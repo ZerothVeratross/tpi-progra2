@@ -1,0 +1,65 @@
+# depslib dependency file v1.0
+1746660645 source:c:\directories\c++\progra_2\restaurante\mesa.cpp
+	"mesa.h"
+
+1746660664 c:\directories\c++\progra_2\restaurante\mesa.h
+	<iostream>
+
+1746130399 source:c:\directories\c++\progra_2\restaurante\menu.cpp
+	"menu.h"
+
+1746130389 c:\directories\c++\progra_2\restaurante\menu.h
+	"mesa.h"
+	"rlutil.h"
+	<iostream>
+	<windows.h>
+
+1571584339 c:\directories\c++\progra_2\restaurante\rlutil.h
+	<iostream>
+	<string>
+	<cstdio>
+	<stdio.h>
+	<string.h>
+	<windows.h>
+	<conio.h>
+	<termios.h>
+	<unistd.h>
+	<sys/ioctl.h>
+	<sys/types.h>
+	<sys/time.h>
+
+1746129712 source:c:\directories\c++\progra_2\restaurante\main.cpp
+	"menu.h"
+
+1746123558 c:\directories\c++\progra_2\restaurante\arrutil.h
+
+1746124450 source:c:\directories\c++\progra_2\restaurante\arrutil.cpp
+	"arrutil.h"
+	<iostream>
+
+1746129712 source:c:\directories\c++\progra_2\tpi-progra2\main.cpp
+	"menu.h"
+
+1746130389 c:\directories\c++\progra_2\tpi-progra2\menu.h
+	"mesa.h"
+	"rlutil.h"
+	<iostream>
+	<windows.h>
+
+1746660664 c:\directories\c++\progra_2\tpi-progra2\mesa.h
+	<iostream>
+
+1571584339 c:\directories\c++\progra_2\tpi-progra2\rlutil.h
+	<iostream>
+	<string>
+	<cstdio>
+	<stdio.h>
+	<string.h>
+	<windows.h>
+	<conio.h>
+	<termios.h>
+	<unistd.h>
+	<sys/ioctl.h>
+	<sys/types.h>
+	<sys/time.h>
+
