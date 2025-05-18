@@ -6,5 +6,6 @@
 void clear_screen(char fill = ' ');
 void imprimir_separador();
 void listar_comandos();
-void listar_mesa(Mesa mesa);
-void cambiar_desc(Mesa mesa);
+Mesa * crear_mesa();
+void listar_mesa(Mesa * mesa);
+void cambiar_desc(Mesa * mesa);

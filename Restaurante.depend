@@ -37,16 +37,16 @@
 	"arrutil.h"
 	<iostream>
 
-1746129712 source:c:\directories\c++\progra_2\tpi-progra2\main.cpp
+1747591261 source:c:\directories\c++\progra_2\tpi-progra2\main.cpp
 	"menu.h"
 
-1746130389 c:\directories\c++\progra_2\tpi-progra2\menu.h
+1747591309 c:\directories\c++\progra_2\tpi-progra2\menu.h
 	"mesa.h"
 	"rlutil.h"
 	<iostream>
 	<windows.h>
 
-1746660664 c:\directories\c++\progra_2\tpi-progra2\mesa.h
+1747582908 c:\directories\c++\progra_2\tpi-progra2\mesa.h
 	<iostream>
 
 1571584339 c:\directories\c++\progra_2\tpi-progra2\rlutil.h
@@ -62,4 +62,10 @@
 	<sys/ioctl.h>
 	<sys/types.h>
 	<sys/time.h>
+
+1747592067 source:c:\directories\c++\progra_2\tpi-progra2\menu.cpp
+	"menu.h"
+
+1747586427 source:c:\directories\c++\progra_2\tpi-progra2\mesa.cpp
+	"mesa.h"
 

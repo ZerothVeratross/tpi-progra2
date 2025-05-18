@@ -3,7 +3,7 @@
 class Mesa {
 private:
     int nro_mesa, can_sillas, ubic;
-    std::string * desc;
+    char * desc;
 public:
     Mesa(int n_nro_mesa);
     Mesa(int n_nro_mesa, int n_can_sillas, int n_ubic, char * n_desc);
