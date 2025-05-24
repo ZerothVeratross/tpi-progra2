@@ -1,48 +1,43 @@
 #include "mesa.h"
 
-Mesa::Mesa(int n_nro_mesa) {
+Mesa::Mesa() {
     int i;
-    nro_mesa=n_nro_mesa;
+    nro_mesa=0;
     can_sillas=4;
     ubic=1;
-    desc=new char[20];
-    for (i=0; i<20; i++) {
+    for (i=0; i<30; i++) {
         desc[i]='\0';
     }
+    estado=true;
 }
 
-Mesa::Mesa(int n_nro_mesa, int n_can_sillas, int n_ubic, char * n_desc) {
-    char c=n_desc[0];
-    int i, tam_desc=0;
+Mesa::Mesa(int n_nro_mesa, int n_can_sillas, int n_ubic, char n_desc[20]) {
+    int i;
     nro_mesa=n_nro_mesa;
     can_sillas=n_can_sillas;
     ubic=n_ubic;
 
-    //corta ciclo en null terminator
-    while (c) {
-        tam_desc++;
-        c=n_desc[tam_desc];
-    }
-
-    desc=new char[tam_desc+1];
-    for (i=0; i<tam_desc; i++) {
+    for (i=0; i<30; i++) {
         desc[i]=n_desc[i];
     }
+    estado=true;
 }
 
 Mesa::Mesa(int n_nro_mesa, int n_can_sillas, int n_ubic, std::string n_desc) {
-    int tam_desc=n_desc.length()+1;
+    int i;
     nro_mesa=n_nro_mesa;
     can_sillas=n_can_sillas;
     ubic=n_ubic;
 
-    desc=new char[tam_desc];
-    n_desc.copy(desc, tam_desc-1, 0);
-    desc[tam_desc-1]='\0';
+    n_desc.copy(desc, 30, 0);
+    //asegurar que las posiciones que sobren no tengan basura
+    for (i=n_desc.length(); i<30; i++) {
+        desc[i]='\0';
+    }
+    estado=true;
 }
 
 Mesa::~Mesa() {
-    delete desc;
 }
 
 int Mesa::get_nro_mesa() {
@@ -58,9 +53,12 @@ int Mesa::get_ubic() {
 }
 
 std::string Mesa::get_desc() {
-    std::cout<<"\n"<<desc<<"\n";
     std::string str(desc);
     return str;
+}
+
+bool Mesa::get_estado() {
+    return estado;
 }
 
 void Mesa::set_nro_mesa(int n_nro_mesa) {
@@ -76,28 +74,21 @@ void Mesa::set_ubic(int n_ubic) {
 }
 
 void Mesa::set_desc(char * n_desc) {
-    int i, tam_desc=0;
-    char c=n_desc[0];
+    int i;
 
-    //el caracter terminador en C es '\0', cuyo codigo numerico es 0
-    while (c) {
-        tam_desc++;
-        c=n_desc[tam_desc];
-    }
-    tam_desc++; //un lugar mas para el terminador
-
-    delete desc;
-    desc=new char[tam_desc];
-    for (i=0; i<tam_desc; i++) {
+    for (i=0; i<30; i++) {
         desc[i]=n_desc[i];
     }
 }
 
 void Mesa::set_desc(std::string n_desc) {
-    int tam_desc=n_desc.length()+1;
+    int i;
+    n_desc.copy(desc, 30, 0);
+    for (i=n_desc.length(); i<30; i++) {
+        desc[i]='\0';
+    }
+}
 
-    delete desc;
-    desc=new char[tam_desc];
-    n_desc.copy(desc, tam_desc-1, 0);
-    desc[tam_desc-1]='\0';
+void Mesa::set_estado(bool n_estado) {
+    estado=n_estado;
 }

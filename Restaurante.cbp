@@ -31,12 +31,30 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="archivo.cpp" />
+		<Unit filename="archivo.h" />
+		<Unit filename="archivoMesa.cpp" />
+		<Unit filename="archivoMesa.h" />
+		<Unit filename="archivoMozo.cpp" />
+		<Unit filename="archivoMozo.h" />
+		<Unit filename="archivoServicio.cpp" />
+		<Unit filename="archivoServicio.h" />
+		<Unit filename="arrutil.cpp" />
+		<Unit filename="arrutil.h" />
+		<Unit filename="fecha.cpp" />
+		<Unit filename="fecha.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="menu.cpp" />
 		<Unit filename="menu.h" />
 		<Unit filename="mesa.cpp" />
 		<Unit filename="mesa.h" />
+		<Unit filename="mozo.cpp" />
+		<Unit filename="mozo.h" />
+		<Unit filename="randutil.cpp" />
+		<Unit filename="randutil.h" />
 		<Unit filename="rlutil.h" />
+		<Unit filename="servicio.cpp" />
+		<Unit filename="servicio.h" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

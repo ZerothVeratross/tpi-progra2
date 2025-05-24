@@ -2,29 +2,114 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="menu.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="archivo.h" open="0" top="0" tabpos="19" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1531" topLine="19" />
+			<Cursor1 position="264" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="mesa.cpp" open="1" top="1" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="menu.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1752" topLine="0" />
+			<Cursor1 position="1436" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="menu.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="archivoMozo.h" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="349" topLine="0" />
+			<Cursor1 position="44" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="mesa.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="archivoServicio.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="389" topLine="0" />
+			<Cursor1 position="2392" topLine="46" />
 		</Cursor>
 	</File>
-	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="mesa.h" open="0" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="423" topLine="0" />
+			<Cursor1 position="701" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="archivoMozo.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="968" topLine="29" />
+		</Cursor>
+	</File>
+	<File name="mozo.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2369" topLine="103" />
+		</Cursor>
+	</File>
+	<File name="mesa.cpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1176" topLine="49" />
+		</Cursor>
+	</File>
+	<File name="fecha.h" open="0" top="0" tabpos="17" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="457" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="archivo.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="507" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="randutil.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1153" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="servicio.h" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="857" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="main.cpp" open="1" top="1" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="455" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="servicio.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="921" topLine="2" />
+		</Cursor>
+	</File>
+	<File name="arrutil.cpp" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="7840" topLine="244" />
+		</Cursor>
+	</File>
+	<File name="archivoMesa.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="907" topLine="18" />
+		</Cursor>
+	</File>
+	<File name="arrutil.h" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="260" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="fecha.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1616" topLine="42" />
+		</Cursor>
+	</File>
+	<File name="mozo.h" open="0" top="0" tabpos="15" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="780" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="archivoServicio.h" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="419" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="archivoMesa.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="228" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="menu.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="82" topLine="0" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
