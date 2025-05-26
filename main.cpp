@@ -17,7 +17,7 @@ int main() {
                 admin_menu_registrar();
                 break;
             case 2:
-                //admin_menu_consultar();
+                admin_menu_consultar();
                 break;
             case 3:
                 admin_menu_listar();
@@ -44,6 +44,9 @@ int main() {
             case -2:
                 clear_screen();
                 cout<<"MODO ADMINISTRADOR\n";
+                break;
+            default:
+                cout<<"\nComando invalido\n";
                 break;
             }
         }

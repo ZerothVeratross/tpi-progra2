@@ -25,6 +25,128 @@ void imprimir_separador() {
     cout<<"-------------------------------------------------------------------";
 }
 
+void comando_invalido() {
+    cout<<"\nComando invalido, regresando al menu principal...\n";
+}
+
+void numero_invalido() {
+    cout<<"\nNumero invalido, regresando al menu principal...\n";
+}
+
+void numero_debe_ser_mayor() {
+    cout<<"\nEl numero mayor debe ser mayor al anterior, regresando al menu principal...\n";
+}
+
+void acceso_archivo_fallido() {
+    cout<<"\nNo se pudo acceder al archivo, regresando al menu principal...\n";
+}
+
+int validar_fecha(int anio, int mes, int dia) {
+    if (dia<1) {return false;}
+    switch (mes) {
+    case 1:
+    case 3:
+    case 5:
+    case 7:
+    case 8:
+    case 10:
+    case 12:
+        if (dia<32) {return 1;}
+        cout<<"\nDia invalido en mes de 31 dias, regresando al menu principal...\n";
+        return 0;
+    case 4:
+    case 6:
+    case 9:
+    case 11:
+        if (dia<31) {return 1;}
+        cout<<"\nDia invalido en mes de 30 dias, regresando al menu principal...\n";
+        return 0;
+    case 2:
+        if (dia<29 || (dia==29 && anio%4==0 && (!anio%100==0 || anio%400==0))) {return 1;}
+        cout<<"\nDia invalido en febrero, regresando al menu principal...\n";
+        return 0;
+    default:
+        cout<<"\nMes invalido, regresando al menu principal...\n";
+        return 0;
+    }
+}
+
+int pedir_comando(const char * pedido, int cant_com, int * comando) {
+    cout<<pedido;
+    cin>>*comando;
+    if (*comando<1 || *comando>cant_com) {
+        comando_invalido();
+        return 0;
+    }
+    return 1;
+}
+
+int pedir_int(const char * pedido, int cota_inf, int cota_sup, int * dato_int) {
+    cout<<pedido;
+    cin>>*dato_int;
+    if (*dato_int<cota_inf || *dato_int>cota_sup) {
+        numero_invalido();
+        return 0;
+    }
+    return 1;
+}
+
+int pedir_rango_int(const char * pedido, int * datos_int, int pos1, int pos2) {
+    cout<<pedido<<"\nNumero menor: ";
+    cin>>datos_int[pos1];
+    if (datos_int[pos1]<1) {
+        numero_invalido();
+        return 0;
+    }
+    cout<<"\nNumero mayor: ";
+    cin>>datos_int[pos2];
+    if (datos_int[pos2]<1) {
+        numero_invalido();
+        return 0;
+    }
+    if (datos_int[pos2]<datos_int[pos1]) {
+        numero_debe_ser_mayor();
+        return 0;
+    }
+    return 1;
+}
+
+int pedir_string(const char * pedido, string * dato_str, int tam_max, bool cin_antes, bool espacios) {
+    string buffer;
+    cout<<pedido;
+    if (espacios) {
+        if (cin_antes){vaciar_input();} //si cin fue accedido por el operador >> antes
+        getline(cin, buffer);
+        cout<<buffer;
+    } else {
+        cin>>buffer;
+    }
+    //length devuelve long long int, que es un entero gigante. se convierte a int
+    //para que el compilador no grite. si por alguna razon mistica, el usuario ingresa
+    //un string con mas de 2147483647 caracteres, el resultado seria reducido a dicho
+    //numero
+    if (int(buffer.length())>tam_max) {
+        cout<<"\nHa ingresado demasiados caracteres, regresando al menu principal...\n";
+        return 0;
+    }
+    if (int(buffer.length())==0) {
+        cout<<"\nAlgo fallo pues no se registro input, regresando al menu principal...\n";
+    }
+    dato_str->erase(0, dato_str->npos);
+    dato_str->append(buffer);
+    return 1;
+}
+
+int pedir_float(const char * pedido, float cota_inf, float cota_sup, float * dato_float) {
+    cout<<pedido;
+    cin>>*dato_float;
+    if (*dato_float<cota_inf || *dato_float>cota_sup) {
+        numero_invalido();
+        return 0;
+    }
+    return 1;
+}
+
 void admin_listar_comandos() {
     imprimir_separador();
     cout<<"\nLista de comandos:";
@@ -95,8 +217,7 @@ void mostrar_servicio(Servicio * servicio, bool ignorar_borrado) {
 //Comienzo funciones para registrar datos
 void admin_menu_registrar() {
     int dato_int;
-    cout<<"\nIngrese su eleccion:\n1. Registrar mesa\n2. Registrar mozos\n3. Registrar servicio\n";
-    cin>>dato_int;
+    pedir_comando("\nIngrese su eleccion:\n1. Registrar mesa\n2. Registrar mozo\n3. Registrar servicio\n", 3, &dato_int);
     switch(dato_int) {
     case 1:
         if (menu_registrar_mesa()) {
@@ -120,150 +241,365 @@ void admin_menu_registrar() {
         }
         break;
     default:
-        cout<<"\nComando invalido, volviendo al menu principal...\n";
+        comando_invalido();
         break;
     }
 }
 
 int menu_registrar_mesa() {
     ArchivoMesa archivo;
-    Mesa * mesa;
-    int chars=0,datos_int[3];
+    int datos_int[3], cant_regs=archivo.contar_regs();
+    Mesa mesas[cant_regs];
+    Mesa n_mesa;
     string dato_str;
 
-    cout<<"\nIngrese numero de mesa: ";
-    cin>>datos_int[0];
-    cout<<"\nIngrese cantidad de sillas: ";
-    cin>>datos_int[1];
-    cout<<"\nElija ubicacion: ";
-    cout<<"\n1. Interior\n2. Terraza\n";
-    cin>>datos_int[2];
+    if (!pedir_int("\nIngrese numero de mesa: ", 1, 99999, &datos_int[0])){return 0;}
+    if (!archivo.listar_mesas(mesas, cant_regs)){acceso_archivo_fallido();};
+    if (buscar_nro_mesa(mesas, cant_regs, datos_int[0])!=-1) {
+        cout<<"\nYa existe una mesa con este numero, regresando al menu principal...\n";
+        return 0;
+    }
 
-    vaciar_input();
-    do {
-        cout<<"\nEscriba una descripcion de la mesa con no mas de 29 caracteres:\n";
-        getline(cin, dato_str, '\n');
-        chars=dato_str.length();
-    } while(chars>29);
-    mesa=new Mesa(datos_int[0], datos_int[1], datos_int[2], dato_str);
+    if (!pedir_int("\nIngrese cantidad de sillas: ", 1, 12, &datos_int[1])){return 0;}
 
-    mostrar_mesa(mesa, true);
-    cout<<"\nEsta es la mesa que desea registrar?\n1. Si\n2. No\n";
-    cin>>datos_int[0];
+    if (!pedir_comando("\nElija ubicacion:\n1. Interior\n2. Terraza\n", 2, &datos_int[2])){return 0;}
+
+    if (!pedir_string("\nEscriba una descripcion de la mesa con no mas de 29 caracteres:\n", &dato_str, 29, true)){return 0;}
+
+    n_mesa=Mesa(datos_int[0], datos_int[1], datos_int[2], dato_str);
+
+    mostrar_mesa(&n_mesa, true);
+    if (!pedir_comando("\nEsta es la mesa que desea registrar?\n1. Si\n2. No\n", 2, &datos_int[0])){return 0;}
     if (datos_int[0]==2) {
         return 0;
     }
 
-    datos_int[0]=archivo.registrar_mesa(mesa);
-    delete mesa;
+    datos_int[0]=archivo.registrar_mesa(&n_mesa);
     return datos_int[0];
 }
 
 int menu_registrar_mozo() {
     ArchivoMozo archivo;
-    Mozo * mozo;
-    int chars=0,datos_int[6];
+    int datos_int[6], cant_regs=archivo.contar_regs();
+    Mozo mozos[cant_regs];
+    Mozo n_mozo;
     string datos_str[4];
     Fecha fecha_naci;
 
-    cout<<"\nIngrese DNI: ";
-    cin>>datos_int[0];
+    if (!pedir_int("\nIngrese ID del mozo: ", 1, 99999, &datos_int[5])) {return 0;}
+    if (!archivo.listar_mozos(mozos, cant_regs)){acceso_archivo_fallido();};
+    if (buscar_id_mozo(mozos, cant_regs, datos_int[5])!=-1) {
+        cout<<"\nYa existe un mozo con este ID, regresando al menu principal...\n";
+        return 0;
+    }
 
-    vaciar_input();
-    do {
-        cout<<"\nEscriba el nombre del mozo con no mas de 19 caracteres:\n";
-        getline(cin, datos_str[0], '\n');
-        chars=datos_str[0].length();
-    } while(chars>19);
-    chars=0;
+    //una persona con DNI por debajo de 1 millon probablemente no este en condiciones de trabajar de mozo
+    if (!pedir_int("\nIngrese DNI mayor a 1 millon: ", 1000000, 80000000, &datos_int[0])) {return 0;}
 
-    do {
-        cout<<"\nEscriba el apellido del mozo con no mas de 29 caracteres:\n";
-        getline(cin, datos_str[1], '\n');
-        chars=datos_str[1].length();
-    } while(chars>29);
-    chars=0;
+    if (!pedir_string("\nEscriba el nombre del mozo con no mas de 19 caracteres:\n", &datos_str[0], 19, true)) {return 0;}
 
-    do {
-        cout<<"\nEscriba el numero de telefono del mozo con no mas de 19 caracteres:\n";
-        getline(cin, datos_str[2], '\n');
-        chars=datos_str[2].length();
-    } while(chars>19);
-    chars=0;
+    if (!pedir_string("\nEscriba el apellido del mozo con no mas de 29 caracteres:\n", &datos_str[1], 29, false)) {return 0;}
 
-    do {
-        cout<<"\nEscriba el email del mozo con no mas de 49 caracteres:\n";
-        getline(cin, datos_str[3], '\n');
-        chars=datos_str[3].length();
-    } while(chars>49);
+    if (!pedir_string("\nEscriba el numero de telefono del mozo con no mas de 19 caracteres:\n", &datos_str[2], 19, false)) {return 0;}
 
-    cout<<"\nIngrese fecha de nacimiento del mozo. Dia: ";
-    cin>>datos_int[1];
-    cout<<"Mes: ";
-    cin>>datos_int[2];
-    cout<<"Anio: ";
-    cin>>datos_int[3];
+    if (!pedir_string("\nEscriba el email del mozo con no mas de 49 caracteres:\n", &datos_str[3], 49, false)) {return 0;}
+
+    if (!pedir_int("\nIngrese fecha de nacimiento del mozo en numeros. Dia: ", 1, 31, &datos_int[1])) {return 0;}
+    if (!pedir_int("Mes: ", 1, 12, &datos_int[2])) {return 0;}
+    if (!pedir_int("Anio (1900 a 2025): ", 1900, 2025, &datos_int[3])) {return 0;}
+    if (!validar_fecha(datos_int[3], datos_int[2], datos_int[1])) {return 0;}
     fecha_naci=Fecha(datos_int[1], datos_int[2], datos_int[3]);
 
-    cout<<"\nIngrese turno del mozo.\n1. Maniana\n2. Tarde\n3. Noche\n";
-    cin>>datos_int[4];
-    cout<<"\nIngrese ID del mozo: ";
-    cin>>datos_int[5];
+    if (!pedir_comando("\nIngrese turno del mozo.\n1. Maniana\n2. Tarde\n3. Noche\n", 3, &datos_int[4])) {return 0;}
 
-    mozo=new Mozo(datos_int[0], datos_str[0], datos_str[1], datos_str[2], datos_str[3], fecha_naci, datos_int[4], datos_int[5]);
+    n_mozo=Mozo(datos_int[0], datos_str[0], datos_str[1], datos_str[2], datos_str[3], fecha_naci, datos_int[4], datos_int[5]);
 
-    mostrar_mozo(mozo, true);
-    cout<<"\nEste es el mozo que desea registrar?\n1. Si\n2. No\n";
-    cin>>datos_int[0];
+    mostrar_mozo(&n_mozo, true);
+    if (!pedir_comando("\nEste es el mozo que desea registrar?\n1. Si\n2. No\n", 2, &datos_int[0])) {return 0;}
     if (datos_int[0]==2) {
         return 0;
     }
 
-    datos_int[0]=archivo.registrar_mozo(mozo);
-    delete mozo;
+    datos_int[0]=archivo.registrar_mozo(&n_mozo);
     return datos_int[0];
 }
 
 int menu_registrar_servicio() {
-    ArchivoServicio archivo;
-    Servicio * servicio;
-    int datos_int[6];
+    ArchivoServicio pServicios;
+    ArchivoMesa pMesas;
+    ArchivoMozo pMozos;
+    int datos_int[6], pos, cant_servicios=pServicios.contar_regs();
+    int cant_mesas=pMesas.contar_regs();
+    int cant_mozos=pMozos.contar_regs();
+    Servicio servicios[cant_servicios];
+    Mesa mesas[cant_mesas];
+    Mozo mozos[cant_mozos];
+    Servicio n_servicio;
     Fecha fecha_serv;
     float datos_float[2];
 
-    cout<<"\nIngrese numero de factura: ";
-    cin>>datos_int[0];
-    cout<<"\nIngrese numero de mesa: ";
-    cin>>datos_int[1];
-    cout<<"\nIngrese ID de mozo: ";
-    cin>>datos_int[2];
+    if (!pedir_int("\nIngrese numero de factura: ", 1, 9999999, &datos_int[0])) {return 0;}
+    if (!pServicios.listar_servicios(servicios, cant_servicios)){acceso_archivo_fallido();};
+    if (buscar_nro_factura(servicios, cant_servicios, datos_int[0])!=-1) {
+        cout<<"\nYa existe un servicio con este numero, regresando al menu principal...\n";
+        return 0;
+    }
 
-    cout<<"\nIngrese fecha del servicio. Dia: ";
-    cin>>datos_int[3];
-    cout<<"Mes: ";
-    cin>>datos_int[4];
-    cout<<"Anio: ";
-    cin>>datos_int[5];
+    if (!pedir_int("\nIngrese numero de mesa: ", 1, 99999, &datos_int[1])) {return 0;}
+    if (!pMesas.listar_mesas(mesas, cant_mesas)){acceso_archivo_fallido();};
+    pos=buscar_nro_mesa(mesas, cant_mesas, datos_int[1]);
+    if (pos==-1) {
+        cout<<"\nEsta mesa no esta registrada, regresando al menu principal...\n";
+        return 0;
+    }
+    if (!mesas[pos].get_estado()) {
+        if (!pedir_comando("\nEsta mesa fue dada de baja. Registrar de todos modos?\n1. Si\n2. No\n", 2, &pos)){return 0;}
+        if (pos==2) {
+            cout<<"\nAbortando operacion...\n";
+            return 0;
+        }
+    }
+
+    if (!pedir_int("\nIngrese ID de mozo: ", 1, 99999, &datos_int[2])) {return 0;}
+    if (!pMozos.listar_mozos(mozos, cant_mozos)){acceso_archivo_fallido();};
+    pos=buscar_id_mozo(mozos, cant_mozos, datos_int[2]);
+    if (pos==-1) {
+        cout<<"\nEste mozo no esta registrado, regresando al menu principal...\n";
+        return 0;
+    }
+    if (!mozos[pos].get_estado()) {
+        if (!pedir_comando("\nEste mozo fue dado de baja. Registrar de todos modos?\n1. Si\n2. No\n", 2, &pos)){return 0;}
+        if (pos==2) {
+            cout<<"\nAbortando operacion...\n";
+            return 0;
+        }
+    }
+
+    if (!pedir_int("\nIngrese fecha del servicio en numeros. Dia: ", 1, 31, &datos_int[3])) {return 0;}
+    if (!pedir_int("Mes: ", 1, 12, &datos_int[4])) {return 0;}
+    if (!pedir_int("Anio (2000 a 2025): ", 2000, 2025, &datos_int[5])) {return 0;}
+    if (!validar_fecha(datos_int[5], datos_int[4], datos_int[3])) {return 0;}
     fecha_serv=Fecha(datos_int[3], datos_int[4], datos_int[5]);
 
-    cout<<"\nIngrese importe del servicio, utilizando punto para marcar decimales: ";
-    cin>>datos_float[0];
-    cout<<"\nIngrese monto abonado por el cliente, utilizando punto para marcar decimales: ";
-    cin>>datos_float[1];
+    //supongo que 10 millones es un techo razonable para gastarse en comida con 12 personas
+    if (!pedir_float("\nIngrese importe del servicio, utilizando punto para marcar decimales: ", 1, 10000000, &datos_float[0])) {return 0;}
 
-    servicio=new Servicio(datos_int[0], datos_int[1], datos_int[2], fecha_serv, datos_float[0], datos_float[1]);
-    mostrar_servicio(servicio, true);
+    if (!pedir_float("\nIngrese monto abonado por el cliente, utilizando punto para marcar decimales: ", 1, 10000000, &datos_float[1])) {return 0;}
+
+    if (datos_float[0]>datos_float[1]) {
+        cout<<"\nEl monto abonado no puede ser menor que el importe del servicio, regresando al menu principal...\n";
+        return 0;
+    }
+
+    n_servicio=Servicio(datos_int[0], datos_int[1], datos_int[2], fecha_serv, datos_float[0], datos_float[1]);
+    mostrar_servicio(&n_servicio, true);
     cout<<"\nEste es el servicio que desea registrar?\n1. Si\n2. No\n";
     cin>>datos_int[0];
     if (datos_int[0]==2) {
         return 0;
     }
 
-    datos_int[0]=archivo.registrar_servicio(servicio);
-    delete servicio;
+    datos_int[0]=pServicios.registrar_servicio(&n_servicio);
     return datos_int[0];
 }
 //Fin funciones para registrar datos
+
+//Comienzo funciones para consultar base de datos
+void admin_menu_consultar() {
+    int dato_int;
+    pedir_comando("\nQue archivo desea consultar?\n1. Mesas\n2. Mozos\n3. Servicios\n", 3, &dato_int);
+    switch(dato_int) {
+    case 1:
+        menu_consultar_mesas();
+        break;
+    case 2:
+        menu_consultar_mozos();
+        break;
+    case 3:
+        menu_consultar_servicios();
+        break;
+    default:
+        comando_invalido();
+        break;
+    }
+
+}
+
+void menu_consultar_mesas() {
+    ArchivoMesa archivo;
+    int i, mesas_encontradas=0, datos_int[3], cant_regs=archivo.contar_regs();
+    Mesa mesas[cant_regs];
+
+    pedir_comando("Que tipo de consulta desea realizar?\n1. Por numero de mesa\n2. Por cantidad de sillas\n3. Por ubicacion y cantidad de sillas\n",
+                  3, &datos_int[0]);
+    switch(datos_int[0]) {
+    case 1:
+        if (!pedir_rango_int("\nIndique el rango de numeros de mesa. Si solo quiere una mesa, escriba dos veces el mismo numero.",
+                         datos_int, 1, 2)) {
+            return;
+        }
+        datos_int[0]=archivo.consultar_mesas(mesas, cant_regs, 1, datos_int[1], datos_int[2]);
+        ordenar_mesas_por_nro(mesas, cant_regs);
+        break;
+    case 2:
+        if (!pedir_rango_int("\nIndique el rango de cantidad de sillas. Si solo quiere buscar por una cantidad especifica, escriba dos veces el mismo numero.",
+                         datos_int, 1, 2)) {
+            return;
+        }
+        datos_int[0]=archivo.consultar_mesas(mesas, cant_regs, 2, datos_int[1], datos_int[2]);
+        ordenar_mesas_por_can_sillas(mesas, cant_regs);
+        break;
+    case 3:
+        if (!pedir_comando("\nIndique la ubicacion.\n1. Interior\n2. Terraza\n", 2, &datos_int[0])) {
+            return;
+        }
+        if (!pedir_rango_int("\nIndique el rango de cantidad de sillas. Si solo quiere buscar por una cantidad especifica, escriba dos veces el mismo numero.",
+                         datos_int, 1, 2)) {
+            return;
+        }
+        datos_int[0]=archivo.consultar_mesas(mesas, cant_regs, 3, datos_int[1], datos_int[2], datos_int[0]);
+        ordenar_mesas_por_can_sillas(mesas, cant_regs);
+        break;
+    default:
+        comando_invalido();
+        break;
+    }
+
+    if (!datos_int[0]) {
+        acceso_archivo_fallido();
+        return;
+    }
+
+    for (i=0; i<cant_regs; i++) {
+        mostrar_mesa(&mesas[i], true);
+        if (mesas[i].get_estado()) {
+            mesas_encontradas++;
+        }
+    }
+    if (mesas_encontradas!=1) {
+        cout<<"\nSe encontraron "<<mesas_encontradas<<" mesas\n";
+    } else {
+        cout<<"\nSe encontro "<<mesas_encontradas<<" mesa\n";
+    }
+}
+
+void menu_consultar_mozos() {
+    ArchivoMozo archivo;
+    int i, mozos_encontrados=0, datos_int[3], cant_regs=archivo.contar_regs();
+    string datos_str[2];
+    Mozo mozos[cant_regs];
+
+    pedir_comando("Que tipo de consulta desea realizar?\n1. Por ID de mozo\n2. Por nombre y/o apellido\n3. Por turno\n",
+                  3, &datos_int[0]);
+    switch(datos_int[0]) {
+    case 1:
+        if (!pedir_rango_int("\nIndique el rango de IDs de mozo. Si solo quiere un mozo, escriba dos veces el mismo numero.",
+                         datos_int, 1, 2)) {
+            return;
+        }
+        datos_int[0]=archivo.consultar_mozos(mozos, cant_regs, 1, datos_int[1], datos_int[2]);
+        ordenar_mozos_por_id(mozos, cant_regs);
+        break;
+    case 2:
+        pedir_comando("\nIndique que desea buscar. Note que debe escribir el nombre y/o apellido exacto.\n1. Nombre\n2. Apellido\n3. Nombre y apellido\n",
+                      3, &datos_int[1]);
+        switch(datos_int[1]) {
+        case 1:
+            cout<<"Nombre: ";
+            cin>>datos_str[0];
+            datos_int[0]=archivo.consultar_mozos(mozos, cant_regs, 1, datos_str[0]);
+            break;
+        case 2:
+            cout<<"Apellido: ";
+            cin>>datos_str[0];
+            datos_int[0]=archivo.consultar_mozos(mozos, cant_regs, 2, datos_str[0]);
+            break;
+        case 3:
+            cout<<"Nombre: ";
+            cin>>datos_str[1];
+            cout<<"Apellido: ";
+            cin>>datos_str[2];
+            datos_int[0]=archivo.consultar_mozos(mozos, cant_regs, 3, datos_str[0], datos_str[1]);
+            break;
+        default:
+            comando_invalido();
+            return;
+        }
+        break;
+    case 3:
+        pedir_comando("\nIndique el turno.\n1. Maniana\n2. Tarde\n3. Noche\n", 3, &datos_int[1]);
+        datos_int[0]=archivo.consultar_mozos(mozos, cant_regs, 2, datos_int[1], datos_int[1]);
+        ordenar_mozos_por_turno_id(mozos, cant_regs);
+        break;
+    default:
+        comando_invalido();
+        break;
+    }
+
+    if (!datos_int[0]) {
+        acceso_archivo_fallido();
+        return;
+    }
+
+    for (i=0; i<cant_regs; i++) {
+        mostrar_mozo(&mozos[i], true);
+        if (mozos[i].get_estado()) {
+            mozos_encontrados++;
+        }
+    }
+    if (mozos_encontrados!=1) {
+        cout<<"\nSe encontraron "<<mozos_encontrados<<" mozos\n";
+    } else {
+        cout<<"\nSe encontro "<<mozos_encontrados<<" mozo\n";
+    }
+}
+
+void menu_consultar_servicios() {
+    ArchivoServicio archivo;
+    int i, servicios_encontrados=0, datos_int[3], cant_regs=archivo.contar_regs();
+    Servicio servicios[cant_regs];
+
+    cout<<"Que tipo de consulta desea realizar?\n1. \n2. \n3. \n4. \n5. \n";
+    cin>>datos_int[0];
+    switch(datos_int[0]) {
+    case 1:
+
+        break;
+    case 2:
+
+        break;
+    case 3:
+
+        break;
+    case 4:
+
+        break;
+    case 5:
+
+        break;
+    default:
+        comando_invalido();
+        break;
+    }
+
+    if (!datos_int[0]) {
+        acceso_archivo_fallido();
+        return;
+    }
+
+    for (i=0; i<cant_regs; i++) {
+        mostrar_servicio(&servicios[i], true);
+        if (servicios[i].get_estado()) {
+            servicios_encontrados++;
+        }
+    }
+    if (servicios_encontrados!=1) {
+        cout<<"\nSe encontraron "<<servicios_encontrados<<" servicios\n";
+    } else {
+        cout<<"\nSe encontro "<<servicios_encontrados<<" servicio\n";
+    }
+}
+//Fin funciones para consultar base de datos
 
 //Comienzo funciones para listar datos
 void admin_menu_listar() {
@@ -277,7 +613,7 @@ void admin_menu_listar() {
         if (dato_int>0 && dato_int<5) {
             menu_listar_mesas(dato_int);
         } else {
-            cout<<"\nComando invalido, volviendo al menu principal...\n";
+            comando_invalido();
         }
         break;
     case 2:
@@ -286,7 +622,7 @@ void admin_menu_listar() {
         if (dato_int>0 && dato_int<7) {
             menu_listar_mozos(dato_int);
         } else {
-            cout<<"\nComando invalido, volviendo al menu principal...\n";
+            comando_invalido();
         }
         break;
     case 3:
@@ -295,11 +631,11 @@ void admin_menu_listar() {
         if (dato_int>0 && dato_int<7) {
             menu_listar_servicios(dato_int);
         } else {
-            cout<<"\nComando invalido, volviendo al menu principal...\n";
+            comando_invalido();
         }
         break;
     default:
-        cout<<"\nComando invalido, volviendo al menu principal...\n";
+        comando_invalido();
         break;
     }
 }
@@ -442,7 +778,7 @@ void admin_menu_informe() {
         informe_propinas_percibidas();
         break;
     default:
-        cout<<"\nComando invalido, regresando al menu principal...\n";
+        comando_invalido();
         break;
     }
 }
@@ -661,7 +997,7 @@ void menu_generacion_datos() {
         datos_int[0]=aServicio.generar_servicios(datos_int[1]);
         break;
     default:
-        cout<<"\nComando invalido, volviendo al menu principal...\n";
+        comando_invalido();
         break;
     }
     if (!datos_int[0]) {

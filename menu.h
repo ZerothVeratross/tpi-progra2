@@ -8,7 +8,20 @@
 void clear_screen(char fill = ' ');
 void vaciar_input();
 void imprimir_separador();
+void comando_invalido();
+void numero_invalido();
+void numero_debe_ser_mayor();
+void acceso_archivo_fallido();
+int validar_dia(int anio, int mes, int dia);
+
+int pedir_comando(const char *, int cant_com, int * comando);
+int pedir_int(const char * pedido, int cota_inf, int cota_sup, int * dato_int);
+int pedir_rango(const char * pedido, int * datos_int, int pos1, int pos2);
+int pedir_string(const char * pedido, std::string * str, int tam_max, bool cin_antes, bool espacios=true);
+int pedir_float(const char * pedido, float cota_inf, float cota_sup, float * dato_int);
+
 void admin_listar_comandos();
+
 void mostrar_mesa(Mesa * mesa, bool ignorar_borrado);
 void mostrar_mozo(Mozo * mozo, bool ignorar_borrado);
 void mostrar_servicio(Servicio * servicio, bool ignorar_borrado);
@@ -17,6 +30,11 @@ void admin_menu_registrar();
 int menu_registrar_mesa();
 int menu_registrar_mozo();
 int menu_registrar_servicio();
+
+void admin_menu_consultar();
+void menu_consultar_mesas();
+void menu_consultar_mozos();
+void menu_consultar_servicios();
 
 void admin_menu_listar();
 void menu_listar_mesas(int orden);

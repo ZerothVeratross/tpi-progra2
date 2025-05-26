@@ -19,6 +19,36 @@ int ArchivoMesa::registrar_mesa(Mesa * mesa) {
     return i;
 }
 
+int ArchivoMesa::consultar_mesas(Mesa * buffer, int cant_regs, int tipo_dato, int cota_inf, int cota_sup, int ubic) {
+    FILE *pMesas=fopen(get_direccion().c_str(), "rb");
+    int i;
+
+    if (pMesas==NULL) {
+        return 0;
+    }
+
+    for (i=0; i<cant_regs; i++) {
+        fread(&buffer[i], get_tam_reg(), 1, pMesas);
+        switch(tipo_dato) {
+        case 1:
+            buffer[i].set_estado(buffer[i].get_nro_mesa()>=cota_inf && buffer[i].get_nro_mesa()<=cota_sup
+                                 && buffer[i].get_estado());
+            break;
+        case 2:
+            buffer[i].set_estado(buffer[i].get_can_sillas()>=cota_inf && buffer[i].get_can_sillas()<=cota_sup
+                                 && buffer[i].get_estado());
+            break;
+        case 3:
+            buffer[i].set_estado(buffer[i].get_can_sillas()>=cota_inf && buffer[i].get_can_sillas()<=cota_sup &&
+                                 buffer[i].get_ubic()==ubic && buffer[i].get_estado());
+            break;
+        default:
+            return 0;
+        }
+    }
+    return 1;
+}
+
 int ArchivoMesa::listar_mesas(Mesa * buffer, int cant_regs) {
     int i;
     FILE * pMesas=fopen(get_direccion().c_str(), "rb");

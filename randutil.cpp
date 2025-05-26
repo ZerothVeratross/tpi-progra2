@@ -46,9 +46,28 @@ void gen_fecha_entre_anios(Fecha * fecha, int anio1, int anio2) {
     buffer=rand()%(anio2-anio1+1)+anio1;
     fecha->set_anio(buffer);
     fecha->set_mes(rand()%12+1);
-    if (fecha->get_mes()==2 && (buffer%4==0 && (buffer%100!=0 || buffer%400==0))) {
-        fecha->set_dia(rand()%29+1);
-    } else {
-        fecha->set_dia(rand()%28+1);
+    switch (fecha->get_mes()) {
+    case 1:
+    case 3:
+    case 5:
+    case 7:
+    case 8:
+    case 10:
+    case 12:
+        fecha->set_dia(rand()%31+1);
+        break;
+    case 4:
+    case 6:
+    case 9:
+    case 11:
+        fecha->set_dia(rand()%30+1);
+        break;
+    case 2:
+        if (buffer%4==0 && (buffer%100!=0 || buffer%400==0)) {
+            fecha->set_dia(rand()%29+1);
+        } else {
+            fecha->set_dia(rand()%28+1);
+        }
+        break;
     }
 }

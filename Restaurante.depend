@@ -37,10 +37,10 @@
 	"arrutil.h"
 	<iostream>
 
-1748100358 source:c:\directories\c++\progra_2\tpi-progra2\main.cpp
+1748269585 source:c:\directories\c++\progra_2\tpi-progra2\main.cpp
 	"menu.h"
 
-1748097392 c:\directories\c++\progra_2\tpi-progra2\menu.h
+1748284450 c:\directories\c++\progra_2\tpi-progra2\menu.h
 	"archivoMesa.h"
 	"archivoMozo.h"
 	"archivoServicio.h"
@@ -65,7 +65,7 @@
 	<sys/types.h>
 	<sys/time.h>
 
-1748100701 source:c:\directories\c++\progra_2\tpi-progra2\menu.cpp
+1748280706 source:c:\directories\c++\progra_2\tpi-progra2\menu.cpp
 	"menu.h"
 
 1748057060 source:c:\directories\c++\progra_2\tpi-progra2\mesa.cpp
@@ -104,10 +104,10 @@
 	<cstdlib>
 	<ctime>
 
-1748026770 source:c:\directories\c++\progra_2\tpi-progra2\randutil.cpp
+1748279123 source:c:\directories\c++\progra_2\tpi-progra2\randutil.cpp
 	"randutil.h"
 
-1748054791 c:\directories\c++\progra_2\tpi-progra2\archivomesa.h
+1748184781 c:\directories\c++\progra_2\tpi-progra2\archivomesa.h
 	"archivo.h"
 	"randutil.h"
 	"mesa.h"
@@ -115,12 +115,12 @@
 1748056524 c:\directories\c++\progra_2\tpi-progra2\archivo.h
 	<iostream>
 
-1748054938 c:\directories\c++\progra_2\tpi-progra2\archivomozo.h
+1748186859 c:\directories\c++\progra_2\tpi-progra2\archivomozo.h
 	"archivo.h"
 	"randutil.h"
 	"mozo.h"
 
-1748054972 c:\directories\c++\progra_2\tpi-progra2\archivoservicio.h
+1748285441 c:\directories\c++\progra_2\tpi-progra2\archivoservicio.h
 	"archivo.h"
 	"archivoMesa.h"
 	"archivoMozo.h"
@@ -130,13 +130,13 @@
 1748056565 source:c:\directories\c++\progra_2\tpi-progra2\archivo.cpp
 	"archivo.h"
 
-1748094433 source:c:\directories\c++\progra_2\tpi-progra2\archivomesa.cpp
+1748187894 source:c:\directories\c++\progra_2\tpi-progra2\archivomesa.cpp
 	"archivoMesa.h"
 
-1748094442 source:c:\directories\c++\progra_2\tpi-progra2\archivomozo.cpp
+1748269890 source:c:\directories\c++\progra_2\tpi-progra2\archivomozo.cpp
 	"archivoMozo.h"
 
-1748101698 source:c:\directories\c++\progra_2\tpi-progra2\archivoservicio.cpp
+1748285413 source:c:\directories\c++\progra_2\tpi-progra2\archivoservicio.cpp
 	"archivoServicio.h"
 
 1748094846 c:\directories\c++\progra_2\tpi-progra2\ordenar.h
@@ -147,11 +147,11 @@
 1748095182 source:c:\directories\c++\progra_2\tpi-progra2\ordenar.cpp
 	"ordenar.h"
 
-1748100973 c:\directories\c++\progra_2\tpi-progra2\arrutil.h
+1748285551 c:\directories\c++\progra_2\tpi-progra2\arrutil.h
 	"mesa.h"
 	"mozo.h"
 	"servicio.h"
 
-1748100978 source:c:\directories\c++\progra_2\tpi-progra2\arrutil.cpp
+1748285558 source:c:\directories\c++\progra_2\tpi-progra2\arrutil.cpp
 	"arrutil.h"
 

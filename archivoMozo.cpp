@@ -19,6 +19,61 @@ int ArchivoMozo::registrar_mozo(Mozo * mozo) {
     return i;
 }
 
+int ArchivoMozo::consultar_mozos(Mozo * buffer, int cant_regs, int tipo_dato, int cota_inf, int cota_sup) {
+    FILE *pMozos=fopen(get_direccion().c_str(), "rb");
+    int i;
+
+    if (pMozos==NULL) {
+        return 0;
+    }
+
+    for (i=0; i<cant_regs; i++) {
+        fread(&buffer[i], get_tam_reg(), 1, pMozos);
+        switch(tipo_dato) {
+        case 1:
+            buffer[i].set_estado(buffer[i].get_id_mozo()>=cota_inf && buffer[i].get_id_mozo()<=cota_sup
+                                 && buffer[i].get_estado());
+            break;
+        case 2:
+            buffer[i].set_estado(buffer[i].get_turno()==cota_inf && buffer[i].get_estado());
+            break;
+        default:
+            return 0;
+        }
+    }
+    return 1;
+}
+
+//esto requeriria usar expresiones regulares para buscar nombres parecidos, lo cual me excede por ahora
+int ArchivoMozo::consultar_mozos(Mozo * buffer, int cant_regs, int tipo_datos, std::string nombre_o_apellido, std::string apellido) {
+    FILE *pMozos=fopen(get_direccion().c_str(), "rb");
+    int i;
+
+    if (pMozos==NULL) {
+        return 0;
+    }
+
+    for (i=0; i<cant_regs; i++) {
+        fread(&buffer[i], get_tam_reg(), 1, pMozos);
+        switch(tipo_datos) {
+        case 1:
+            //std::cout<<nombre_o_apellido<<" - "<<nombre_o_apellido.length()<<" | "<<buffer[i].get_nombre()<<" - "<<buffer[i].get_nombre().length()<<"\n";
+            buffer[i].set_estado(buffer[i].get_nombre().compare(nombre_o_apellido)==0 && buffer[i].get_estado());
+            break;
+        case 2:
+            buffer[i].set_estado(buffer[i].get_apellido().compare(nombre_o_apellido)==0 && buffer[i].get_estado());
+            break;
+        case 3:
+            buffer[i].set_estado(buffer[i].get_nombre().compare(nombre_o_apellido)==0 && buffer[i].get_apellido().compare(apellido)==0
+                                 && buffer[i].get_estado());
+            break;
+        default:
+            return 0;
+        }
+    }
+    return 1;
+}
+
 int ArchivoMozo::listar_mozos(Mozo * buffer, int cant_regs) {
     int i;
     FILE * pMozos=fopen(get_direccion().c_str(), "rb");

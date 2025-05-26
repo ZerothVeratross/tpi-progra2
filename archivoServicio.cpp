@@ -19,6 +19,62 @@ int ArchivoServicio::registrar_servicio(Servicio * servicio) {
     return i;
 }
 
+int ArchivoServicio::consultar_servicios(Servicio * buffer, int cant_regs, int tipo_dato, int cota_inf, int cota_sup) {
+    FILE *pMozos=fopen(get_direccion().c_str(), "rb");
+    int i;
+
+    if (pMozos==NULL) {
+        return 0;
+    }
+
+    for (i=0; i<cant_regs; i++) {
+        fread(&buffer[i], get_tam_reg(), 1, pMozos);
+        switch(tipo_dato) {
+        case 1:
+            buffer[i].set_estado(buffer[i].get_nro_factura()>=cota_inf && buffer[i].get_nro_factura()<=cota_sup
+                                 && buffer[i].get_estado());
+            break;
+        case 2:
+            buffer[i].set_estado(buffer[i].get_nro_mesa()>=cota_inf && buffer[i].get_nro_mesa()<=cota_sup
+                                 && buffer[i].get_estado());
+            break;
+        case 3:
+            buffer[i].set_estado(buffer[i].get_id_mozo()>=cota_inf && buffer[i].get_id_mozo()<=cota_sup
+                                 && buffer[i].get_estado());
+            break;
+        default:
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int ArchivoServicio::consultar_servicios(Servicio * buffer, int cant_regs, int tipo_dato, float cota_inf, float cota_sup) {
+    FILE *pMozos=fopen(get_direccion().c_str(), "rb");
+    int i;
+
+    if (pMozos==NULL) {
+        return 0;
+    }
+
+    for (i=0; i<cant_regs; i++) {
+        fread(&buffer[i], get_tam_reg(), 1, pMozos);
+        switch(tipo_dato) {
+        case 4:
+            buffer[i].set_estado(buffer[i].get_importe_serv()>=cota_inf && buffer[i].get_importe_serv()<=cota_sup
+                                 && buffer[i].get_estado());
+            break;
+        case 5:
+            buffer[i].set_estado(buffer[i].get_monto_abon()>=cota_inf && buffer[i].get_monto_abon()<=cota_sup
+                                 && buffer[i].get_estado());
+            break;
+        default:
+            return 0;
+        }
+    }
+    return 1;
+}
+
 int ArchivoServicio::listar_servicios(Servicio * buffer, int cant_regs) {
     int i;
     FILE * pServicios=fopen(get_direccion().c_str(), "rb");

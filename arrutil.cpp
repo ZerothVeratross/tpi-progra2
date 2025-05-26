@@ -289,3 +289,14 @@ int buscar_nro_mesa(Mesa * mesas, int cant_mesas, int nro) {
     }
     return pos;
 }
+
+int buscar_nro_factura(Servicio * servicios, int cant_servicios, int nro) {
+    int i, pos=-1;
+    for (i=0; i<cant_servicios; i++) {
+        if (servicios[i].get_nro_factura()==nro) {   //encontro el objetivo
+            pos=i;
+            break;
+        }
+    }
+    return pos;
+}
