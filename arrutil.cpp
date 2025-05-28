@@ -218,6 +218,22 @@ void ordenar_servicios_por_importe_serv(Servicio * servicios, int tam) {
     }
 }
 
+void ordenar_servicios_por_monto_abon(Servicio * servicios, int tam) {
+    int i, j, posmin;
+    Servicio temp;
+    for (i=0; i<tam-1; i++) {
+        posmin=i;
+        for (j=i+1; j<tam; j++) {
+            if (servicios[j].get_monto_abon()<servicios[posmin].get_monto_abon()) {
+                posmin=j;
+            }
+        }
+        temp=servicios[i];
+        servicios[i]=servicios[posmin];
+        servicios[posmin]=temp;
+    }
+}
+
 int buscar_int(int * arr, int tam, int target) {
     int i, pos=-1;
     for (i=0; i<tam; i++) {

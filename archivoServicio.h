@@ -14,6 +14,7 @@ public:
     int registrar_servicio(Servicio * servicio);
     int consultar_servicios(Servicio * buffer, int cant_regs, int tipo_dato, int cota_inf, int cota_sup);
     int consultar_servicios(Servicio * buffer, int cant_regs, int tipo_dato, float cota_inf, float cota_sup);
+    int consultar_servicios(Servicio * buffer, int cant_regs, int tipo_dato, Fecha cota_inf, Fecha cota_sup);
     int listar_servicios(Servicio * buffer, int cant_regs);
     int generar_servicios(int cantidad);
 };

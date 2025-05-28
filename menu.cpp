@@ -41,36 +41,6 @@ void acceso_archivo_fallido() {
     cout<<"\nNo se pudo acceder al archivo, regresando al menu principal...\n";
 }
 
-int validar_fecha(int anio, int mes, int dia) {
-    if (dia<1) {return false;}
-    switch (mes) {
-    case 1:
-    case 3:
-    case 5:
-    case 7:
-    case 8:
-    case 10:
-    case 12:
-        if (dia<32) {return 1;}
-        cout<<"\nDia invalido en mes de 31 dias, regresando al menu principal...\n";
-        return 0;
-    case 4:
-    case 6:
-    case 9:
-    case 11:
-        if (dia<31) {return 1;}
-        cout<<"\nDia invalido en mes de 30 dias, regresando al menu principal...\n";
-        return 0;
-    case 2:
-        if (dia<29 || (dia==29 && anio%4==0 && (!anio%100==0 || anio%400==0))) {return 1;}
-        cout<<"\nDia invalido en febrero, regresando al menu principal...\n";
-        return 0;
-    default:
-        cout<<"\nMes invalido, regresando al menu principal...\n";
-        return 0;
-    }
-}
-
 int pedir_comando(const char * pedido, int cant_com, int * comando) {
     cout<<pedido;
     cin>>*comando;
@@ -142,6 +112,83 @@ int pedir_float(const char * pedido, float cota_inf, float cota_sup, float * dat
     cin>>*dato_float;
     if (*dato_float<cota_inf || *dato_float>cota_sup) {
         numero_invalido();
+        return 0;
+    }
+    return 1;
+}
+
+int pedir_rango_float(const char * pedido, float * datos_float, int pos1, int pos2) {
+    cout<<pedido<<"\nNumero menor: ";
+    cin>>datos_float[pos1];
+    if (datos_float[pos1]<1) {
+        numero_invalido();
+        return 0;
+    }
+    cout<<"\nNumero mayor: ";
+    cin>>datos_float[pos2];
+    if (datos_float[pos2]<1) {
+        numero_invalido();
+        return 0;
+    }
+    if (datos_float[pos2]<datos_float[pos1]) {
+        numero_debe_ser_mayor();
+        return 0;
+    }
+    return 1;
+}
+
+int pedir_fecha(const char * pedido, Fecha * fecha, int anio1, int anio2) {
+    int dia, mes, anio;
+    cout<<pedido;
+    if (!pedir_int("\nDia: ", 1, 31, &dia)) {return 0;}
+    if (!pedir_int("Mes: ", 1, 12, &mes)) {return 0;}
+    if (!pedir_int("Anio: ", anio1, anio2, &anio)) {return 0;}
+    if (dia<1) {return 0;}
+    switch (mes) {
+    case 1:
+    case 3:
+    case 5:
+    case 7:
+    case 8:
+    case 10:
+    case 12:
+        if (dia>31) {
+            cout<<"\nDia invalido en mes de 31 dias, regresando al menu principal...\n";
+            return 0;
+        }
+        break;
+    case 4:
+    case 6:
+    case 9:
+    case 11:
+        if (dia>30) {
+            cout<<"\nDia invalido en mes de 30 dias, regresando al menu principal...\n";
+            return 0;
+        }
+        break;
+    case 2:
+        if (dia>28 && (dia!=29 || anio%4!=0 || (anio%100==0 && anio%400!=0))) {
+            cout<<"\nDia invalido en febrero, regresando al menu principal...\n";
+            return 0;
+        }
+        break;
+    default:
+        cout<<"\nMes invalido, regresando al menu principal...\n";
+        return 0;
+    }
+    fecha->set_dia(dia);
+    fecha->set_mes(mes);
+    fecha->set_anio(anio);
+    cout<<fecha->get_str();
+    return 1;
+}
+
+int pedir_rango_fecha(const char * pedido, Fecha * fechas, int anio1, int anio2, int pos1, int pos2) {
+    cout<<pedido;
+    if (!pedir_fecha("\nFecha lejana.", &fechas[pos1], anio1, anio2)) {return 0;}
+    if (!pedir_fecha("\nFecha reciente.", &fechas[pos2], anio1, anio2)) {return 0;}
+    if (fechas[pos2].comparar(fechas[pos1])<0) {
+        cout<<"\nLa segunda fecha ingresada debe ser mas reciente que la segunda, regresando al menu principal...\n";
         return 0;
     }
     return 1;
@@ -280,13 +327,13 @@ int menu_registrar_mesa() {
 
 int menu_registrar_mozo() {
     ArchivoMozo archivo;
-    int datos_int[6], cant_regs=archivo.contar_regs();
+    int datos_int[3], cant_regs=archivo.contar_regs();
     Mozo mozos[cant_regs];
     Mozo n_mozo;
     string datos_str[4];
-    Fecha fecha_naci;
+    Fecha dato_fecha;
 
-    if (!pedir_int("\nIngrese ID del mozo: ", 1, 99999, &datos_int[5])) {return 0;}
+    if (!pedir_int("\nIngrese ID del mozo: ", 1, 99999, &datos_int[2])) {return 0;}
     if (!archivo.listar_mozos(mozos, cant_regs)){acceso_archivo_fallido();};
     if (buscar_id_mozo(mozos, cant_regs, datos_int[5])!=-1) {
         cout<<"\nYa existe un mozo con este ID, regresando al menu principal...\n";
@@ -304,15 +351,11 @@ int menu_registrar_mozo() {
 
     if (!pedir_string("\nEscriba el email del mozo con no mas de 49 caracteres:\n", &datos_str[3], 49, false)) {return 0;}
 
-    if (!pedir_int("\nIngrese fecha de nacimiento del mozo en numeros. Dia: ", 1, 31, &datos_int[1])) {return 0;}
-    if (!pedir_int("Mes: ", 1, 12, &datos_int[2])) {return 0;}
-    if (!pedir_int("Anio (1900 a 2025): ", 1900, 2025, &datos_int[3])) {return 0;}
-    if (!validar_fecha(datos_int[3], datos_int[2], datos_int[1])) {return 0;}
-    fecha_naci=Fecha(datos_int[1], datos_int[2], datos_int[3]);
+    if (!pedir_fecha("\nIngrese fecha de nacimiento del mozo en numeros.", &dato_fecha, 1900, 2025)) {return 0;}
 
-    if (!pedir_comando("\nIngrese turno del mozo.\n1. Maniana\n2. Tarde\n3. Noche\n", 3, &datos_int[4])) {return 0;}
+    if (!pedir_comando("\nIngrese turno del mozo.\n1. Maniana\n2. Tarde\n3. Noche\n", 3, &datos_int[1])) {return 0;}
 
-    n_mozo=Mozo(datos_int[0], datos_str[0], datos_str[1], datos_str[2], datos_str[3], fecha_naci, datos_int[4], datos_int[5]);
+    n_mozo=Mozo(datos_int[0], datos_str[0], datos_str[1], datos_str[2], datos_str[3], dato_fecha, datos_int[1], datos_int[2]);
 
     mostrar_mozo(&n_mozo, true);
     if (!pedir_comando("\nEste es el mozo que desea registrar?\n1. Si\n2. No\n", 2, &datos_int[0])) {return 0;}
@@ -328,14 +371,14 @@ int menu_registrar_servicio() {
     ArchivoServicio pServicios;
     ArchivoMesa pMesas;
     ArchivoMozo pMozos;
-    int datos_int[6], pos, cant_servicios=pServicios.contar_regs();
+    int datos_int[3], pos, cant_servicios=pServicios.contar_regs();
     int cant_mesas=pMesas.contar_regs();
     int cant_mozos=pMozos.contar_regs();
     Servicio servicios[cant_servicios];
     Mesa mesas[cant_mesas];
     Mozo mozos[cant_mozos];
     Servicio n_servicio;
-    Fecha fecha_serv;
+    Fecha dato_fecha;
     float datos_float[2];
 
     if (!pedir_int("\nIngrese numero de factura: ", 1, 9999999, &datos_int[0])) {return 0;}
@@ -375,11 +418,7 @@ int menu_registrar_servicio() {
         }
     }
 
-    if (!pedir_int("\nIngrese fecha del servicio en numeros. Dia: ", 1, 31, &datos_int[3])) {return 0;}
-    if (!pedir_int("Mes: ", 1, 12, &datos_int[4])) {return 0;}
-    if (!pedir_int("Anio (2000 a 2025): ", 2000, 2025, &datos_int[5])) {return 0;}
-    if (!validar_fecha(datos_int[5], datos_int[4], datos_int[3])) {return 0;}
-    fecha_serv=Fecha(datos_int[3], datos_int[4], datos_int[5]);
+    if (!pedir_fecha("\nIngrese fecha del servicio en numeros.", &dato_fecha, 2000, 2025)) {return 0;}
 
     //supongo que 10 millones es un techo razonable para gastarse en comida con 12 personas
     if (!pedir_float("\nIngrese importe del servicio, utilizando punto para marcar decimales: ", 1, 10000000, &datos_float[0])) {return 0;}
@@ -391,7 +430,7 @@ int menu_registrar_servicio() {
         return 0;
     }
 
-    n_servicio=Servicio(datos_int[0], datos_int[1], datos_int[2], fecha_serv, datos_float[0], datos_float[1]);
+    n_servicio=Servicio(datos_int[0], datos_int[1], datos_int[2], dato_fecha, datos_float[0], datos_float[1]);
     mostrar_servicio(&n_servicio, true);
     cout<<"\nEste es el servicio que desea registrar?\n1. Si\n2. No\n";
     cin>>datos_int[0];
@@ -434,7 +473,7 @@ void menu_consultar_mesas() {
                   3, &datos_int[0]);
     switch(datos_int[0]) {
     case 1:
-        if (!pedir_rango_int("\nIndique el rango de numeros de mesa. Si solo quiere una mesa, escriba dos veces el mismo numero.",
+        if (!pedir_rango_int("\nIndique el rango de numeros de mesa. Si solo quiere buscar una mesa, escriba dos veces el mismo numero.",
                          datos_int, 1, 2)) {
             return;
         }
@@ -493,7 +532,7 @@ void menu_consultar_mozos() {
                   3, &datos_int[0]);
     switch(datos_int[0]) {
     case 1:
-        if (!pedir_rango_int("\nIndique el rango de IDs de mozo. Si solo quiere un mozo, escriba dos veces el mismo numero.",
+        if (!pedir_rango_int("\nIndique el rango de IDs de mozo. Si solo quiere buscar un mozo, escriba dos veces el mismo numero.",
                          datos_int, 1, 2)) {
             return;
         }
@@ -557,25 +596,48 @@ void menu_consultar_mozos() {
 void menu_consultar_servicios() {
     ArchivoServicio archivo;
     int i, servicios_encontrados=0, datos_int[3], cant_regs=archivo.contar_regs();
+    float datos_float[2];
+    Fecha datos_fecha[2];
     Servicio servicios[cant_regs];
 
-    cout<<"Que tipo de consulta desea realizar?\n1. \n2. \n3. \n4. \n5. \n";
+    cout<<"Que tipo de consulta desea realizar?\n1. Por numero de factura\n2. Por numero de mesa\n3. Por ID de mozo\n4. Por fecha de servicio\n5. Por importe de servicio\n6. Por monto abonado\n";
     cin>>datos_int[0];
     switch(datos_int[0]) {
     case 1:
-
+        if (!pedir_rango_int("\nIndique el rango de numeros de factura. Si solo quiere buscar un servicio, escriba dos veces el mismo numero.",
+                         datos_int, 1, 2)) {return;}
+        datos_int[0]=archivo.consultar_servicios(servicios, cant_regs, 1, datos_int[1], datos_int[2]);
+        ordenar_servicios_por_nro_factura(servicios, cant_regs);
         break;
     case 2:
-
+        if (!pedir_rango_int("\nIndique el rango de numeros de mesa. Si solo quiere buscar por un numero, escriba dos veces el mismo numero.",
+                         datos_int, 1, 2)) {return;}
+        datos_int[0]=archivo.consultar_servicios(servicios, cant_regs, 2, datos_int[1], datos_int[2]);
+        ordenar_servicios_por_nro_mesa(servicios, cant_regs);
         break;
     case 3:
-
+        if (!pedir_rango_int("\nIndique el rango de IDs de mozo. Si solo quiere buscar por un ID, escriba dos veces el mismo numero.",
+                         datos_int, 1, 2)) {return;}
+        datos_int[0]=archivo.consultar_servicios(servicios, cant_regs, 3, datos_int[1], datos_int[2]);
+        ordenar_servicios_por_id_mozo(servicios, cant_regs);
         break;
     case 4:
-
+        if (!pedir_rango_fecha("\nIndique el rango de fechas. Si solo quiere buscar un dia especifico, escriba dos veces la misma fecha.\n",
+                               datos_fecha, 2000, 2025, 0, 1)) {return;}
+        datos_int[0]=archivo.consultar_servicios(servicios, cant_regs, 4, datos_fecha[0], datos_fecha[1]);
+        ordenar_servicios_por_fecha_serv(servicios, cant_regs);
         break;
     case 5:
-
+        if (!pedir_rango_float("\nIndique el rango de importes. Si solo quiere buscar por un importe especifico, escriba dos veces el mismo numero.",
+                         datos_float, 0, 1)) {return;}
+        datos_int[0]=archivo.consultar_servicios(servicios, cant_regs, 5, datos_float[0], datos_float[1]);
+        ordenar_servicios_por_importe_serv(servicios, cant_regs);
+        break;
+    case 6:
+        if (!pedir_rango_float("\nIndique el rango de montos. Si solo quiere buscar por un monto especifico, escriba dos veces el mismo numero.",
+                         datos_float, 0, 1)) {return;}
+        datos_int[0]=archivo.consultar_servicios(servicios, cant_regs, 6, datos_float[0], datos_float[1]);
+        ordenar_servicios_por_monto_abon(servicios, cant_regs);
         break;
     default:
         comando_invalido();

@@ -19,6 +19,7 @@ void ordenar_servicios_por_nro_mesa(Servicio * servicios, int tam);
 void ordenar_servicios_por_id_mozo(Servicio * servicios, int tam);
 void ordenar_servicios_por_fecha_serv(Servicio * servicios, int tam);
 void ordenar_servicios_por_importe_serv(Servicio * servicios, int tam);
+void ordenar_servicios_por_monto_abon(Servicio * servicios, int tam);
 int buscar_nro_factura(Servicio * servicios, int cant_servicios, int nro);
 
 int buscar_int(int * arr, int tam, int target);

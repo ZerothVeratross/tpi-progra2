@@ -30,15 +30,15 @@ int ArchivoServicio::consultar_servicios(Servicio * buffer, int cant_regs, int t
     for (i=0; i<cant_regs; i++) {
         fread(&buffer[i], get_tam_reg(), 1, pMozos);
         switch(tipo_dato) {
-        case 1:
+        case 1: //consulta por numero de factura
             buffer[i].set_estado(buffer[i].get_nro_factura()>=cota_inf && buffer[i].get_nro_factura()<=cota_sup
                                  && buffer[i].get_estado());
             break;
-        case 2:
+        case 2: //consulta por numero de mesa
             buffer[i].set_estado(buffer[i].get_nro_mesa()>=cota_inf && buffer[i].get_nro_mesa()<=cota_sup
                                  && buffer[i].get_estado());
             break;
-        case 3:
+        case 3: //consulta por id de mozo
             buffer[i].set_estado(buffer[i].get_id_mozo()>=cota_inf && buffer[i].get_id_mozo()<=cota_sup
                                  && buffer[i].get_estado());
             break;
@@ -60,12 +60,34 @@ int ArchivoServicio::consultar_servicios(Servicio * buffer, int cant_regs, int t
     for (i=0; i<cant_regs; i++) {
         fread(&buffer[i], get_tam_reg(), 1, pMozos);
         switch(tipo_dato) {
-        case 4:
+        case 5: //consulta por importe de servicio
             buffer[i].set_estado(buffer[i].get_importe_serv()>=cota_inf && buffer[i].get_importe_serv()<=cota_sup
                                  && buffer[i].get_estado());
             break;
-        case 5:
+        case 6: //consulta por monto abonado
             buffer[i].set_estado(buffer[i].get_monto_abon()>=cota_inf && buffer[i].get_monto_abon()<=cota_sup
+                                 && buffer[i].get_estado());
+            break;
+        default:
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int ArchivoServicio::consultar_servicios(Servicio * buffer, int cant_regs, int tipo_dato, Fecha cota_inf, Fecha cota_sup) {
+    FILE *pMozos=fopen(get_direccion().c_str(), "rb");
+    int i;
+
+    if (pMozos==NULL) {
+        return 0;
+    }
+
+    for (i=0; i<cant_regs; i++) {
+        fread(&buffer[i], get_tam_reg(), 1, pMozos);
+        switch(tipo_dato) {
+        case 4: //consulta por fecha de servicio
+            buffer[i].set_estado(buffer[i].get_fecha_serv().comparar(cota_inf)>=0 && buffer[i].get_fecha_serv().comparar(cota_sup)<=0
                                  && buffer[i].get_estado());
             break;
         default:
