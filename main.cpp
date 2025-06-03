@@ -26,7 +26,7 @@ int main() {
                 admin_menu_informe();
                 break;
             case 5:
-                //admin_menu_borrar();
+                admin_menu_borrar();
                 break;
             case 6:
                 //admin_menu_modificar();

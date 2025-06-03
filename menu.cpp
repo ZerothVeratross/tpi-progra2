@@ -296,6 +296,12 @@ void admin_menu_registrar() {
 int menu_registrar_mesa() {
     ArchivoMesa archivo;
     int datos_int[3], cant_regs=archivo.contar_regs();
+
+    if (!cant_regs) {
+        acceso_archivo_fallido();
+        return 0;
+    }
+
     Mesa mesas[cant_regs];
     Mesa n_mesa;
     string dato_str;
@@ -328,6 +334,12 @@ int menu_registrar_mesa() {
 int menu_registrar_mozo() {
     ArchivoMozo archivo;
     int datos_int[3], cant_regs=archivo.contar_regs();
+
+    if (!cant_regs) {
+        acceso_archivo_fallido();
+        return 0;
+    }
+
     Mozo mozos[cant_regs];
     Mozo n_mozo;
     string datos_str[4];
@@ -372,8 +384,26 @@ int menu_registrar_servicio() {
     ArchivoMesa pMesas;
     ArchivoMozo pMozos;
     int datos_int[3], pos, cant_servicios=pServicios.contar_regs();
+
+    if (!cant_servicios) {
+        acceso_archivo_fallido();
+        return 0;
+    }
+
     int cant_mesas=pMesas.contar_regs();
+
+    if (!cant_mesas) {
+        acceso_archivo_fallido();
+        return 0;
+    }
+
     int cant_mozos=pMozos.contar_regs();
+
+    if (!cant_mozos) {
+        acceso_archivo_fallido();
+        return 0;
+    }
+
     Servicio servicios[cant_servicios];
     Mesa mesas[cant_mesas];
     Mozo mozos[cant_mozos];
@@ -467,6 +497,12 @@ void admin_menu_consultar() {
 void menu_consultar_mesas() {
     ArchivoMesa archivo;
     int i, mesas_encontradas=0, datos_int[3], cant_regs=archivo.contar_regs();
+
+    if (!cant_regs) {
+        acceso_archivo_fallido();
+        return;
+    }
+
     Mesa mesas[cant_regs];
 
     pedir_comando("Que tipo de consulta desea realizar?\n1. Por numero de mesa\n2. Por cantidad de sillas\n3. Por ubicacion y cantidad de sillas\n",
@@ -525,6 +561,12 @@ void menu_consultar_mesas() {
 void menu_consultar_mozos() {
     ArchivoMozo archivo;
     int i, mozos_encontrados=0, datos_int[3], cant_regs=archivo.contar_regs();
+
+    if (!cant_regs) {
+        acceso_archivo_fallido();
+        return;
+    }
+
     string datos_str[2];
     Mozo mozos[cant_regs];
 
@@ -596,6 +638,12 @@ void menu_consultar_mozos() {
 void menu_consultar_servicios() {
     ArchivoServicio archivo;
     int i, servicios_encontrados=0, datos_int[3], cant_regs=archivo.contar_regs();
+
+    if (!cant_regs) {
+        acceso_archivo_fallido();
+        return;
+    }
+
     float datos_float[2];
     Fecha datos_fecha[2];
     Servicio servicios[cant_regs];
@@ -666,35 +714,16 @@ void menu_consultar_servicios() {
 //Comienzo funciones para listar datos
 void admin_menu_listar() {
     int dato_int;
-    cout<<"\nIngrese su eleccion:\n1. Listar mesas\n2. Listar mozos\n3. Listar servicios\n";
-    cin>>dato_int;
+    pedir_comando("\nIngrese su eleccion:\n1. Listar mesas\n2. Listar mozos\n3. Listar servicios\n", 3, &dato_int);
     switch(dato_int) {
     case 1:
-        cout<<"Como deben estar ordenadas las mesas?\n1. Por numero de mesa\n2. Por cantidad de sillas\n3. Por ubicacion y numero de mesa\n4. Listar mesas dadas de baja\n";
-        cin>>dato_int;
-        if (dato_int>0 && dato_int<5) {
-            menu_listar_mesas(dato_int);
-        } else {
-            comando_invalido();
-        }
+        menu_listar_mesas();
         break;
     case 2:
-        cout<<"Como deben estar ordenadas los mozos?\n1. Por ID de mozo\n2. Alfabeticamente por nombre\n3. Alfabeticamente por apellido\n4. Por fecha de nacimiento\n5. Por turno e ID de mozo\n6. Listar mozos dados de baja\n";
-        cin>>dato_int;
-        if (dato_int>0 && dato_int<7) {
-            menu_listar_mozos(dato_int);
-        } else {
-            comando_invalido();
-        }
+        menu_listar_mozos();
         break;
     case 3:
-        cout<<"Como deben estar ordenados los servicios?\n1. Por numero de factura\n2. Por numero de mesa\n3. Por ID de mozo\n4. Por fecha de servicio\n5. Por importe de servicio\n6. Listar servicios dados de baja\n";
-        cin>>dato_int;
-        if (dato_int>0 && dato_int<7) {
-            menu_listar_servicios(dato_int);
-        } else {
-            comando_invalido();
-        }
+        menu_listar_servicios();
         break;
     default:
         comando_invalido();
@@ -702,13 +731,24 @@ void admin_menu_listar() {
     }
 }
 
-void menu_listar_mesas(int orden) {
+void menu_listar_mesas() {
     ArchivoMesa archivo;
-    int i, cant_regs=archivo.contar_regs();
+    int i, orden, cant_regs=archivo.contar_regs();
+
+    if (!cant_regs) {
+        acceso_archivo_fallido();
+        return;
+    }
+
     bool ignorar_borrado=true;
     Mesa mesas[cant_regs];
 
-    archivo.listar_mesas(mesas, cant_regs);
+    pedir_comando("Como deben estar ordenadas las mesas?\n1. Por numero de mesa\n2. Por cantidad de sillas\n3. Por ubicacion y numero de mesa\n4. Listar mesas dadas de baja\n", 4, &orden);
+
+    if (!cant_regs || !archivo.listar_mesas(mesas, cant_regs)) {
+        acceso_archivo_fallido();
+        return;
+    }
 
     switch(orden) {
     case 1:
@@ -736,13 +776,24 @@ void menu_listar_mesas(int orden) {
     cout<<"\n";
 }
 
-void menu_listar_mozos(int orden) {
+void menu_listar_mozos() {
     ArchivoMozo archivo;
-    int i, cant_regs=archivo.contar_regs();
+    int i, orden, cant_regs=archivo.contar_regs();
+
+    if (!cant_regs) {
+        acceso_archivo_fallido();
+        return;
+    }
+
     bool ignorar_borrado=true;
     Mozo mozos[cant_regs];
 
-    archivo.listar_mozos(mozos, cant_regs);
+    pedir_comando("Como deben estar ordenadas los mozos?\n1. Por ID de mozo\n2. Alfabeticamente por nombre\n3. Alfabeticamente por apellido\n4. Por fecha de nacimiento\n5. Por turno e ID de mozo\n6. Listar mozos dados de baja\n", 6, &orden);
+
+    if (!cant_regs || !archivo.listar_mozos(mozos, cant_regs)) {
+        acceso_archivo_fallido();
+        return;
+    }
 
     switch(orden) {
     case 1:
@@ -776,13 +827,24 @@ void menu_listar_mozos(int orden) {
     cout<<"\n";
 }
 
-void menu_listar_servicios(int orden) {
+void menu_listar_servicios() {
     ArchivoServicio archivo;
-    int i, cant_regs=archivo.contar_regs();
+    int i, orden, cant_regs=archivo.contar_regs();
+
+    if (!cant_regs) {
+        acceso_archivo_fallido();
+        return;
+    }
+
     bool ignorar_borrado=true;
     Servicio servicios[cant_regs];
 
-    archivo.listar_servicios(servicios, cant_regs);
+    pedir_comando("Como deben estar ordenados los servicios?\n1. Por numero de factura\n2. Por numero de mesa\n3. Por ID de mozo\n4. Por fecha de servicio\n5. Por importe de servicio\n6. Listar servicios dados de baja\n", 6, &orden);
+
+    if (!archivo.listar_servicios(servicios, cant_regs)) {
+        acceso_archivo_fallido();
+        return;
+    }
 
     switch(orden) {
     case 1:
@@ -820,9 +882,7 @@ void menu_listar_servicios(int orden) {
 //Comienzo funciones para generar informes
 void admin_menu_informe() {
     int dato_int;
-    cout<<"\nQue tipo de informe desea generar?";
-    cout<<"\n1. Recaudacion anual\n2. Recaudacion por mozo\n3. Recaudacion por mesa\n4. Recaudacion mensual\n5. Propinas percibidas por cada mozo\n";
-    cin>>dato_int;
+    pedir_comando("\nQue tipo de informe desea generar?\n1. Recaudacion anual\n2. Recaudacion por mozo\n3. Recaudacion por mesa\n4. Recaudacion mensual\n5. Propinas percibidas por cada mozo\n", 5, &dato_int);
     switch(dato_int) {
     case 1:
         informe_recaudacion_anual();
@@ -848,6 +908,12 @@ void admin_menu_informe() {
 void informe_recaudacion_anual() {
     ArchivoServicio archivo;
     int i, pos, cant_regs=archivo.contar_regs();
+
+    if (!cant_regs) {
+        acceso_archivo_fallido();
+        return;
+    }
+
     Servicio servicios[cant_regs];
     int anios[30];
     float recaudaciones[30];
@@ -856,7 +922,11 @@ void informe_recaudacion_anual() {
         anios[i]=0;
         recaudaciones[i]=0;
     }
-    archivo.listar_servicios(servicios, cant_regs);
+
+    if (!archivo.listar_servicios(servicios, cant_regs)) {
+        acceso_archivo_fallido();
+        return;
+    }
 
     for (i=0; i<cant_regs; i++) {
         if (!servicios[i].get_estado()) {
@@ -884,14 +954,30 @@ void informe_recaudacion_por_mozo() {
     ArchivoMozo aMozo;
     ArchivoServicio aServicio;
     int i, pos, cant_mozos=aMozo.contar_regs();
+
+    if (!cant_mozos) {
+        acceso_archivo_fallido();
+        return;
+    }
+
     int cant_servicios=aServicio.contar_regs();
+
+    if (!cant_servicios) {
+        acceso_archivo_fallido();
+        return;
+    }
+
     Mozo mozos[cant_mozos];
     Servicio servicios[cant_servicios];
     float recaudaciones[cant_mozos];
 
     aMozo.listar_mozos(mozos, cant_mozos);
     ordenar_mozos_por_id(mozos, cant_mozos);
-    aServicio.listar_servicios(servicios, cant_servicios);
+
+    if (!aServicio.listar_servicios(servicios, cant_servicios)) {
+        acceso_archivo_fallido();
+        return;
+    }
     for (i=0; i<cant_mozos; i++) {
         recaudaciones[i]=0;
     }
@@ -922,14 +1008,35 @@ void informe_recaudacion_por_mesa() {
     ArchivoMesa aMesa;
     ArchivoServicio aServicio;
     int i, pos, cant_mesas=aMesa.contar_regs();
+
+    if (!cant_mesas) {
+        acceso_archivo_fallido();
+        return;
+    }
+
     int cant_servicios=aServicio.contar_regs();
+
+    if (!cant_servicios) {
+        acceso_archivo_fallido();
+        return;
+    }
+
     Mesa mesas[cant_mesas];
     Servicio servicios[cant_servicios];
     float recaudaciones[cant_mesas];
 
-    aMesa.listar_mesas(mesas, cant_mesas);
+    if (aMesa.listar_mesas(mesas, cant_mesas)) {
+        acceso_archivo_fallido();
+        return;
+    }
+
     ordenar_mesas_por_nro(mesas, cant_mesas);
-    aServicio.listar_servicios(servicios, cant_servicios);
+
+    if (!cant_servicios || !aServicio.listar_servicios(servicios, cant_servicios)) {
+        acceso_archivo_fallido();
+        return;
+    }
+
     for (i=0; i<cant_mesas; i++) {
         recaudaciones[i]=0;
     }
@@ -959,6 +1066,12 @@ void informe_recaudacion_por_mesa() {
 void informe_recaudacion_mensual() {
     ArchivoServicio archivo;
     int i, anio, cant_regs=archivo.contar_regs();
+
+    if (!cant_regs) {
+        acceso_archivo_fallido();
+        return;
+    }
+
     Servicio servicios[cant_regs];
     float recaudaciones[12];
 
@@ -972,7 +1085,11 @@ void informe_recaudacion_mensual() {
     for (i=0; i<12; i++) {
         recaudaciones[i]=0;
     }
-    archivo.listar_servicios(servicios, cant_regs);
+
+    if (!archivo.listar_servicios(servicios, cant_regs)) {
+        acceso_archivo_fallido();
+        return;
+    }
 
     for (i=0; i<cant_regs; i++) {
         if (!servicios[i].get_estado()) {
@@ -983,8 +1100,8 @@ void informe_recaudacion_mensual() {
         }
     }
 
-    cout<<"Anio "<<anio<<"\n";
-    cout<<"Mes | Recaudacion\n";
+    cout<<"ANIO "<<anio<<"\n";
+    cout<<"MES        | Recaudacion\n";
     cout<<"Enero      | $"<<recaudaciones[0]<<"\n";
     cout<<"Febrero    | $"<<recaudaciones[1]<<"\n";
     cout<<"Marzo      | $"<<recaudaciones[2]<<"\n";
@@ -1003,14 +1120,35 @@ void informe_propinas_percibidas() {
     ArchivoMozo aMozo;
     ArchivoServicio aServicio;
     int i, pos, cant_mozos=aMozo.contar_regs();
+
+    if (!cant_mozos) {
+        acceso_archivo_fallido();
+        return;
+    }
+
     int cant_servicios=aServicio.contar_regs();
+
+    if (!cant_servicios) {
+        acceso_archivo_fallido();
+        return;
+    }
+
     Mozo mozos[cant_mozos];
     Servicio servicios[cant_servicios];
     float propinas[cant_mozos];
 
-    aMozo.listar_mozos(mozos, cant_mozos);
+    if (!aMozo.listar_mozos(mozos, cant_mozos)) {
+        acceso_archivo_fallido();
+        return;
+    }
+
     ordenar_mozos_por_id(mozos, cant_mozos);
-    aServicio.listar_servicios(servicios, cant_servicios);
+
+    if (!aServicio.listar_servicios(servicios, cant_servicios)) {
+        acceso_archivo_fallido();
+        return;
+    }
+
     for (i=0; i<cant_mozos; i++) {
         propinas[i]=0;
     }
@@ -1038,6 +1176,54 @@ void informe_propinas_percibidas() {
     }
 }
 //Fin funciones para generar informes
+
+//Comienzo funciones para borrar
+void admin_menu_borrar() {
+    int dato_int;
+    pedir_comando("\n¿Qué tipo de dato desea borrar?\n1. Mesa\n2. Mozo\n3. Servicio", 3, &dato_int);
+    switch (dato_int) {
+    case 1:
+        menu_borrar_mesa();
+        break;
+    case 2:
+        menu_borrar_mozo();
+        break;
+    case 3:
+        menu_borrar_servicio();
+        break;
+    default:
+        comando_invalido();
+        return;
+    }
+}
+
+void menu_borrar_mesa() {
+    ArchivoMesa archivo;
+    int dato_int, pos, cant_regs=archivo.contar_regs();
+
+    if (!cant_regs) {
+        acceso_archivo_fallido();
+        return;
+    }
+
+    Mesa mesas[cant_regs];
+
+    if (archivo.listar_mesas(mesas, cant_regs)) {
+        acceso_archivo_fallido();
+        return;
+    }
+
+    if (!pedir_int("\nIngrese el numero de mesa que desea borrar: ", 1, cant_regs, &dato_int)) {return;}
+
+
+}
+
+void menu_borrar_mozo() {
+}
+
+void menu_borrar_servicio() {
+}
+//Fin funciones para borrar
 
 void menu_generacion_datos() {
     ArchivoMesa aMesa;

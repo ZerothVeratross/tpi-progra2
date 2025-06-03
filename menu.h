@@ -38,9 +38,9 @@ void menu_consultar_mozos();
 void menu_consultar_servicios();
 
 void admin_menu_listar();
-void menu_listar_mesas(int orden);
-void menu_listar_mozos(int orden);
-void menu_listar_servicios(int orden);
+void menu_listar_mesas();
+void menu_listar_mozos();
+void menu_listar_servicios();
 
 void admin_menu_informe();
 void informe_recaudacion_anual();
@@ -48,5 +48,10 @@ void informe_recaudacion_por_mozo();
 void informe_recaudacion_por_mesa();
 void informe_recaudacion_mensual();
 void informe_propinas_percibidas();
+
+void admin_menu_borrar();
+void menu_borrar_mesa();
+void menu_borrar_mozo();
+void menu_borrar_servicio();
 
 void menu_generacion_datos();
