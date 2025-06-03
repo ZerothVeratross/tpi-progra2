@@ -1230,10 +1230,13 @@ void menu_generacion_datos() {
     ArchivoMozo aMozo;
     ArchivoServicio aServicio;
     int datos_int[2];
-    cout<<"Que archivo desea generar?\n1. Mesas\n2. Mozos\n3. Servicios\n";
-    cin>>datos_int[0];
-    cout<<"Cuantos desea generar?\n";
-    cin>>datos_int[1];
+    if (!pedir_comando("Que archivo desea generar? Recuerde que la generacion de servicios depende de la existencia de datos para mesas y mozos.\n1. Mesas\n2. Mozos\n3. Servicios\n",
+                       3, &datos_int[0])) {
+        return;
+    }
+
+    if (!pedir_int("Cuantos desea generar?\n", 1, 99999, &datos_int[1])) {return;}
+
     switch(datos_int[0]) {
     case 1:
         datos_int[0]=aMesa.generar_mesas(datos_int[1]);
