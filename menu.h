@@ -49,9 +49,9 @@ void informe_recaudacion_por_mesa();
 void informe_recaudacion_mensual();
 void informe_propinas_percibidas();
 
-void admin_menu_borrar();
-void menu_borrar_mesa();
-void menu_borrar_mozo();
-void menu_borrar_servicio();
+void admin_menu_borrar_recuperar();
+void menu_borrar_recuperar_mesa();
+void menu_borrar_recuperar_mozo();
+void menu_borrar_recuperar_servicio();
 
 void menu_generacion_datos();

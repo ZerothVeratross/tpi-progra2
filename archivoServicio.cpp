@@ -111,6 +111,20 @@ int ArchivoServicio::listar_servicios(Servicio * buffer, int cant_regs) {
     return 1;
 }
 
+int ArchivoServicio::guardar_servicios(Servicio * buffer, int cant_regs) {
+    FILE *pServicios;
+    int i;
+
+    pServicios=fopen(get_direccion().c_str(), "wb");
+    if (pServicios==NULL) {
+        return 0;
+    }
+
+    i=fwrite(buffer, get_tam_reg(), cant_regs, pServicios);
+    fclose(pServicios);
+    return i;
+}
+
 //requiere que los archivos de Mesas y Mozos ya existan
 int ArchivoServicio::generar_servicios(int cantidad) {
     int i, nro_mesa, id_mozo, nro_factura;

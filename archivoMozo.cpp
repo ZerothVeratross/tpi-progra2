@@ -88,6 +88,20 @@ int ArchivoMozo::listar_mozos(Mozo * buffer, int cant_regs) {
     return 1;
 }
 
+int ArchivoMozo::guardar_mozos(Mozo * buffer, int cant_regs) {
+    FILE *pMozos;
+    int i;
+
+    pMozos=fopen(get_direccion().c_str(), "wb");
+    if (pMozos==NULL) {
+        return 0;
+    }
+
+    i=fwrite(buffer, get_tam_reg(), cant_regs, pMozos);
+    fclose(pMozos);
+    return i;
+}
+
 int ArchivoMozo::generar_mozos(int cantidad) {
     int i, str_len, dni, turno, id_mozo;
     std::string nombre, apellido, nro_telef, email;

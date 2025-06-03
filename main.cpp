@@ -9,7 +9,11 @@ int main() {
     cout<<fixed;//deshabilita notacion cientifica para floats en cout
     if (admin) {
         cout<<"MODO ADMINISTRADOR\n";
-        while (ciclo) {
+    } else {
+        cout<<"MODO REGULAR\n";
+    }
+    while (ciclo) {
+        if (admin) {
             admin_listar_comandos();
             cin>>comando;
             switch (comando) {
@@ -26,14 +30,15 @@ int main() {
                 admin_menu_informe();
                 break;
             case 5:
-                admin_menu_borrar();
+                admin_menu_borrar_recuperar();
                 break;
             case 6:
                 //admin_menu_modificar();
                 break;
             case 7:
-                //clear_screen();
-                //admin=false;
+                clear_screen();
+                admin=false;
+                cout<<"MODO ADMINISTRADOR\n";
                 break;
             case 8:
                 menu_generacion_datos();
@@ -49,9 +54,7 @@ int main() {
                 cout<<"\nComando invalido\n";
                 break;
             }
-        }
-    } else {
-        while (ciclo) {
+        } else {
             //comun_listar_comandos();
             cin>>comando;
             switch (comando) {
@@ -63,12 +66,19 @@ int main() {
                 break;
             case 3:
                 //comun_modificar();
+            case 4:
+                clear_screen();
+                admin=true;
+                cout<<"MODO ADMINISTRADOR\n";
                 break;
             case -1:
                 ciclo=false;
                 break;
             case -2:
                 clear_screen();
+                break;
+            default:
+                cout<<"\nComando invalido\n";
                 break;
             }
         }

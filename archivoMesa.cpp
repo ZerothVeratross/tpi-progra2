@@ -63,6 +63,20 @@ int ArchivoMesa::listar_mesas(Mesa * buffer, int cant_regs) {
     return 1;
 }
 
+int ArchivoMesa::guardar_mesas(Mesa * buffer, int cant_regs) {
+    FILE *pMesas;
+    int i;
+
+    pMesas=fopen(get_direccion().c_str(), "wb");
+    if (pMesas==NULL) {
+        return 0;
+    }
+
+    i=fwrite(buffer, get_tam_reg(), cant_regs, pMesas);
+    fclose(pMesas);
+    return i;
+}
+
 int ArchivoMesa::generar_mesas(int cantidad) {
     int i, desc_len, can_sillas, ubic, nro_mesa;
     std::string desc;

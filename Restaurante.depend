@@ -37,10 +37,10 @@
 	"arrutil.h"
 	<iostream>
 
-1748958562 source:c:\directories\c++\progra_2\tpi-progra2\main.cpp
+1748984980 source:c:\directories\c++\progra_2\tpi-progra2\main.cpp
 	"menu.h"
 
-1748959033 c:\directories\c++\progra_2\tpi-progra2\menu.h
+1748984982 c:\directories\c++\progra_2\tpi-progra2\menu.h
 	"archivoMesa.h"
 	"archivoMozo.h"
 	"archivoServicio.h"
@@ -65,7 +65,7 @@
 	<sys/types.h>
 	<sys/time.h>
 
-1748961914 source:c:\directories\c++\progra_2\tpi-progra2\menu.cpp
+1748985688 source:c:\directories\c++\progra_2\tpi-progra2\menu.cpp
 	"menu.h"
 
 1748963074 source:c:\directories\c++\progra_2\tpi-progra2\mesa.cpp
@@ -107,7 +107,7 @@
 1748279123 source:c:\directories\c++\progra_2\tpi-progra2\randutil.cpp
 	"randutil.h"
 
-1748184781 c:\directories\c++\progra_2\tpi-progra2\archivomesa.h
+1748983988 c:\directories\c++\progra_2\tpi-progra2\archivomesa.h
 	"archivo.h"
 	"randutil.h"
 	"mesa.h"
@@ -115,12 +115,12 @@
 1748056524 c:\directories\c++\progra_2\tpi-progra2\archivo.h
 	<iostream>
 
-1748186859 c:\directories\c++\progra_2\tpi-progra2\archivomozo.h
+1748984956 c:\directories\c++\progra_2\tpi-progra2\archivomozo.h
 	"archivo.h"
 	"randutil.h"
 	"mozo.h"
 
-1748402007 c:\directories\c++\progra_2\tpi-progra2\archivoservicio.h
+1748984973 c:\directories\c++\progra_2\tpi-progra2\archivoservicio.h
 	"archivo.h"
 	"archivoMesa.h"
 	"archivoMozo.h"
@@ -130,13 +130,13 @@
 1748959576 source:c:\directories\c++\progra_2\tpi-progra2\archivo.cpp
 	"archivo.h"
 
-1748187894 source:c:\directories\c++\progra_2\tpi-progra2\archivomesa.cpp
+1748983975 source:c:\directories\c++\progra_2\tpi-progra2\archivomesa.cpp
 	"archivoMesa.h"
 
-1748269890 source:c:\directories\c++\progra_2\tpi-progra2\archivomozo.cpp
+1748984880 source:c:\directories\c++\progra_2\tpi-progra2\archivomozo.cpp
 	"archivoMozo.h"
 
-1748402852 source:c:\directories\c++\progra_2\tpi-progra2\archivoservicio.cpp
+1748984928 source:c:\directories\c++\progra_2\tpi-progra2\archivoservicio.cpp
 	"archivoServicio.h"
 
 1748094846 c:\directories\c++\progra_2\tpi-progra2\ordenar.h

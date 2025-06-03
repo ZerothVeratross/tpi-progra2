@@ -201,7 +201,7 @@ void admin_listar_comandos() {
     cout<<"\n2. Consultar";
     cout<<"\n3. Listar";
     cout<<"\n4. Generar informe";
-    cout<<"\n5. Borrar";
+    cout<<"\n5. Borrar o recuperar";
     cout<<"\n6. Modificar";
     cout<<"\n7. Salir de modo administrador";
     cout<<"\n8. Generar datos aleatorios";
@@ -1178,18 +1178,18 @@ void informe_propinas_percibidas() {
 //Fin funciones para generar informes
 
 //Comienzo funciones para borrar
-void admin_menu_borrar() {
+void admin_menu_borrar_recuperar() {
     int dato_int;
-    pedir_comando("\n¿Qué tipo de dato desea borrar?\n1. Mesa\n2. Mozo\n3. Servicio", 3, &dato_int);
+    pedir_comando("\nQue tipo de dato desea borrar?\n1. Mesa\n2. Mozo\n3. Servicio\n", 3, &dato_int);
     switch (dato_int) {
     case 1:
-        menu_borrar_mesa();
+        menu_borrar_recuperar_mesa();
         break;
     case 2:
-        menu_borrar_mozo();
+        menu_borrar_recuperar_mozo();
         break;
     case 3:
-        menu_borrar_servicio();
+        menu_borrar_recuperar_servicio();
         break;
     default:
         comando_invalido();
@@ -1197,7 +1197,7 @@ void admin_menu_borrar() {
     }
 }
 
-void menu_borrar_mesa() {
+void menu_borrar_recuperar_mesa() {
     ArchivoMesa archivo;
     int dato_int, pos, cant_regs=archivo.contar_regs();
 
@@ -1208,20 +1208,137 @@ void menu_borrar_mesa() {
 
     Mesa mesas[cant_regs];
 
-    if (archivo.listar_mesas(mesas, cant_regs)) {
+    if (!archivo.listar_mesas(mesas, cant_regs)) {
         acceso_archivo_fallido();
         return;
     }
 
     if (!pedir_int("\nIngrese el numero de mesa que desea borrar: ", 1, cant_regs, &dato_int)) {return;}
 
+    pos=buscar_nro_mesa(mesas, cant_regs, dato_int);
 
+    if (pos==-1) {
+        cout<<"\nNo hay una mesa habilitada con ese numero.";
+        return;
+    }
+
+    mostrar_mesa(&mesas[pos], false);
+    if (!mesas[pos].get_estado()) {
+        pedir_comando("\nLa mesa indicada ya fue dada de baja. Desea habilitarla de nuevo?\n1. Si\n2. No\n", 2, &dato_int);
+        if (dato_int==1) {
+            cout<<"\nHabilitando mesa...\n";
+            mesas[pos].set_estado(true);
+            archivo.guardar_mesas(mesas, cant_regs);
+        } else if (dato_int==2) {
+            cout<<"\nAbortando operacion de habilitacion...\n";
+        }
+        return;
+    }
+
+    pedir_comando("\nEsta es la mesa que desea dar de baja?\n1. Si\n2. No\n", 2, &dato_int);
+    if (dato_int==1) {
+        cout<<"\nDando de baja la mesa indicada...\n";
+        mesas[pos].set_estado(false);
+        archivo.guardar_mesas(mesas, cant_regs);
+    } else if (dato_int==2) {
+        cout<<"\nAbortando operacion de borrado...\n";
+    }
 }
 
-void menu_borrar_mozo() {
+void menu_borrar_recuperar_mozo() {
+    ArchivoMozo archivo;
+    int dato_int, pos, cant_regs=archivo.contar_regs();
+
+    if (!cant_regs) {
+        acceso_archivo_fallido();
+        return;
+    }
+
+    Mozo mozos[cant_regs];
+
+    if (!archivo.listar_mozos(mozos, cant_regs)) {
+        acceso_archivo_fallido();
+        return;
+    }
+
+    if (!pedir_int("\nIngrese el ID de mozo que desea borrar: ", 1, cant_regs, &dato_int)) {return;}
+
+    pos=buscar_id_mozo(mozos, cant_regs, dato_int);
+
+    if (pos==-1) {
+        cout<<"\nNo hay un mozo habilitado con ese ID.";
+        return;
+    }
+
+    mostrar_mozo(&mozos[pos], false);
+    if (!mozos[pos].get_estado()) {
+        pedir_comando("\nEl mozo indicado ya fue dado de baja. Desea habilitarlo de nuevo?\n1. Si\n2. No\n", 2, &dato_int);
+        if (dato_int==1) {
+                cout<<"\nHabilitando mozo...\n";
+            mozos[pos].set_estado(true);
+            archivo.guardar_mozos(mozos, cant_regs);
+        } else if (dato_int==2) {
+            cout<<"\nAbortando operacion de habilitacion...\n";
+        }
+        return;
+    }
+
+    pedir_comando("\nEste es el mozo que desea dar de baja?\n1. Si\n2. No\n", 2, &dato_int);
+    if (dato_int==1) {
+        cout<<"\nDando de baja el mozo indicado...\n";
+        mozos[pos].set_estado(false);
+        archivo.guardar_mozos(mozos, cant_regs);
+    } else if (dato_int==2) {
+        cout<<"\nAbortando operacion de borrado...\n";
+    }
 }
 
-void menu_borrar_servicio() {
+void menu_borrar_recuperar_servicio() {
+    ArchivoServicio archivo;
+    int dato_int, pos, cant_regs=archivo.contar_regs();
+
+    if (!cant_regs) {
+        acceso_archivo_fallido();
+        return;
+    }
+
+    Servicio servicios[cant_regs];
+
+    if (!archivo.listar_servicios(servicios, cant_regs)) {
+        acceso_archivo_fallido();
+        return;
+    }
+
+    if (!pedir_int("\nIngrese el numero de factura del servicio que desea borrar: ", 1, cant_regs, &dato_int)) {return;}
+
+    pos=buscar_nro_factura(servicios, cant_regs, dato_int);
+
+    if (pos==-1) {
+        cout<<"\nNo hay un servicio habilitado con ese numero de factura.";
+        return;
+    }
+
+    mostrar_servicio(&servicios[pos], false);
+    if (!servicios[pos].get_estado()) {
+        pedir_comando("\nEl servicio indicado ya fue dado de baja. Desea habilitarlo de nuevo?\n1. Si\n2. No\n", 2, &dato_int);
+        if (dato_int==1) {
+                cout<<"\nHabilitando servicio...\n";
+            servicios[pos].set_estado(true);
+            archivo.guardar_servicios(servicios, cant_regs);
+        } else if (dato_int==2) {
+            cout<<"\nAbortando operacion de habilitacion...\n";
+        }
+        return;
+    }
+
+    pedir_comando("\nEste es el servicio que desea dar de baja?\n1. Si\n2. No\n", 2, &dato_int);
+    if (dato_int==1) {
+        cout<<"\nDando de baja el servicio indicado...\n";
+        servicios[pos].set_estado(false);
+        archivo.guardar_servicios(servicios, cant_regs);
+    } else if (dato_int==2) {
+        cout<<"\nAbortando operacion de borrado...\n";
+    }
 }
 //Fin funciones para borrar
 
