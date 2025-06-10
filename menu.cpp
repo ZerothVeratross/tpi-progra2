@@ -1466,9 +1466,180 @@ void menu_modificar_mesa() {
 }
 
 void menu_modificar_mozo() {
+    ArchivoMozo archivo;
+    int dato_int, cant_regs=archivo.contar_regs();
+    int tpos, pos=-1;
+
+    if (!cant_regs) {
+        acceso_archivo_fallido();
+        return;
+    }
+
+    string dato_str;
+    bool control=true;
+    bool cin_antes=true;
+    Mozo mozos[cant_regs];
+
+    if (!archivo.listar_mozos(mozos, cant_regs)) {
+        acceso_archivo_fallido();
+        return;
+    }
+
+    while (control) {
+        if (pos==-1) {
+            if(!pedir_int("\nIngrese el ID del mozo que desea modificar: ", 1, 99999, &dato_int)){return;}
+            pos=buscar_id_mozo(mozos, cant_regs, dato_int);
+        }
+        if (pos==-1 || !mozos[pos].get_estado()) {
+            cout<<"\nNo se ha encontrado el mozo especificado.\n";
+            pos=-1;
+            imprimir_separador();
+            continue;
+        } else {
+            mostrar_mozo(&mozos[pos], true);
+        }
+
+        if (!pedir_comando("\nQue atributo desea modificar?\n1. ID de mozo\n2. DNI\n3. Turno\n4. Nombre\n5. Apellido\n6. Numero de telefono\n7. Email\n8. Modificar otra mozo\n9. Guardar y salir\n", 9, &dato_int)){return;}
+
+        switch (dato_int) {
+        case 1:
+            if (!pedir_int("\nIngrese el nuevo ID de mozo: ", 1, 99999, &dato_int)){return;}
+            cin_antes=true;
+            tpos=buscar_id_mozo(mozos, cant_regs, dato_int);
+            if (tpos!=-1) {
+                if (mozos[tpos].get_estado()) {
+                    cout<<"\nYa existe un mozo con el ID especificado. Elija otro ID.\n";
+                } else {
+                    cout<<"\nYa existe un mozo con el ID especificado, aunque fue dado de baja. Elija otro ID\n";
+                }
+            } else {
+                mozos[pos].set_id_mozo(dato_int);
+            }
+            break;
+        case 2:
+            if (!pedir_int("\nIngrese el nuevo DNI: ", 1000000, 80000000, &dato_int)) {return;}
+            cin_antes=true;
+            mozos[pos].set_dni(dato_int);
+            break;
+        case 3:
+            if (!pedir_comando("\nIngrese el nuevo turno\n1. Maniana\n2. Tarde\n3. Noche\n", 3, &dato_int)) {return;}
+            cin_antes=true;
+            mozos[pos].set_turno(dato_int);
+            break;
+        case 4:
+            if (!pedir_string("\nIngrese el nuevo nombre con no mas de 19 caracteres\n", &dato_str, 19, cin_antes, true)) {return;}
+            cin_antes=false;
+            mozos[pos].set_nombre(dato_str);
+            break;
+        case 5:
+            if (!pedir_string("\nIngrese el nuevo apellido con no mas de 29 caracteres\n", &dato_str, 29, cin_antes, true)) {return;}
+            cin_antes=false;
+            mozos[pos].set_apellido(dato_str);
+            break;
+        case 6:
+            if (!pedir_string("\nIngrese el nuevo numero de telefono con no mas de 19 caracteres\n", &dato_str, 19, cin_antes, true)) {return;}
+            cin_antes=false;
+            mozos[pos].set_nombre(dato_str);
+            break;
+        case 7:
+            if (!pedir_string("\nIngrese el nuevo email con no mas de 49 caracteres\n", &dato_str, 19, cin_antes, true)) {return;}
+            cin_antes=false;
+            mozos[pos].set_nombre(dato_str);
+            break;
+        case 8:
+            pos=-1;
+            break;
+        case 9:
+            archivo.guardar_mozos(mozos, cant_regs);
+            control=false;
+            break;
+        default:
+            control=false;
+            break;
+        }
+        imprimir_separador();
+    }
 }
 
 void menu_modificar_servicio() {
+    ArchivoServicio archivo;
+    int dato_int, cant_regs=archivo.contar_regs();
+    int tpos, pos=-1;
+
+    if (!cant_regs) {
+        acceso_archivo_fallido();
+        return;
+    }
+
+    float dato_float;
+    bool control=true;
+    bool cin_antes=true;
+    Servicio servicios[cant_regs];
+
+    if (!archivo.listar_servicios(servicios, cant_regs)) {
+        acceso_archivo_fallido();
+        return;
+    }
+
+    while (control) {
+        if (pos==-1) {
+            if(!pedir_int("\nIngrese el numero de factura del servicio que desea modificar: ", 1, 999999, &dato_int)){return;}
+            pos=buscar_nro_mesa(mesas, cant_regs, dato_int);
+        }
+        if (pos==-1 || !mesas[pos].get_estado()) {
+            cout<<"\nNo se ha encontrado la mesa especificada.\n";
+            pos=-1;
+            imprimir_separador();
+            continue;
+        } else {
+            mostrar_mesa(&mesas[pos], true);
+        }
+
+        if (!pedir_comando("\nQue atributo desea modificar?\n1. Numero de factura\n2. Numero de mesa\n3. ID de mozo\n4. Fecha\n5. Importe de servicio\n6. Monto abonado\n7. Modificar otro servicio\n8. Guardar y salir\n", 8, &dato_int)){return;}
+
+        switch (dato_int) {
+        case 1:
+            if (!pedir_int("\nIngrese el nuevo numero de factura: ", 1, 9999999, &dato_int)){return;}
+            cin_antes=true;
+            tpos=buscar_nro_factura(servicios, cant_regs, dato_int);
+            if (tpos!=-1) {
+                if (mesas[tpos].get_estado()) {
+                    cout<<"\nYa existe un servicio con el numero especificado. Elija otro numero.\n";
+                } else {
+                    cout<<"\nYa existe un servicio con el numero especificado, aunque fue dado de baja. Elija otro numero\n";
+                }
+            } else {
+                mesas[pos].set_nro_mesa(dato_int);
+            }
+            break;
+        case 2:
+            if (!pedir_int("\nIngrese la nueva cantidad de sillas: ", 1, 12, &dato_int)) {return;}
+            cin_antes=true;
+            mesas[pos].set_can_sillas(dato_int);
+            break;
+        case 3:
+            if (!pedir_comando("\nIngrese la nueva ubicacion\n1. Interior\n2. Terraza\n", 2, &dato_int)) {return;}
+            cin_antes=true;
+            mesas[pos].set_ubic(dato_int);
+            break;
+        case 4:
+            if (!pedir_string("\nIngrese la nueva descripcion con no mas de 29 caracteres\n", &dato_str, 29, cin_antes, true)) {return;}
+            cin_antes=false;
+            mesas[pos].set_desc(dato_str);
+            break;
+        case 7:
+            pos=-1;
+            break;
+        case 8:
+            archivo.guardar_mesas(mesas, cant_regs);
+            control=false;
+            break;
+        default:
+            control=false;
+            break;
+        }
+        imprimir_separador();
+    }
 }
 //Fin funciones para modificar
 

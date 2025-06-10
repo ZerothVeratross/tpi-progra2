@@ -65,7 +65,7 @@
 	<sys/types.h>
 	<sys/time.h>
 
-1749566803 source:c:\directories\c++\progra_2\tpi-progra2\menu.cpp
+1749571536 source:c:\directories\c++\progra_2\tpi-progra2\menu.cpp
 	"menu.h"
 
 1748963074 source:c:\directories\c++\progra_2\tpi-progra2\mesa.cpp
@@ -74,10 +74,10 @@
 1748963662 source:c:\directories\c++\progra_2\tpi-progra2\servicio.cpp
 	"servicio.h"
 
-1748963426 source:c:\directories\c++\progra_2\tpi-progra2\mozo.cpp
+1749570091 source:c:\directories\c++\progra_2\tpi-progra2\mozo.cpp
 	"mozo.h"
 
-1748057106 c:\directories\c++\progra_2\tpi-progra2\mozo.h
+1749569955 c:\directories\c++\progra_2\tpi-progra2\mozo.h
 	"fecha.h"
 
 1748094194 source:c:\directories\c++\progra_2\tpi-progra2\fecha.cpp
