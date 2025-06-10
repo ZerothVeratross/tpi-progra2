@@ -168,6 +168,11 @@ bool Mozo::get_estado() {
     return estado;
 }
 
+void Mozo::set_dni(int n_dni) {
+    if (dni<1000000 || dni>80000000) {return;}
+    dni=n_dni;
+}
+
 void Mozo::set_nombre(char n_nombre[20]) {
     int i;
     for (i=0; i<20; i++) {

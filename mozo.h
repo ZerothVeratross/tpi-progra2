@@ -24,6 +24,7 @@ public:
     int get_turno();
     int get_id_mozo();
     bool get_estado();
+    void set_dni(int n_dni);
     void set_nombre(char n_nombre[20]);
     void set_nombre(std::string n_nombre);
     void set_apellido(char n_apellido[30]);
