@@ -33,7 +33,7 @@ int main() {
                 admin_menu_borrar_recuperar();
                 break;
             case 6:
-                //admin_menu_modificar();
+                admin_menu_modificar();
                 break;
             case 7:
                 clear_screen();

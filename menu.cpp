@@ -52,32 +52,37 @@ int pedir_comando(const char * pedido, int cant_com, int * comando) {
 }
 
 int pedir_int(const char * pedido, int cota_inf, int cota_sup, int * dato_int) {
+    int buffer;
     cout<<pedido;
-    cin>>*dato_int;
-    if (*dato_int<cota_inf || *dato_int>cota_sup) {
+    cin>>buffer;
+    if (buffer<cota_inf || buffer>cota_sup) {
         numero_invalido();
         return 0;
     }
+    *dato_int=buffer;
     return 1;
 }
 
 int pedir_rango_int(const char * pedido, int * datos_int, int pos1, int pos2) {
+    int buffer1, buffer2;
     cout<<pedido<<"\nNumero menor: ";
-    cin>>datos_int[pos1];
-    if (datos_int[pos1]<1) {
+    cin>>buffer1;
+    if (buffer1<1) {
         numero_invalido();
         return 0;
     }
     cout<<"\nNumero mayor: ";
-    cin>>datos_int[pos2];
-    if (datos_int[pos2]<1) {
+    cin>>buffer2;
+    if (buffer2<1) {
         numero_invalido();
         return 0;
     }
-    if (datos_int[pos2]<datos_int[pos1]) {
+    if (buffer2<buffer1) {
         numero_debe_ser_mayor();
         return 0;
     }
+    datos_int[pos1]=buffer1;
+    datos_int[pos2]=buffer2;
     return 1;
 }
 
@@ -87,7 +92,6 @@ int pedir_string(const char * pedido, string * dato_str, int tam_max, bool cin_a
     if (espacios) {
         if (cin_antes){vaciar_input();} //si cin fue accedido por el operador >> antes
         getline(cin, buffer);
-        cout<<buffer;
     } else {
         cin>>buffer;
     }
@@ -108,32 +112,37 @@ int pedir_string(const char * pedido, string * dato_str, int tam_max, bool cin_a
 }
 
 int pedir_float(const char * pedido, float cota_inf, float cota_sup, float * dato_float) {
+    float buffer;
     cout<<pedido;
-    cin>>*dato_float;
-    if (*dato_float<cota_inf || *dato_float>cota_sup) {
+    cin>>buffer;
+    if (buffer<cota_inf || buffer>cota_sup) {
         numero_invalido();
         return 0;
     }
+    *dato_float=buffer;
     return 1;
 }
 
 int pedir_rango_float(const char * pedido, float * datos_float, int pos1, int pos2) {
+    float buffer1, buffer2;
     cout<<pedido<<"\nNumero menor: ";
-    cin>>datos_float[pos1];
-    if (datos_float[pos1]<1) {
+    cin>>buffer1;
+    if (buffer1<1) {
         numero_invalido();
         return 0;
     }
     cout<<"\nNumero mayor: ";
-    cin>>datos_float[pos2];
-    if (datos_float[pos2]<1) {
+    cin>>buffer2;
+    if (buffer2<1) {
         numero_invalido();
         return 0;
     }
-    if (datos_float[pos2]<datos_float[pos1]) {
+    if (buffer2<buffer1) {
         numero_debe_ser_mayor();
         return 0;
     }
+    datos_float[pos1]=buffer1;
+    datos_float[pos2]=buffer2;
     return 1;
 }
 
@@ -184,11 +193,19 @@ int pedir_fecha(const char * pedido, Fecha * fecha, int anio1, int anio2) {
 }
 
 int pedir_rango_fecha(const char * pedido, Fecha * fechas, int anio1, int anio2, int pos1, int pos2) {
+    Fecha buffer1, buffer2;
+    fechas[pos1].copiar(&buffer1);
+    fechas[pos2].copiar(&buffer2);
     cout<<pedido;
     if (!pedir_fecha("\nFecha lejana.", &fechas[pos1], anio1, anio2)) {return 0;}
-    if (!pedir_fecha("\nFecha reciente.", &fechas[pos2], anio1, anio2)) {return 0;}
+    if (!pedir_fecha("\nFecha reciente.", &fechas[pos2], anio1, anio2)) {
+        buffer1.copiar(&fechas[pos1]);
+        return 0;
+    }
     if (fechas[pos2].comparar(fechas[pos1])<0) {
         cout<<"\nLa segunda fecha ingresada debe ser mas reciente que la segunda, regresando al menu principal...\n";
+        buffer1.copiar(&fechas[pos1]);
+        buffer2.copiar(&fechas[pos2]);
         return 0;
     }
     return 1;
@@ -295,7 +312,7 @@ void admin_menu_registrar() {
 
 int menu_registrar_mesa() {
     ArchivoMesa archivo;
-    int datos_int[3], cant_regs=archivo.contar_regs();
+    int datos_int[3], pos, cant_regs=archivo.contar_regs();
 
     if (!cant_regs) {
         acceso_archivo_fallido();
@@ -308,8 +325,13 @@ int menu_registrar_mesa() {
 
     if (!pedir_int("\nIngrese numero de mesa: ", 1, 99999, &datos_int[0])){return 0;}
     if (!archivo.listar_mesas(mesas, cant_regs)){acceso_archivo_fallido();};
-    if (buscar_nro_mesa(mesas, cant_regs, datos_int[0])!=-1) {
-        cout<<"\nYa existe una mesa con este numero, regresando al menu principal...\n";
+    pos=buscar_nro_mesa(mesas, cant_regs, datos_int[0]);
+    if (pos!=-1) {
+        if (mesas[pos].get_estado()) {
+            cout<<"\nYa existe una mesa con este numero, regresando al menu principal...\n";
+        } else {
+            cout<<"\nYa existe una mesa con este numero que fue dada de baja, regresando al menu principal...\n";
+        }
         return 0;
     }
 
@@ -1341,6 +1363,114 @@ void menu_borrar_recuperar_servicio() {
     }
 }
 //Fin funciones para borrar
+
+//Comienzo funciones para modificar
+void admin_menu_modificar() {
+    int dato_int;
+
+    pedir_comando("\nQue tipo de registro desea modificar?\n1. Mesa\n2. Mozo\n3. Servicio\n", 3, &dato_int);
+    switch (dato_int) {
+    case 1:
+        menu_modificar_mesa();
+        break;
+    case 2:
+        menu_modificar_mozo();
+        break;
+    case 3:
+        menu_modificar_servicio();
+        break;
+    default:
+        break;
+    }
+}
+
+void menu_modificar_mesa() {
+    ArchivoMesa archivo;
+    int dato_int, cant_regs=archivo.contar_regs();
+    int tpos, pos=-1;
+
+    if (!cant_regs) {
+        acceso_archivo_fallido();
+        return;
+    }
+
+    string dato_str;
+    bool control=true;
+    bool cin_antes=true;
+    Mesa mesas[cant_regs];
+
+    if (!archivo.listar_mesas(mesas, cant_regs)) {
+        acceso_archivo_fallido();
+        return;
+    }
+
+    while (control) {
+        if (pos==-1) {
+            if(!pedir_int("\nIngrese el numero de la mesa que desea modificar: ", 1, 99999, &dato_int)){return;}
+            pos=buscar_nro_mesa(mesas, cant_regs, dato_int);
+        }
+        if (pos==-1 || !mesas[pos].get_estado()) {
+            cout<<"\nNo se ha encontrado la mesa especificada.\n";
+            pos=-1;
+            imprimir_separador();
+            continue;
+        } else {
+            mostrar_mesa(&mesas[pos], true);
+        }
+
+        if (!pedir_comando("\nQue atributo desea modificar?\n1. Numero de mesa\n2. Cantidad de sillas\n3. Ubicacion\n4. Descripcion\n5. Modificar otra mesa\n6. Guardar y salir\n", 6, &dato_int)){return;}
+
+        switch (dato_int) {
+        case 1:
+            if (!pedir_int("\nIngrese el nuevo numero de mesa: ", 1, 99999, &dato_int)){return;}
+            cin_antes=true;
+            tpos=buscar_nro_mesa(mesas, cant_regs, dato_int);
+            if (tpos!=-1) {
+                if (mesas[tpos].get_estado()) {
+                    cout<<"\nYa existe una mesa con el numero especificado. Elija otro numero.\n";
+                } else {
+                    cout<<"\nYa existe una mesa con el numero especificado, aunque fue dada de baja. Elija otro numero\n";
+                }
+            } else {
+                mesas[pos].set_nro_mesa(dato_int);
+            }
+            break;
+        case 2:
+            if (!pedir_int("\nIngrese la nueva cantidad de sillas: ", 1, 12, &dato_int)) {return;}
+            cin_antes=true;
+            mesas[pos].set_can_sillas(dato_int);
+            break;
+        case 3:
+            if (!pedir_comando("\nIngrese la nueva ubicacion\n1. Interior\n2. Terraza\n", 2, &dato_int)) {return;}
+            cin_antes=true;
+            mesas[pos].set_ubic(dato_int);
+            break;
+        case 4:
+            if (!pedir_string("\nIngrese la nueva descripcion con no mas de 29 caracteres\n", &dato_str, 29, cin_antes, true)) {return;}
+            cin_antes=false;
+            mesas[pos].set_desc(dato_str);
+            break;
+        case 5:
+            pos=-1;
+            break;
+        case 6:
+            archivo.guardar_mesas(mesas, cant_regs);
+            control=false;
+            break;
+        default:
+            control=false;
+            break;
+        }
+        imprimir_separador();
+    }
+}
+
+void menu_modificar_mozo() {
+}
+
+void menu_modificar_servicio() {
+}
+//Fin funciones para modificar
 
 void menu_generacion_datos() {
     ArchivoMesa aMesa;

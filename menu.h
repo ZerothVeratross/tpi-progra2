@@ -54,4 +54,9 @@ void menu_borrar_recuperar_mesa();
 void menu_borrar_recuperar_mozo();
 void menu_borrar_recuperar_servicio();
 
+void admin_menu_modificar();
+void menu_modificar_mesa();
+void menu_modificar_mozo();
+void menu_modificar_servicio();
+
 void menu_generacion_datos();
