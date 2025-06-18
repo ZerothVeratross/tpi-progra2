@@ -8,6 +8,9 @@
 void clear_screen(char fill = ' ');
 void vaciar_input();
 void imprimir_separador();
+void imprimir_error(const char * msj_error);
+void imprimir_exito(const char * msj_exito);
+void imprimir_comando(const char * msj_comando);
 void comando_invalido();
 void numero_invalido();
 void numero_debe_ser_mayor();
@@ -23,9 +26,9 @@ int pedir_fecha(const char * pedido, Fecha * fecha, int anio1, int anio2);
 
 void admin_listar_comandos();
 
-void mostrar_mesa(Mesa * mesa, bool ignorar_borrado);
-void mostrar_mozo(Mozo * mozo, bool ignorar_borrado);
-void mostrar_servicio(Servicio * servicio, bool ignorar_borrado);
+void mostrar_mesa(Mesa * mesa, bool ignorar_borrado, int color, bool mostrar_nombres);
+void mostrar_mozo(Mozo * mozo, bool ignorar_borrado, int color, bool mostrar_nombres);
+void mostrar_servicio(Servicio * servicio, bool ignorar_borrado, int color, bool mostrar_nombres);
 
 void admin_menu_registrar();
 int menu_registrar_mesa();

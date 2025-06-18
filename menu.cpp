@@ -25,24 +25,62 @@ void imprimir_separador() {
     cout<<"-------------------------------------------------------------------";
 }
 
+void imprimir_error(const char * msj_error) {
+    rlutil::setColor(rlutil::RED);
+    cout<<msj_error;
+    rlutil::setColor(rlutil::WHITE);
+}
+
+void imprimir_exito(const char * msj_exito) {
+    rlutil::setColor(rlutil::GREEN);
+    cout<<msj_exito;
+    rlutil::setColor(rlutil::WHITE);
+}
+
+void imprimir_comando(const char * msj_comando) {
+    char c=msj_comando[0];
+    int i=0;
+    while (c!='\0') {
+        if ((c>=48 && c<=57) || c=='-') {
+            if (msj_comando[i+1]>=48 && msj_comando[i+1]<=57) {
+                if (msj_comando[i+2]=='.') {
+                    rlutil::setColor(rlutil::YELLOW);
+                    cout<<c<<msj_comando[i+1]<<'.';
+                    rlutil::setColor(rlutil::WHITE);
+                    i+=2;
+                }
+            } else if (msj_comando[i+1]=='.') {
+                rlutil::setColor(rlutil::YELLOW);
+                cout<<c<<'.';
+                rlutil::setColor(rlutil::WHITE);
+                i++;
+            }
+        } else {
+            cout<<c;
+        }
+        i++;
+        c=msj_comando[i];
+    }
+}
+
 void comando_invalido() {
-    cout<<"\nComando invalido, regresando al menu principal...\n";
+    imprimir_error("\nComando invalido, regresando al menu principal...\n");
 }
 
 void numero_invalido() {
-    cout<<"\nNumero invalido, regresando al menu principal...\n";
+    imprimir_error("\nNumero invalido, regresando al menu principal...\n");
 }
 
 void numero_debe_ser_mayor() {
-    cout<<"\nEl numero mayor debe ser mayor al anterior, regresando al menu principal...\n";
+    imprimir_error("\nEl numero mayor debe ser mayor al anterior, regresando al menu principal...\n");
 }
 
 void acceso_archivo_fallido() {
-    cout<<"\nNo se pudo acceder al archivo, regresando al menu principal...\n";
+    imprimir_error("\nNo se pudo acceder al archivo, regresando al menu principal...\n");
 }
 
 int pedir_comando(const char * pedido, int cant_com, int * comando) {
-    cout<<pedido;
+    imprimir_comando(pedido);
     cin>>*comando;
     if (*comando<1 || *comando>cant_com) {
         comando_invalido();
@@ -100,11 +138,11 @@ int pedir_string(const char * pedido, string * dato_str, int tam_max, bool cin_a
     //un string con mas de 2147483647 caracteres, el resultado seria reducido a dicho
     //numero
     if (int(buffer.length())>tam_max) {
-        cout<<"\nHa ingresado demasiados caracteres, regresando al menu principal...\n";
+        imprimir_error("\nHa ingresado demasiados caracteres, regresando al menu principal...\n");
         return 0;
     }
     if (int(buffer.length())==0) {
-        cout<<"\nAlgo fallo pues no se registro input, regresando al menu principal...\n";
+        imprimir_error("\nAlgo fallo pues no se registro input, regresando al menu principal...\n");
     }
     dato_str->erase(0, dato_str->npos);
     dato_str->append(buffer);
@@ -162,7 +200,7 @@ int pedir_fecha(const char * pedido, Fecha * fecha, int anio1, int anio2) {
     case 10:
     case 12:
         if (dia>31) {
-            cout<<"\nDia invalido en mes de 31 dias, regresando al menu principal...\n";
+            imprimir_error("\nDia invalido en mes de 31 dias, regresando al menu principal...\n");
             return 0;
         }
         break;
@@ -171,18 +209,18 @@ int pedir_fecha(const char * pedido, Fecha * fecha, int anio1, int anio2) {
     case 9:
     case 11:
         if (dia>30) {
-            cout<<"\nDia invalido en mes de 30 dias, regresando al menu principal...\n";
+            imprimir_error("\nDia invalido en mes de 30 dias, regresando al menu principal...\n");
             return 0;
         }
         break;
     case 2:
         if (dia>28 && (dia!=29 || anio%4!=0 || (anio%100==0 && anio%400!=0))) {
-            cout<<"\nDia invalido en febrero, regresando al menu principal...\n";
+            imprimir_error("\nDia invalido en febrero, regresando al menu principal...\n");
             return 0;
         }
         break;
     default:
-        cout<<"\nMes invalido, regresando al menu principal...\n";
+        imprimir_error("\nMes invalido, regresando al menu principal...\n");
         return 0;
     }
     fecha->set_dia(dia);
@@ -203,7 +241,7 @@ int pedir_rango_fecha(const char * pedido, Fecha * fechas, int anio1, int anio2,
         return 0;
     }
     if (fechas[pos2].comparar(fechas[pos1])<0) {
-        cout<<"\nLa segunda fecha ingresada debe ser mas reciente que la segunda, regresando al menu principal...\n";
+        imprimir_error("\nLa segunda fecha ingresada debe ser mas reciente que la segunda, regresando al menu principal...\n");
         buffer1.copiar(&fechas[pos1]);
         buffer2.copiar(&fechas[pos2]);
         return 0;
@@ -213,34 +251,68 @@ int pedir_rango_fecha(const char * pedido, Fecha * fechas, int anio1, int anio2,
 
 void admin_listar_comandos() {
     imprimir_separador();
-    cout<<"\nLista de comandos:";
-    cout<<"\n1. Registrar";
-    cout<<"\n2. Consultar";
-    cout<<"\n3. Listar";
-    cout<<"\n4. Generar informe";
-    cout<<"\n5. Borrar o recuperar";
-    cout<<"\n6. Modificar";
-    cout<<"\n7. Salir de modo administrador";
-    cout<<"\n8. Generar datos aleatorios";
-    cout<<"\n-1. Cerrar programa\n-2. Limpiar consola\n\nIngrese un comando: ";
+    imprimir_comando("\nLista de comandos:\n1. Registrar\n2. Consultar\n3. Listar\n4. Generar informe\n5. Borrar o recuperar\n6. Modificar\n7. Salir de modo administrador\n8. Generar datos aleatorios\n-1. Cerrar programa\n-2. Limpiar consola\n\nIngrese un comando: ");
 }
 
-void mostrar_mesa(Mesa * mesa, bool ignorar_borrado) {
+void mostrar_mesa(Mesa * mesa, bool ignorar_borrado, int color=rlutil::WHITE, bool mostrar_nombres=true) {
+    CONSOLE_SCREEN_BUFFER_INFO s;
+    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+    GetConsoleScreenBufferInfo(console, &s);
+    int x=0;
+    int y=s.dwCursorPosition.Y+1;
+
     if (!mesa->get_estado() && ignorar_borrado) {
         return;
     }
-    cout<<"\nNumero de mesa: "<<mesa->get_nro_mesa();
-    cout<<" | Cantidad de sillas: "<<mesa->get_can_sillas();
-    cout<<" | Ubicacion: ";
-    if (mesa->get_ubic() == 1) {
-        cout<<"interior";
+    rlutil::setColor(color);
+
+    rlutil::locate(x, y);
+    if (mostrar_nombres) {
+        cout<<"Numero de mesa: ";
+        x+=20;
     } else {
-        cout<<"terraza";
+        x+=6;
     }
-    cout<<" | Descripcion: "<<mesa->get_desc()<<"\n";
+    cout<<mesa->get_nro_mesa();
+    rlutil::locate(x, y);
+    cout<<" | ";
+    x+=3;
+
+    rlutil::locate(x, y);
+    if (mostrar_nombres) {
+        cout<<"Cantidad de sillas: ";
+        x+=25;
+    } else {
+        x+=4;
+    }
+
+    cout<<mesa->get_can_sillas();
+    rlutil::locate(x, y);
+    cout<<" | ";
+    x+=3;
+
+    rlutil::locate(x, y);
+    if (mostrar_nombres) {
+        cout<<"Ubicacion: ";
+        x+=23;
+    } else {
+        x+=12;
+    }
+
+    if (mesa->get_ubic() == 1) {
+        cout<<"interior | ";
+    } else {
+        cout<<"terraza  | ";
+    }
+
+    rlutil::locate(x, y);
+    if (mostrar_nombres) {
+        cout<<"Descripcion: ";
+    }
+    cout<<mesa->get_desc()<<"\n";
 }
 
-void mostrar_mozo(Mozo * mozo, bool ignorar_borrado) {
+void mostrar_mozo(Mozo * mozo, bool ignorar_borrado, int color=rlutil::WHITE, bool mostrar_nombres=true) {
     if (!mozo->get_estado() && ignorar_borrado) {
         return;
     }
@@ -262,11 +334,11 @@ void mostrar_mozo(Mozo * mozo, bool ignorar_borrado) {
         cout<<"Noche";
         break;
     default:
-        cout<<"registro invalido";
+        imprimir_error("registro invalido");
     }
 }
 
-void mostrar_servicio(Servicio * servicio, bool ignorar_borrado) {
+void mostrar_servicio(Servicio * servicio, bool ignorar_borrado, int color=rlutil::WHITE, bool mostrar_nombres=true) {
     if (!servicio->get_estado() && ignorar_borrado) {
         return;
     }
@@ -287,21 +359,21 @@ void admin_menu_registrar() {
         if (menu_registrar_mesa()) {
             cout<<"\nNueva mesa registrada exitosamente\n";
         } else {
-            cout<<"\nNo se registro una mesa nueva\n";
+            imprimir_error("\nNo se registro una mesa nueva\n");
         }
         break;
     case 2:
         if (menu_registrar_mozo()) {
             cout<<"\nNuevo mozo registrado exitosamente\n";
         } else {
-            cout<<"\nNo se registro un mozo nuevo\n";
+            imprimir_error("\nNo se registro un mozo nuevo\n");
         }
         break;
     case 3:
         if (menu_registrar_servicio()) {
             cout<<"\nNuevo servicio registrado exitosamente\n";
         } else {
-            cout<<"\nNo se registro un servicio nuevo\n";
+            imprimir_error("\nNo se registro un servicio nuevo\n");
         }
         break;
     default:
@@ -328,9 +400,9 @@ int menu_registrar_mesa() {
     pos=buscar_nro_mesa(mesas, cant_regs, datos_int[0]);
     if (pos!=-1) {
         if (mesas[pos].get_estado()) {
-            cout<<"\nYa existe una mesa con este numero, regresando al menu principal...\n";
+            imprimir_error("\nYa existe una mesa con este numero, regresando al menu principal...\n");
         } else {
-            cout<<"\nYa existe una mesa con este numero que fue dada de baja, regresando al menu principal...\n";
+            imprimir_error("\nYa existe una mesa con este numero que fue dada de baja, regresando al menu principal...\n");
         }
         return 0;
     }
@@ -370,7 +442,7 @@ int menu_registrar_mozo() {
     if (!pedir_int("\nIngrese ID del mozo: ", 1, 99999, &datos_int[2])) {return 0;}
     if (!archivo.listar_mozos(mozos, cant_regs)){acceso_archivo_fallido();};
     if (buscar_id_mozo(mozos, cant_regs, datos_int[5])!=-1) {
-        cout<<"\nYa existe un mozo con este ID, regresando al menu principal...\n";
+        imprimir_error("\nYa existe un mozo con este ID, regresando al menu principal...\n");
         return 0;
     }
 
@@ -436,7 +508,7 @@ int menu_registrar_servicio() {
     if (!pedir_int("\nIngrese numero de factura: ", 1, 9999999, &datos_int[0])) {return 0;}
     if (!pServicios.listar_servicios(servicios, cant_servicios)){acceso_archivo_fallido();};
     if (buscar_nro_factura(servicios, cant_servicios, datos_int[0])!=-1) {
-        cout<<"\nYa existe un servicio con este numero, regresando al menu principal...\n";
+        imprimir_error("\nYa existe un servicio con este numero, regresando al menu principal...\n");
         return 0;
     }
 
@@ -444,13 +516,13 @@ int menu_registrar_servicio() {
     if (!pMesas.listar_mesas(mesas, cant_mesas)){acceso_archivo_fallido();};
     pos=buscar_nro_mesa(mesas, cant_mesas, datos_int[1]);
     if (pos==-1) {
-        cout<<"\nEsta mesa no esta registrada, regresando al menu principal...\n";
+        imprimir_error("\nEsta mesa no esta registrada, regresando al menu principal...\n");
         return 0;
     }
     if (!mesas[pos].get_estado()) {
         if (!pedir_comando("\nEsta mesa fue dada de baja. Registrar de todos modos?\n1. Si\n2. No\n", 2, &pos)){return 0;}
         if (pos==2) {
-            cout<<"\nAbortando operacion...\n";
+            imprimir_error("\nAbortando operacion...\n");
             return 0;
         }
     }
@@ -459,13 +531,13 @@ int menu_registrar_servicio() {
     if (!pMozos.listar_mozos(mozos, cant_mozos)){acceso_archivo_fallido();};
     pos=buscar_id_mozo(mozos, cant_mozos, datos_int[2]);
     if (pos==-1) {
-        cout<<"\nEste mozo no esta registrado, regresando al menu principal...\n";
+        imprimir_error("\nEste mozo no esta registrado, regresando al menu principal...\n");
         return 0;
     }
     if (!mozos[pos].get_estado()) {
         if (!pedir_comando("\nEste mozo fue dado de baja. Registrar de todos modos?\n1. Si\n2. No\n", 2, &pos)){return 0;}
         if (pos==2) {
-            cout<<"\nAbortando operacion...\n";
+            imprimir_error("\nAbortando operacion...\n");
             return 0;
         }
     }
@@ -478,7 +550,7 @@ int menu_registrar_servicio() {
     if (!pedir_float("\nIngrese monto abonado por el cliente, utilizando punto para marcar decimales: ", 1, 10000000, &datos_float[1])) {return 0;}
 
     if (datos_float[0]>datos_float[1]) {
-        cout<<"\nEl monto abonado no puede ser menor que el importe del servicio, regresando al menu principal...\n";
+        imprimir_error("\nEl monto abonado no puede ser menor que el importe del servicio, regresando al menu principal...\n");
         return 0;
     }
 
@@ -573,11 +645,13 @@ void menu_consultar_mesas() {
             mesas_encontradas++;
         }
     }
+    rlutil::setColor(rlutil::GREEN);
     if (mesas_encontradas!=1) {
         cout<<"\nSe encontraron "<<mesas_encontradas<<" mesas\n";
     } else {
         cout<<"\nSe encontro "<<mesas_encontradas<<" mesa\n";
     }
+    rlutil::setColor(rlutil::WHITE);
 }
 
 void menu_consultar_mozos() {
@@ -650,11 +724,13 @@ void menu_consultar_mozos() {
             mozos_encontrados++;
         }
     }
+    rlutil::setColor(rlutil::GREEN);
     if (mozos_encontrados!=1) {
         cout<<"\nSe encontraron "<<mozos_encontrados<<" mozos\n";
     } else {
         cout<<"\nSe encontro "<<mozos_encontrados<<" mozo\n";
     }
+    rlutil::setColor(rlutil::WHITE);
 }
 
 void menu_consultar_servicios() {
@@ -725,11 +801,13 @@ void menu_consultar_servicios() {
             servicios_encontrados++;
         }
     }
+    rlutil::setColor(rlutil::GREEN);
     if (servicios_encontrados!=1) {
         cout<<"\nSe encontraron "<<servicios_encontrados<<" servicios\n";
     } else {
         cout<<"\nSe encontro "<<servicios_encontrados<<" servicio\n";
     }
+    rlutil::setColor(rlutil::WHITE);
 }
 //Fin funciones para consultar base de datos
 
@@ -756,6 +834,7 @@ void admin_menu_listar() {
 void menu_listar_mesas() {
     ArchivoMesa archivo;
     int i, orden, cant_regs=archivo.contar_regs();
+    int color=rlutil::WHITE;
 
     if (!cant_regs) {
         acceso_archivo_fallido();
@@ -789,13 +868,25 @@ void menu_listar_mesas() {
         break;
     }
 
+    imprimir_separador();
+    cout<<"\nNumero|Sillas|Ubicacion |Descripcion\n";
+    imprimir_separador();
+    cout<<"\n";
     for (i=0; i<cant_regs; i++) {
         if (mesas[i].get_estado() && !ignorar_borrado) {
             continue;
         }
-        mostrar_mesa(&mesas[i], ignorar_borrado);
+
+        if (mesas[i].get_estado() || (!mesas[i].get_estado() && !ignorar_borrado)) {
+            if (color==rlutil::WHITE) {
+                color=rlutil::GREY;
+            } else {
+                color=rlutil::WHITE;
+            }
+        }
+        mostrar_mesa(&mesas[i], ignorar_borrado, color, false);
     }
-    cout<<"\n";
+    rlutil::setColor(rlutil::WHITE);
 }
 
 void menu_listar_mozos() {
@@ -1240,7 +1331,7 @@ void menu_borrar_recuperar_mesa() {
     pos=buscar_nro_mesa(mesas, cant_regs, dato_int);
 
     if (pos==-1) {
-        cout<<"\nNo hay una mesa habilitada con ese numero.";
+        imprimir_error("\nNo hay una mesa habilitada con ese numero.\n");
         return;
     }
 
@@ -1248,22 +1339,22 @@ void menu_borrar_recuperar_mesa() {
     if (!mesas[pos].get_estado()) {
         pedir_comando("\nLa mesa indicada ya fue dada de baja. Desea habilitarla de nuevo?\n1. Si\n2. No\n", 2, &dato_int);
         if (dato_int==1) {
-            cout<<"\nHabilitando mesa...\n";
+            imprimir_exito("\nHabilitando mesa...\n");
             mesas[pos].set_estado(true);
             archivo.guardar_mesas(mesas, cant_regs);
         } else if (dato_int==2) {
-            cout<<"\nAbortando operacion de habilitacion...\n";
+            imprimir_error("\nAbortando operacion de habilitacion...\n");
         }
         return;
     }
 
     pedir_comando("\nEsta es la mesa que desea dar de baja?\n1. Si\n2. No\n", 2, &dato_int);
     if (dato_int==1) {
-        cout<<"\nDando de baja la mesa indicada...\n";
+        imprimir_exito("\nDando de baja la mesa indicada...\n");
         mesas[pos].set_estado(false);
         archivo.guardar_mesas(mesas, cant_regs);
     } else if (dato_int==2) {
-        cout<<"\nAbortando operacion de borrado...\n";
+        imprimir_error("\nAbortando operacion de borrado...\n");
     }
 }
 
@@ -1296,22 +1387,22 @@ void menu_borrar_recuperar_mozo() {
     if (!mozos[pos].get_estado()) {
         pedir_comando("\nEl mozo indicado ya fue dado de baja. Desea habilitarlo de nuevo?\n1. Si\n2. No\n", 2, &dato_int);
         if (dato_int==1) {
-                cout<<"\nHabilitando mozo...\n";
+            imprimir_exito("\nHabilitando mozo...\n");
             mozos[pos].set_estado(true);
             archivo.guardar_mozos(mozos, cant_regs);
         } else if (dato_int==2) {
-            cout<<"\nAbortando operacion de habilitacion...\n";
+            imprimir_error("\nAbortando operacion de habilitacion...\n");
         }
         return;
     }
 
     pedir_comando("\nEste es el mozo que desea dar de baja?\n1. Si\n2. No\n", 2, &dato_int);
     if (dato_int==1) {
-        cout<<"\nDando de baja el mozo indicado...\n";
+        imprimir_exito("\nDando de baja el mozo indicado...\n");
         mozos[pos].set_estado(false);
         archivo.guardar_mozos(mozos, cant_regs);
     } else if (dato_int==2) {
-        cout<<"\nAbortando operacion de borrado...\n";
+        imprimir_error("\nAbortando operacion de borrado...\n");
     }
 }
 
@@ -1344,22 +1435,22 @@ void menu_borrar_recuperar_servicio() {
     if (!servicios[pos].get_estado()) {
         pedir_comando("\nEl servicio indicado ya fue dado de baja. Desea habilitarlo de nuevo?\n1. Si\n2. No\n", 2, &dato_int);
         if (dato_int==1) {
-                cout<<"\nHabilitando servicio...\n";
+            imprimir_exito("\nHabilitando servicio...\n");
             servicios[pos].set_estado(true);
             archivo.guardar_servicios(servicios, cant_regs);
         } else if (dato_int==2) {
-            cout<<"\nAbortando operacion de habilitacion...\n";
+            imprimir_error("\nAbortando operacion de habilitacion...\n");
         }
         return;
     }
 
     pedir_comando("\nEste es el servicio que desea dar de baja?\n1. Si\n2. No\n", 2, &dato_int);
     if (dato_int==1) {
-        cout<<"\nDando de baja el servicio indicado...\n";
+        imprimir_exito("\nDando de baja el servicio indicado...\n");
         servicios[pos].set_estado(false);
         archivo.guardar_servicios(servicios, cant_regs);
     } else if (dato_int==2) {
-        cout<<"\nAbortando operacion de borrado...\n";
+        imprimir_error("\nAbortando operacion de borrado...\n");
     }
 }
 //Fin funciones para borrar
@@ -1410,7 +1501,7 @@ void menu_modificar_mesa() {
             pos=buscar_nro_mesa(mesas, cant_regs, dato_int);
         }
         if (pos==-1 || !mesas[pos].get_estado()) {
-            cout<<"\nNo se ha encontrado la mesa especificada.\n";
+            imprimir_error("\nNo se ha encontrado la mesa especificada.\n");
             pos=-1;
             imprimir_separador();
             continue;
@@ -1427,9 +1518,9 @@ void menu_modificar_mesa() {
             tpos=buscar_nro_mesa(mesas, cant_regs, dato_int);
             if (tpos!=-1) {
                 if (mesas[tpos].get_estado()) {
-                    cout<<"\nYa existe una mesa con el numero especificado. Elija otro numero.\n";
+                    imprimir_error("\nYa existe una mesa con el numero especificado. Elija otro numero.\n");
                 } else {
-                    cout<<"\nYa existe una mesa con el numero especificado, aunque fue dada de baja. Elija otro numero\n";
+                    imprimir_error("\nYa existe una mesa con el numero especificado, aunque fue dada de baja. Elija otro numero\n");
                 }
             } else {
                 mesas[pos].set_nro_mesa(dato_int);
@@ -1491,7 +1582,7 @@ void menu_modificar_mozo() {
             pos=buscar_id_mozo(mozos, cant_regs, dato_int);
         }
         if (pos==-1 || !mozos[pos].get_estado()) {
-            cout<<"\nNo se ha encontrado el mozo especificado.\n";
+            imprimir_error("\nNo se ha encontrado el mozo especificado.\n");
             pos=-1;
             imprimir_separador();
             continue;
@@ -1508,9 +1599,9 @@ void menu_modificar_mozo() {
             tpos=buscar_id_mozo(mozos, cant_regs, dato_int);
             if (tpos!=-1) {
                 if (mozos[tpos].get_estado()) {
-                    cout<<"\nYa existe un mozo con el ID especificado. Elija otro ID.\n";
+                    imprimir_error("\nYa existe un mozo con el ID especificado. Elija otro ID.\n");
                 } else {
-                    cout<<"\nYa existe un mozo con el ID especificado, aunque fue dado de baja. Elija otro ID\n";
+                    imprimir_error("\nYa existe un mozo con el ID especificado, aunque fue dado de baja. Elija otro ID\n");
                 }
             } else {
                 mozos[pos].set_id_mozo(dato_int);
@@ -1562,21 +1653,43 @@ void menu_modificar_mozo() {
 }
 
 void menu_modificar_servicio() {
-    ArchivoServicio archivo;
-    int dato_int, cant_regs=archivo.contar_regs();
-    int tpos, pos=-1;
+    ArchivoServicio pServicios;
+    ArchivoMesa pMesas;
+    ArchivoMozo pMozos;
+    int tpos, pos=-1, dato_int;
+    float dato_float;
+    bool control=true;
+    Fecha dato_fecha;
 
-    if (!cant_regs) {
+    int cant_serv=pServicios.contar_regs();
+    if (!cant_serv) {
+        acceso_archivo_fallido();
+        return;
+    }
+    Servicio servicios[cant_serv];
+    if (!pServicios.listar_servicios(servicios, cant_serv)) {
         acceso_archivo_fallido();
         return;
     }
 
-    float dato_float;
-    bool control=true;
-    bool cin_antes=true;
-    Servicio servicios[cant_regs];
+    int cant_mesas=pMesas.contar_regs();
+    if (!cant_mesas) {
+        acceso_archivo_fallido();
+        return;
+    }
+    Mesa mesas[cant_mesas];
+    if (!pMesas.listar_mesas(mesas, cant_mesas)) {
+        acceso_archivo_fallido();
+        return;
+    }
 
-    if (!archivo.listar_servicios(servicios, cant_regs)) {
+    int cant_mozos=pServicios.contar_regs();
+    if (!cant_mozos) {
+        acceso_archivo_fallido();
+        return;
+    }
+    Mozo mozos[cant_mozos];
+    if (!pMozos.listar_mozos(mozos, cant_mozos)) {
         acceso_archivo_fallido();
         return;
     }
@@ -1584,15 +1697,15 @@ void menu_modificar_servicio() {
     while (control) {
         if (pos==-1) {
             if(!pedir_int("\nIngrese el numero de factura del servicio que desea modificar: ", 1, 999999, &dato_int)){return;}
-            pos=buscar_nro_mesa(mesas, cant_regs, dato_int);
+            pos=buscar_nro_factura(servicios, cant_serv, dato_int);
         }
-        if (pos==-1 || !mesas[pos].get_estado()) {
-            cout<<"\nNo se ha encontrado la mesa especificada.\n";
+        if (pos==-1 || !servicios[pos].get_estado()) {
+            imprimir_error("\nNo se ha encontrado el servicio especificado.\n");
             pos=-1;
             imprimir_separador();
             continue;
         } else {
-            mostrar_mesa(&mesas[pos], true);
+            mostrar_servicio(&servicios[pos], true);
         }
 
         if (!pedir_comando("\nQue atributo desea modificar?\n1. Numero de factura\n2. Numero de mesa\n3. ID de mozo\n4. Fecha\n5. Importe de servicio\n6. Monto abonado\n7. Modificar otro servicio\n8. Guardar y salir\n", 8, &dato_int)){return;}
@@ -1600,38 +1713,76 @@ void menu_modificar_servicio() {
         switch (dato_int) {
         case 1:
             if (!pedir_int("\nIngrese el nuevo numero de factura: ", 1, 9999999, &dato_int)){return;}
-            cin_antes=true;
-            tpos=buscar_nro_factura(servicios, cant_regs, dato_int);
+            tpos=buscar_nro_factura(servicios, cant_serv, dato_int);
             if (tpos!=-1) {
                 if (mesas[tpos].get_estado()) {
-                    cout<<"\nYa existe un servicio con el numero especificado. Elija otro numero.\n";
+                    imprimir_error("\nYa existe un servicio con el numero especificado. Elija otro numero.\n");
                 } else {
-                    cout<<"\nYa existe un servicio con el numero especificado, aunque fue dado de baja. Elija otro numero\n";
+                    imprimir_error("\nYa existe un servicio con el numero especificado, aunque fue dado de baja. Elija otro numero\n");
                 }
             } else {
-                mesas[pos].set_nro_mesa(dato_int);
+                servicios[pos].set_nro_factura(dato_int);
             }
             break;
         case 2:
-            if (!pedir_int("\nIngrese la nueva cantidad de sillas: ", 1, 12, &dato_int)) {return;}
-            cin_antes=true;
-            mesas[pos].set_can_sillas(dato_int);
+            if (!pedir_int("\nIngrese el nuevo numero de mesa: ", 1, 99999, &dato_int)) {return;}
+            tpos=buscar_nro_mesa(mesas, cant_mesas, dato_int);
+            if (tpos!=-1) {
+                if (!mesas[tpos].get_estado()) {
+                    cout<<"\nLa mesa especificada fue dada de baja. Continuar?\n";
+                    if (!pedir_comando("\n1. Si\n2. No", 2, &tpos)) {return;}
+                    if (tpos==2) {
+                        cout<<"\n";
+                        break;
+                    }
+                }
+                servicios[pos].set_nro_mesa(dato_int);
+            } else {
+                imprimir_error("\nNo existe una mesa con el numero especificado. Elija otro numero.\n");
+            }
             break;
         case 3:
-            if (!pedir_comando("\nIngrese la nueva ubicacion\n1. Interior\n2. Terraza\n", 2, &dato_int)) {return;}
-            cin_antes=true;
-            mesas[pos].set_ubic(dato_int);
+            if (!pedir_int("\nIngrese el nuevo ID de mozo: ", 1, 99999, &dato_int)) {return;}
+            tpos=buscar_id_mozo(mozos, cant_mozos, dato_int);
+            if (tpos!=-1) {
+                if (!mesas[tpos].get_estado()) {
+                    cout<<"\nEl mozo especificado fue dado de baja. Continuar?\n";
+                    if (!pedir_comando("\n1. Si\n2. No", 2, &tpos)) {return;}
+                    if (tpos==2) {
+                        cout<<"\n";
+                        break;
+                    }
+                }
+                servicios[pos].set_id_mozo(dato_int);
+            } else {
+                imprimir_error("\nNo existe un mozo con el ID especificado. Elija otro ID.\n");
+            }
             break;
         case 4:
-            if (!pedir_string("\nIngrese la nueva descripcion con no mas de 29 caracteres\n", &dato_str, 29, cin_antes, true)) {return;}
-            cin_antes=false;
-            mesas[pos].set_desc(dato_str);
+            if (!pedir_fecha("\nIngrese la nueva fecha de servicio\n", &dato_fecha, 2000, 2025)) {return;}
+            servicios[pos].set_fecha_serv(dato_fecha);
+            break;
+        case 5:
+            if (!pedir_float("\nIngrese el nuevo importe de servicio: ", 1, 10000000, &dato_float)){return;}
+            if (dato_float<=servicios[pos].get_monto_abon()) {
+                servicios[pos].set_importe_serv(dato_float);
+            } else {
+                imprimir_error("\nEl importe de servicio debe ser menor o igual al monto abonado.\n");
+            }
+            break;
+        case 6:
+            if (!pedir_float("\nIngrese el nuevo monto abonado: ", 1, 10000000, &dato_float)){return;}
+            if (dato_float>=servicios[pos].get_importe_serv()) {
+                servicios[pos].set_importe_serv(dato_float);
+            } else {
+                imprimir_error("\nEl monto abonado debe ser mayor o igual al importe de servicio.\n");
+            }
             break;
         case 7:
             pos=-1;
             break;
         case 8:
-            archivo.guardar_mesas(mesas, cant_regs);
+            pServicios.guardar_servicios(servicios, cant_serv);
             control=false;
             break;
         default:
@@ -1670,6 +1821,6 @@ void menu_generacion_datos() {
         break;
     }
     if (!datos_int[0]) {
-        cout<<"\nUno de los archivos no pudo ser accedido, volviendo al menu principal...\n";
+        imprimir_error("\nUno de los archivos no pudo ser accedido, volviendo al menu principal...\n");
     }
 }

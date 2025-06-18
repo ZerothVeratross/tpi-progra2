@@ -7,6 +7,7 @@ int main() {
     bool admin=true;
     bool ciclo=true;
     cout<<fixed;//deshabilita notacion cientifica para floats en cout
+    rlutil::setColor(rlutil::WHITE);
     if (admin) {
         cout<<"MODO ADMINISTRADOR\n";
     } else {
@@ -51,7 +52,7 @@ int main() {
                 cout<<"MODO ADMINISTRADOR\n";
                 break;
             default:
-                cout<<"\nComando invalido\n";
+                imprimir_error("\nComando invalido\n");
                 break;
             }
         } else {
