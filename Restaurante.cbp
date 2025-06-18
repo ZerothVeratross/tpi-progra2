@@ -33,6 +33,8 @@
 		</Compiler>
 		<Unit filename="archivo.cpp" />
 		<Unit filename="archivo.h" />
+		<Unit filename="archivoConfig.cpp" />
+		<Unit filename="archivoConfig.h" />
 		<Unit filename="archivoMesa.cpp" />
 		<Unit filename="archivoMesa.h" />
 		<Unit filename="archivoMozo.cpp" />
@@ -41,6 +43,8 @@
 		<Unit filename="archivoServicio.h" />
 		<Unit filename="arrutil.cpp" />
 		<Unit filename="arrutil.h" />
+		<Unit filename="config.cpp" />
+		<Unit filename="config.h" />
 		<Unit filename="fecha.cpp" />
 		<Unit filename="fecha.h" />
 		<Unit filename="main.cpp" />
