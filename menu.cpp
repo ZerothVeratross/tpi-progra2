@@ -258,7 +258,7 @@ void mostrar_mesa(Mesa * mesa, bool ignorar_borrado, int color=rlutil::WHITE, bo
     CONSOLE_SCREEN_BUFFER_INFO s;
     HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
     GetConsoleScreenBufferInfo(console, &s);
-    int x=0;
+    int x=1;
     int y=s.dwCursorPosition.Y+1;
 
     if (!mesa->get_estado() && ignorar_borrado) {
@@ -271,7 +271,7 @@ void mostrar_mesa(Mesa * mesa, bool ignorar_borrado, int color=rlutil::WHITE, bo
         cout<<"Numero de mesa: ";
         x+=20;
     } else {
-        x+=6;
+        x+=5;
     }
     cout<<mesa->get_nro_mesa();
     rlutil::locate(x, y);
@@ -313,16 +313,106 @@ void mostrar_mesa(Mesa * mesa, bool ignorar_borrado, int color=rlutil::WHITE, bo
 }
 
 void mostrar_mozo(Mozo * mozo, bool ignorar_borrado, int color=rlutil::WHITE, bool mostrar_nombres=true) {
+    CONSOLE_SCREEN_BUFFER_INFO s;
+    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+    GetConsoleScreenBufferInfo(console, &s);
+    int x=1;
+    int y=s.dwCursorPosition.Y+1;
+
     if (!mozo->get_estado() && ignorar_borrado) {
         return;
     }
-    cout<<"\nID del mozo: "<<mozo->get_id_mozo();
-    cout<<" | Nombre: "<<mozo->get_nombre();
-    cout<<" | Apellido: "<<mozo->get_apellido();
-    cout<<" | Numero de telefono: "<<mozo->get_nro_telef();
-    cout<<" | email: "<<mozo->get_email();
-    cout<<" | Fecha de nacimiento: "<<mozo->get_fecha_naci().get_str();
-    cout<<" | Turno: ";
+    rlutil::setColor(color);
+
+    rlutil::locate(x, y);
+    if (mostrar_nombres) {
+        cout<<"ID: ";
+        x+=10;
+    } else {
+        x+=5;
+    }
+    cout<<mozo->get_id_mozo();
+    rlutil::locate(x, y);
+    cout<<" | ";
+    x+=3;
+
+    rlutil::locate(x, y);
+    if (mostrar_nombres) {
+        cout<<"Nombre: ";
+        x+=27;
+    } else {
+        x+=19;
+    }
+    cout<<mozo->get_nombre();
+    rlutil::locate(x, y);
+    cout<<" | ";
+    x+=3;
+
+    rlutil::locate(x, y);
+    if (mostrar_nombres) {
+        cout<<"Apellido: ";
+        x+=39;
+    } else {
+        x+=29;
+    }
+    cout<<mozo->get_apellido();
+    rlutil::locate(x, y);
+    cout<<" | ";
+    x+=3;
+
+    rlutil::locate(x, y);
+    if (mostrar_nombres) {
+        cout<<"DNI: ";
+        x+=13;
+    } else {
+        x+=8;
+    }
+    cout<<mozo->get_dni();
+    rlutil::locate(x, y);
+    cout<<" | ";
+    x+=3;
+
+    rlutil::locate(x, y);
+    if (mostrar_nombres) {
+        cout<<"Telefono: ";
+        x+=29;
+    } else {
+        x+=19;
+    }
+    cout<<mozo->get_nro_telef();
+    rlutil::locate(x, y);
+    cout<<" | ";
+    x+=3;
+
+    rlutil::locate(x, y);
+    if (mostrar_nombres) {
+        cout<<"email: ";
+        x+=56;
+    } else {
+        x+=49;
+    }
+    cout<<mozo->get_email();
+    rlutil::locate(x, y);
+    cout<<" | ";
+    x+=3;
+
+    rlutil::locate(x, y);
+    if (mostrar_nombres) {
+        cout<<"Nacimiento: ";
+        x+=22;
+    } else {
+        x+=10;
+    }
+    cout<<mozo->get_fecha_naci().get_str();
+    rlutil::locate(x, y);
+    cout<<" | ";
+    x+=3;
+
+    rlutil::locate(x, y);
+    if (mostrar_nombres) {
+        cout<<"Turno: ";
+    }
+
     switch(mozo->get_turno()) {
     case 1:
         cout<<"Maniana";
@@ -336,18 +426,86 @@ void mostrar_mozo(Mozo * mozo, bool ignorar_borrado, int color=rlutil::WHITE, bo
     default:
         imprimir_error("registro invalido");
     }
+    cout<<"\n";
 }
 
 void mostrar_servicio(Servicio * servicio, bool ignorar_borrado, int color=rlutil::WHITE, bool mostrar_nombres=true) {
+    CONSOLE_SCREEN_BUFFER_INFO s;
+    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+    GetConsoleScreenBufferInfo(console, &s);
+    int x=1;
+    int y=s.dwCursorPosition.Y+1;
+
     if (!servicio->get_estado() && ignorar_borrado) {
         return;
     }
-    cout<<"\nNumero de factura: "<<servicio->get_nro_factura();
-    cout<<" | Numero de mesa: "<<servicio->get_nro_mesa();
-    cout<<" | ID de mozo: "<<servicio->get_id_mozo();
-    cout<<" | Fecha de servicio: "<<servicio->get_fecha_serv().get_str();
-    cout<<" | Importe de servicio: "<<servicio->get_importe_serv();
-    cout<<" | Monto abonado por cliente: "<<servicio->get_monto_abon()<<"\n";
+    rlutil::setColor(color);
+
+    rlutil::locate(x, y);
+    if (mostrar_nombres) {
+        cout<<"Factura: ";
+        x+=19;
+    } else {
+        x+=9;
+    }
+    cout<<servicio->get_nro_factura();
+    rlutil::locate(x, y);
+    cout<<" | ";
+    x+=3;
+
+    rlutil::locate(x, y);
+    if (mostrar_nombres) {
+        cout<<"Mesa: ";
+        x+=12;
+    } else {
+        x+=6;
+    }
+    cout<<servicio->get_nro_mesa();
+    rlutil::locate(x, y);
+    cout<<" | ";
+    x+=3;
+
+    rlutil::locate(x, y);
+    if (mostrar_nombres) {
+        cout<<"ID mozo: ";
+        x+=15;
+    } else {
+        x+=6;
+    }
+    cout<<servicio->get_id_mozo();
+    rlutil::locate(x, y);
+    cout<<" | ";
+    x+=3;
+
+    rlutil::locate(x, y);
+    if (mostrar_nombres) {
+        cout<<"Fecha: ";
+        x+=17;
+    } else {
+        x+=10;
+    }
+    cout<<servicio->get_fecha_serv().get_str();
+    rlutil::locate(x, y);
+    cout<<" | ";
+    x+=3;
+
+    rlutil::locate(x, y);
+    if (mostrar_nombres) {
+        cout<<"Importe: ";
+        x+=20;
+    } else {
+        x+=11;
+    }
+    cout<<servicio->get_importe_serv();
+    rlutil::locate(x, y);
+    cout<<" | ";
+    x+=3;
+
+    rlutil::locate(x, y);
+    if (mostrar_nombres) {
+        cout<<"Monto abonado: ";
+    }
+    cout<<servicio->get_monto_abon()<<"\n";
 }
 
 //Comienzo funciones para registrar datos
@@ -591,6 +749,7 @@ void admin_menu_consultar() {
 void menu_consultar_mesas() {
     ArchivoMesa archivo;
     int i, mesas_encontradas=0, datos_int[3], cant_regs=archivo.contar_regs();
+    int color=rlutil::WHITE;
 
     if (!cant_regs) {
         acceso_archivo_fallido();
@@ -639,12 +798,27 @@ void menu_consultar_mesas() {
         return;
     }
 
+    imprimir_separador();
+    cout<<"\nNumero|Sillas|Ubicacion |Descripcion\n";
+    imprimir_separador();
+    cout<<"\n";
     for (i=0; i<cant_regs; i++) {
-        mostrar_mesa(&mesas[i], true);
+        if (mesas[i].get_estado()) {
+            if (color==rlutil::WHITE) {
+                color=rlutil::GREY;
+            } else {
+                color=rlutil::WHITE;
+            }
+        }
+
+        mostrar_mesa(&mesas[i], true, color, false);
         if (mesas[i].get_estado()) {
             mesas_encontradas++;
         }
     }
+
+    rlutil::setColor(rlutil::WHITE);
+    imprimir_separador();
     rlutil::setColor(rlutil::GREEN);
     if (mesas_encontradas!=1) {
         cout<<"\nSe encontraron "<<mesas_encontradas<<" mesas\n";
@@ -657,6 +831,7 @@ void menu_consultar_mesas() {
 void menu_consultar_mozos() {
     ArchivoMozo archivo;
     int i, mozos_encontrados=0, datos_int[3], cant_regs=archivo.contar_regs();
+    int color=rlutil::WHITE;
 
     if (!cant_regs) {
         acceso_archivo_fallido();
@@ -718,12 +893,30 @@ void menu_consultar_mozos() {
         return;
     }
 
+    imprimir_separador();
+    imprimir_separador();
+    imprimir_separador();
+    cout<<"\nID    | Nombre              | Apellido                      | DNI      | Telefono            | email                                             | Nacimiento | Turno\n";
+    imprimir_separador();
+    imprimir_separador();
+    imprimir_separador();
+    cout<<"\n";
+
     for (i=0; i<cant_regs; i++) {
-        mostrar_mozo(&mozos[i], true);
+        if (mozos[i].get_estado()) {
+            if (color==rlutil::WHITE) {
+                color=rlutil::GREY;
+            } else {
+                color=rlutil::WHITE;
+            }
+        }
+
+        mostrar_mozo(&mozos[i], true, color, false);
         if (mozos[i].get_estado()) {
             mozos_encontrados++;
         }
     }
+
     rlutil::setColor(rlutil::GREEN);
     if (mozos_encontrados!=1) {
         cout<<"\nSe encontraron "<<mozos_encontrados<<" mozos\n";
@@ -736,6 +929,7 @@ void menu_consultar_mozos() {
 void menu_consultar_servicios() {
     ArchivoServicio archivo;
     int i, servicios_encontrados=0, datos_int[3], cant_regs=archivo.contar_regs();
+    int color=rlutil::WHITE;
 
     if (!cant_regs) {
         acceso_archivo_fallido();
@@ -795,8 +989,23 @@ void menu_consultar_servicios() {
         return;
     }
 
+    imprimir_separador();
+    imprimir_separador();
+    cout<<"\nFactura   | Mesa   | ID mozo| Fecha      | Importe     | Monto abonado\n";
+    imprimir_separador();
+    imprimir_separador();
+    cout<<"\n";
+
     for (i=0; i<cant_regs; i++) {
-        mostrar_servicio(&servicios[i], true);
+        if (servicios[i].get_estado()) {
+            if (color==rlutil::WHITE) {
+                color=rlutil::GREY;
+            } else {
+                color=rlutil::WHITE;
+            }
+        }
+
+        mostrar_servicio(&servicios[i], true, color, false);
         if (servicios[i].get_estado()) {
             servicios_encontrados++;
         }
@@ -892,6 +1101,7 @@ void menu_listar_mesas() {
 void menu_listar_mozos() {
     ArchivoMozo archivo;
     int i, orden, cant_regs=archivo.contar_regs();
+    int color=rlutil::WHITE;
 
     if (!cant_regs) {
         acceso_archivo_fallido();
@@ -930,19 +1140,45 @@ void menu_listar_mozos() {
     default:
         break;
     }
-
+/*
     for (i=0; i<cant_regs; i++) {
         if (mozos[i].get_estado() && !ignorar_borrado) {
             continue;
         }
         mostrar_mozo(&mozos[i], ignorar_borrado);
-    }
+    }*/
+
+    imprimir_separador();
+    imprimir_separador();
+    imprimir_separador();
+    cout<<"\nID    | Nombre              | Apellido                      | DNI      | Telefono            | email                                             | Nacimiento | Turno\n";
+    imprimir_separador();
+    imprimir_separador();
+    imprimir_separador();
     cout<<"\n";
+    for (i=0; i<cant_regs; i++) {
+        if (mozos[i].get_estado() && !ignorar_borrado) {
+            continue;
+        }
+
+        if (mozos[i].get_estado() || (!mozos[i].get_estado() && !ignorar_borrado)) {
+            if (color==rlutil::WHITE) {
+                color=rlutil::GREY;
+            } else {
+                color=rlutil::WHITE;
+            }
+        }
+        mostrar_mozo(&mozos[i], ignorar_borrado, color, false);
+    }
+    imprimir_separador();
+    imprimir_separador();
+    rlutil::setColor(rlutil::WHITE);
 }
 
 void menu_listar_servicios() {
     ArchivoServicio archivo;
     int i, orden, cant_regs=archivo.contar_regs();
+    int color=rlutil::WHITE;
 
     if (!cant_regs) {
         acceso_archivo_fallido();
@@ -982,13 +1218,28 @@ void menu_listar_servicios() {
         break;
     }
 
+    imprimir_separador();
+    imprimir_separador();
+    cout<<"\nFactura   | Mesa   | ID mozo| Fecha      | Importe     | Monto abonado\n";
+    imprimir_separador();
+    imprimir_separador();
+    cout<<"\n";
     for (i=0; i<cant_regs; i++) {
         if (servicios[i].get_estado() && !ignorar_borrado) {
             continue;
         }
-        mostrar_servicio(&servicios[i], ignorar_borrado);
+
+        if (servicios[i].get_estado() || (!servicios[i].get_estado() && !ignorar_borrado)) {
+            if (color==rlutil::WHITE) {
+                color=rlutil::GREY;
+            } else {
+                color=rlutil::WHITE;
+            }
+        }
+        mostrar_servicio(&servicios[i], ignorar_borrado, color, false);
     }
-    cout<<"\n";
+    imprimir_separador();
+    rlutil::setColor(rlutil::WHITE);
 }
 //Fin funciones para listar datos
 
@@ -1021,6 +1272,7 @@ void admin_menu_informe() {
 void informe_recaudacion_anual() {
     ArchivoServicio archivo;
     int i, pos, cant_regs=archivo.contar_regs();
+    int color=rlutil::WHITE;
 
     if (!cant_regs) {
         acceso_archivo_fallido();
@@ -1054,19 +1306,36 @@ void informe_recaudacion_anual() {
     }
 
     ordenar_int_con_float_secundario(anios, recaudaciones, 30);
-    cout<<"Anio | Recaudacion\n";
+    imprimir_separador();
+    cout<<"\nAnio | Recaudacion\n";
+    imprimir_separador();
+    cout<<"\n";
     for (i=0; i<30; i++) {
         if (anios[i]==0) {
             break;
         }
-        cout<<anios[i]<<" | $"<<recaudaciones[i]<<"\n";
+
+        if (color==rlutil::WHITE) {
+            color=rlutil::GREY;
+        } else {
+            color=rlutil::WHITE;
+        }
+        rlutil::setColor(color);
+        cout<<anios[i]<<" | $ "<<recaudaciones[i]<<"\n";
     }
+    rlutil::setColor(rlutil::WHITE);
 }
 
 void informe_recaudacion_por_mozo() {
     ArchivoMozo aMozo;
     ArchivoServicio aServicio;
     int i, pos, cant_mozos=aMozo.contar_regs();
+    CONSOLE_SCREEN_BUFFER_INFO s;
+    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+    GetConsoleScreenBufferInfo(console, &s);
+    int x=1;
+    int y=s.dwCursorPosition.Y+3;
+    int color=rlutil::WHITE;
 
     if (!cant_mozos) {
         acceso_archivo_fallido();
@@ -1108,19 +1377,48 @@ void informe_recaudacion_por_mozo() {
 
     }
 
-    cout<<"ID de mozo | Nombre y Apellido | Recaudacion\n";
+    imprimir_separador();
+    imprimir_separador();
+    cout<<"\nID mozo | Nombre y Apellido                                  | Recaudacion\n";
+    imprimir_separador();
+    imprimir_separador();
     for (i=0; i<cant_mozos; i++) {
         if (!mozos[i].get_estado()) {
             continue;
         }
-        cout<<mozos[i].get_id_mozo()<<" | "<<mozos[i].get_nombre()<<" "<<mozos[i].get_apellido()<<" | $"<<recaudaciones[i]<<"\n";
+
+        if (color==rlutil::WHITE) {
+            color=rlutil::GREY;
+        } else {
+            color=rlutil::WHITE;
+        }
+        rlutil::setColor(color);
+
+        y+=1;
+        x=1;
+        rlutil::locate(x, y);
+        cout<<mozos[i].get_id_mozo();
+        x+=7;
+        rlutil::locate(x, y);
+        cout<<" | "<<mozos[i].get_nombre()<<" "<<mozos[i].get_apellido();
+        x+=53;
+        rlutil::locate(x, y);
+        cout<<" | $ "<<recaudaciones[i];
     }
+    cout<<"\n";
+    imprimir_separador();
 }
 
 void informe_recaudacion_por_mesa() {
     ArchivoMesa aMesa;
     ArchivoServicio aServicio;
     int i, pos, cant_mesas=aMesa.contar_regs();
+    CONSOLE_SCREEN_BUFFER_INFO s;
+    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+    GetConsoleScreenBufferInfo(console, &s);
+    int x=1;
+    int y=s.dwCursorPosition.Y+3;
+    int color=rlutil::WHITE;
 
     if (!cant_mesas) {
         acceso_archivo_fallido();
@@ -1138,7 +1436,7 @@ void informe_recaudacion_por_mesa() {
     Servicio servicios[cant_servicios];
     float recaudaciones[cant_mesas];
 
-    if (aMesa.listar_mesas(mesas, cant_mesas)) {
+    if (!aMesa.listar_mesas(mesas, cant_mesas)) {
         acceso_archivo_fallido();
         return;
     }
@@ -1166,14 +1464,30 @@ void informe_recaudacion_por_mesa() {
         recaudaciones[pos]+=servicios[i].get_importe_serv();
 
     }
-
-    cout<<"Numero de mesa | Recaudacion\n";
+    imprimir_separador();
+    cout<<"\nNumero de mesa | Recaudacion\n";
+    imprimir_separador();
     for (i=0; i<cant_mesas; i++) {
         if (!mesas[i].get_estado()) {
             continue;
         }
-        cout<<mesas[i].get_nro_mesa()<<" | $"<<recaudaciones[i]<<"\n";
+
+        if (color==rlutil::WHITE) {
+            color=rlutil::GREY;
+        } else {
+            color=rlutil::WHITE;
+        }
+        rlutil::setColor(color);
+
+        x=1;
+        y+=1;
+        rlutil::locate(x, y);
+        cout<<mesas[i].get_nro_mesa();
+        x+=14;
+        rlutil::locate(x, y);
+        cout<<" | $ "<<recaudaciones[i];
     }
+    cout<<"\n";
 }
 
 void informe_recaudacion_mensual() {
@@ -1213,9 +1527,12 @@ void informe_recaudacion_mensual() {
         }
     }
 
-    cout<<"ANIO "<<anio<<"\n";
-    cout<<"MES        | Recaudacion\n";
-    cout<<"Enero      | $"<<recaudaciones[0]<<"\n";
+    imprimir_separador();
+    cout<<"\nANIO "<<anio<<"\n";
+    imprimir_separador();
+    cout<<"\nMES        | Recaudacion\n";
+    imprimir_separador();
+    cout<<"\nEnero      | $"<<recaudaciones[0]<<"\n";
     cout<<"Febrero    | $"<<recaudaciones[1]<<"\n";
     cout<<"Marzo      | $"<<recaudaciones[2]<<"\n";
     cout<<"Abril      | $"<<recaudaciones[3]<<"\n";
@@ -1233,6 +1550,12 @@ void informe_propinas_percibidas() {
     ArchivoMozo aMozo;
     ArchivoServicio aServicio;
     int i, pos, cant_mozos=aMozo.contar_regs();
+    CONSOLE_SCREEN_BUFFER_INFO s;
+    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+    GetConsoleScreenBufferInfo(console, &s);
+    int x=1;
+    int y=s.dwCursorPosition.Y+3;
+    int color=rlutil::WHITE;
 
     if (!cant_mozos) {
         acceso_archivo_fallido();
@@ -1279,21 +1602,42 @@ void informe_propinas_percibidas() {
 
     }
 
-
-    cout<<"ID de mozo | Nombre y Apellido | Propinas percibidas\n";
+    imprimir_separador();
+    imprimir_separador();
+    cout<<"\nID mozo | Nombre y Apellido                                  | Propinas percibidas\n";
+    imprimir_separador();
+    imprimir_separador();
     for (i=0; i<cant_mozos; i++) {
         if (!mozos[i].get_estado()) {
             continue;
         }
-        cout<<mozos[i].get_id_mozo()<<" | "<<mozos[i].get_nombre()<<" "<<mozos[i].get_apellido()<<" | $"<<propinas[i]<<"\n";
+
+        if (color==rlutil::WHITE) {
+            color=rlutil::GREY;
+        } else {
+            color=rlutil::WHITE;
+        }
+        rlutil::setColor(color);
+
+        x=1;
+        y+=1;
+        rlutil::locate(x, y);
+        cout<<mozos[i].get_id_mozo();
+        x+=7;
+        rlutil::locate(x, y);
+        cout<<" | "<<mozos[i].get_nombre()<<" "<<mozos[i].get_apellido();
+        x+=53;
+        rlutil::locate(x, y);
+        cout<<" | $ "<<propinas[i];
     }
+    cout<<"\n";
 }
 //Fin funciones para generar informes
 
 //Comienzo funciones para borrar
 void admin_menu_borrar_recuperar() {
     int dato_int;
-    pedir_comando("\nQue tipo de dato desea borrar?\n1. Mesa\n2. Mozo\n3. Servicio\n", 3, &dato_int);
+    pedir_comando("\nQue tipo de dato desea borrar o recuperar?\n1. Mesa\n2. Mozo\n3. Servicio\n", 3, &dato_int);
     switch (dato_int) {
     case 1:
         menu_borrar_recuperar_mesa();
@@ -1326,7 +1670,7 @@ void menu_borrar_recuperar_mesa() {
         return;
     }
 
-    if (!pedir_int("\nIngrese el numero de mesa que desea borrar: ", 1, cant_regs, &dato_int)) {return;}
+    if (!pedir_int("\nIngrese el numero de mesa que desea borrar o recuperar: ", 1, cant_regs, &dato_int)) {return;}
 
     pos=buscar_nro_mesa(mesas, cant_regs, dato_int);
 
@@ -1374,7 +1718,7 @@ void menu_borrar_recuperar_mozo() {
         return;
     }
 
-    if (!pedir_int("\nIngrese el ID de mozo que desea borrar: ", 1, cant_regs, &dato_int)) {return;}
+    if (!pedir_int("\nIngrese el ID de mozo que desea borrar o recuperar: ", 1, cant_regs, &dato_int)) {return;}
 
     pos=buscar_id_mozo(mozos, cant_regs, dato_int);
 
@@ -1422,7 +1766,7 @@ void menu_borrar_recuperar_servicio() {
         return;
     }
 
-    if (!pedir_int("\nIngrese el numero de factura del servicio que desea borrar: ", 1, cant_regs, &dato_int)) {return;}
+    if (!pedir_int("\nIngrese el numero de factura del servicio que desea borrar o recuperar: ", 1, cant_regs, &dato_int)) {return;}
 
     pos=buscar_nro_factura(servicios, cant_regs, dato_int);
 

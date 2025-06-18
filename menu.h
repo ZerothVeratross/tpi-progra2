@@ -3,6 +3,7 @@
 #include "archivoServicio.h"
 #include "arrutil.h"
 #include "rlutil.h"
+#include <iomanip>
 #include <windows.h>    //header principal de la API de Windows https://learn.microsoft.com/en-us/windows/win32/api/
 
 void clear_screen(char fill = ' ');
