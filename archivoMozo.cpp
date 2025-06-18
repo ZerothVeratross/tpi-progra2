@@ -41,6 +41,7 @@ int ArchivoMozo::consultar_mozos(Mozo * buffer, int cant_regs, int tipo_dato, in
             return 0;
         }
     }
+    fclose(pMozos);
     return 1;
 }
 
@@ -71,6 +72,7 @@ int ArchivoMozo::consultar_mozos(Mozo * buffer, int cant_regs, int tipo_datos, s
             return 0;
         }
     }
+    fclose(pMozos);
     return 1;
 }
 
@@ -84,7 +86,7 @@ int ArchivoMozo::listar_mozos(Mozo * buffer, int cant_regs) {
     for (i=0; i<cant_regs; i++) {
         fread(&buffer[i], get_tam_reg(), 1, pMozos);
     }
-
+    fclose(pMozos);
     return 1;
 }
 

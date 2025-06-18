@@ -20,15 +20,15 @@ int ArchivoServicio::registrar_servicio(Servicio * servicio) {
 }
 
 int ArchivoServicio::consultar_servicios(Servicio * buffer, int cant_regs, int tipo_dato, int cota_inf, int cota_sup) {
-    FILE *pMozos=fopen(get_direccion().c_str(), "rb");
+    FILE *pServicios=fopen(get_direccion().c_str(), "rb");
     int i;
 
-    if (pMozos==NULL) {
+    if (pServicios==NULL) {
         return 0;
     }
 
     for (i=0; i<cant_regs; i++) {
-        fread(&buffer[i], get_tam_reg(), 1, pMozos);
+        fread(&buffer[i], get_tam_reg(), 1, pServicios);
         switch(tipo_dato) {
         case 1: //consulta por numero de factura
             buffer[i].set_estado(buffer[i].get_nro_factura()>=cota_inf && buffer[i].get_nro_factura()<=cota_sup
@@ -46,19 +46,20 @@ int ArchivoServicio::consultar_servicios(Servicio * buffer, int cant_regs, int t
             return 0;
         }
     }
+    fclose(pServicios);
     return 1;
 }
 
 int ArchivoServicio::consultar_servicios(Servicio * buffer, int cant_regs, int tipo_dato, float cota_inf, float cota_sup) {
-    FILE *pMozos=fopen(get_direccion().c_str(), "rb");
+    FILE *pServicios=fopen(get_direccion().c_str(), "rb");
     int i;
 
-    if (pMozos==NULL) {
+    if (pServicios==NULL) {
         return 0;
     }
 
     for (i=0; i<cant_regs; i++) {
-        fread(&buffer[i], get_tam_reg(), 1, pMozos);
+        fread(&buffer[i], get_tam_reg(), 1, pServicios);
         switch(tipo_dato) {
         case 5: //consulta por importe de servicio
             buffer[i].set_estado(buffer[i].get_importe_serv()>=cota_inf && buffer[i].get_importe_serv()<=cota_sup
@@ -72,19 +73,20 @@ int ArchivoServicio::consultar_servicios(Servicio * buffer, int cant_regs, int t
             return 0;
         }
     }
+    fclose(pServicios);
     return 1;
 }
 
 int ArchivoServicio::consultar_servicios(Servicio * buffer, int cant_regs, int tipo_dato, Fecha cota_inf, Fecha cota_sup) {
-    FILE *pMozos=fopen(get_direccion().c_str(), "rb");
+    FILE *pServicios=fopen(get_direccion().c_str(), "rb");
     int i;
 
-    if (pMozos==NULL) {
+    if (pServicios==NULL) {
         return 0;
     }
 
     for (i=0; i<cant_regs; i++) {
-        fread(&buffer[i], get_tam_reg(), 1, pMozos);
+        fread(&buffer[i], get_tam_reg(), 1, pServicios);
         switch(tipo_dato) {
         case 4: //consulta por fecha de servicio
             buffer[i].set_estado(buffer[i].get_fecha_serv().comparar(cota_inf)>=0 && buffer[i].get_fecha_serv().comparar(cota_sup)<=0
@@ -94,6 +96,7 @@ int ArchivoServicio::consultar_servicios(Servicio * buffer, int cant_regs, int t
             return 0;
         }
     }
+    fclose(pServicios);
     return 1;
 }
 
@@ -107,7 +110,7 @@ int ArchivoServicio::listar_servicios(Servicio * buffer, int cant_regs) {
     for (i=0; i<cant_regs; i++) {
         fread(&buffer[i], get_tam_reg(), 1, pServicios);
     }
-
+    fclose(pServicios);
     return 1;
 }
 
@@ -130,7 +133,7 @@ int ArchivoServicio::generar_servicios(int cantidad) {
     int i, nro_mesa, id_mozo, nro_factura;
     float importe_serv, monto_abon;
     Fecha fecha_serv;
-    FILE * pArchivo;
+    FILE * pServicios;
     ArchivoMesa archivo_mesa;
     ArchivoMozo archivo_mozo;
     Mesa mesa;
@@ -142,26 +145,26 @@ int ArchivoServicio::generar_servicios(int cantidad) {
     int nros_mesas[mesas];
     int ids_mozos[mozos];
 
-    pArchivo=fopen(archivo_mesa.get_direccion().c_str(), "rb");
-    if (pArchivo==NULL) {
+    pServicios=fopen(archivo_mesa.get_direccion().c_str(), "rb");
+    if (pServicios==NULL) {
         return 0;
     }
     for (i=0; i<mesas; i++) {
-        fread(&mesa, archivo_mesa.get_tam_reg(), 1, pArchivo);
+        fread(&mesa, archivo_mesa.get_tam_reg(), 1, pServicios);
         nros_mesas[i]=mesa.get_nro_mesa();
     }
 
-    pArchivo=fopen(archivo_mozo.get_direccion().c_str(), "rb");
-    if (pArchivo==NULL) {
+    pServicios=fopen(archivo_mozo.get_direccion().c_str(), "rb");
+    if (pServicios==NULL) {
         return 0;
     }
     for (i=0; i<mozos; i++) {
-        fread(&mozo, archivo_mozo.get_tam_reg(), 1, pArchivo);
+        fread(&mozo, archivo_mozo.get_tam_reg(), 1, pServicios);
         ids_mozos[i]=mozo.get_id_mozo();
     }
 
-    pArchivo=fopen(get_direccion().c_str(), "wb");
-    if (pArchivo==NULL) {
+    pServicios=fopen(get_direccion().c_str(), "wb");
+    if (pServicios==NULL) {
         return 0;
     }
     srand(time(NULL));  //utiliza la hora como semilla para el generador de numeros aleatorios
@@ -178,8 +181,8 @@ int ArchivoServicio::generar_servicios(int cantidad) {
         if (rand()%4==3) {
             servicio.set_estado(false);
         }
-        fwrite(&servicio, get_tam_reg(), 1, pArchivo);
+        fwrite(&servicio, get_tam_reg(), 1, pServicios);
     }
-    fclose(pArchivo);
+    fclose(pServicios);
     return 1;
 }

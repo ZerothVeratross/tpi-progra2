@@ -46,6 +46,7 @@ int ArchivoMesa::consultar_mesas(Mesa * buffer, int cant_regs, int tipo_dato, in
             return 0;
         }
     }
+    fclose(pMesas);
     return 1;
 }
 
@@ -59,7 +60,7 @@ int ArchivoMesa::listar_mesas(Mesa * buffer, int cant_regs) {
     for (i=0; i<cant_regs; i++) {
         fread(&buffer[i], get_tam_reg(), 1, pMesas);
     }
-
+    fclose(pMesas);
     return 1;
 }
 
