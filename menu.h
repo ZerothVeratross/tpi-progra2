@@ -3,6 +3,7 @@
 #include "archivoServicio.h"
 #include "arrutil.h"
 #include "rlutil.h"
+#include "archivoConfig.h"
 #include <iomanip>
 #include <windows.h>    //header principal de la API de Windows https://learn.microsoft.com/en-us/windows/win32/api/
 
@@ -25,7 +26,9 @@ int pedir_float(const char * pedido, float cota_inf, float cota_sup, float * dat
 int pedir_rango_float(const char * pedido, float * datos_float, int pos1, int pos2);
 int pedir_fecha(const char * pedido, Fecha * fecha, int anio1, int anio2);
 
-void admin_listar_comandos();
+bool comandos_principales();
+bool menu_cambiar_modo(Configuracion * config, int modo);
+bool menu_cambiar_contrasenia(Configuracion * config);
 
 void mostrar_mesa(Mesa * mesa, bool ignorar_borrado, int color, bool mostrar_nombres);
 void mostrar_mozo(Mozo * mozo, bool ignorar_borrado, int color, bool mostrar_nombres);

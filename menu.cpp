@@ -249,9 +249,146 @@ int pedir_rango_fecha(const char * pedido, Fecha * fechas, int anio1, int anio2,
     return 1;
 }
 
-void admin_listar_comandos() {
-    imprimir_separador();
-    imprimir_comando("\nLista de comandos:\n1. Registrar\n2. Consultar\n3. Listar\n4. Generar informe\n5. Borrar o recuperar\n6. Modificar\n7. Salir de modo administrador\n8. Generar datos aleatorios\n-1. Cerrar programa\n-2. Limpiar consola\n\nIngrese un comando: ");
+bool comandos_principales() {
+    bool admin;
+    int comando;
+    ArchivoConfiguracion aConfig;
+    Configuracion config;
+    comando=aConfig.inicializar();
+
+    if (comando==0) {
+        cout<<"No hay un archivo de configuracion, creando uno...\n";
+    } else if (comando==1) {
+        cout<<"\nLa contrasenia todavia tiene el valor predeterminado de \"123\". Se recomienda cambiarla\n";
+    }
+
+    aConfig.leer_config(&config);
+    admin=config.get_modo()==1;
+    if (admin) {
+        imprimir_separador();
+        imprimir_comando("\nLista de comandos ADMINISTRADOR:\n1. Registrar\n2. Consultar\n3. Listar\n"
+                         "4. Generar informe\n5. Borrar o recuperar\n6. Modificar\n"
+                         "7. Generar datos aleatorios\n"
+                         "-1. Cerrar programa\n-2. Limpiar consola\n"
+                         "-3. Cambiar modo de usuario\n-4. Cambiar contrasenia\nIngrese un comando: ");
+        cin>>comando;
+        switch (comando) {
+        case 1:
+            admin_menu_registrar();
+            break;
+        case 2:
+            admin_menu_consultar();
+            break;
+        case 3:
+            admin_menu_listar();
+            break;
+        case 4:
+            admin_menu_informe();
+            break;
+        case 5:
+            admin_menu_borrar_recuperar();
+            break;
+        case 6:
+            admin_menu_modificar();
+            break;
+        case 7:
+            menu_generacion_datos();
+            break;
+        case -1:
+            return false;
+            break;
+        case -2:
+            clear_screen();
+            break;
+        case -3:
+            if (menu_cambiar_modo(&config, 2)) {
+                aConfig.guardar_config(&config);
+                clear_screen();
+            } else {
+                imprimir_error("\nContrasenia rechazada");
+            }
+
+            break;
+        case -4:
+            if (menu_cambiar_contrasenia(&config)) {
+                aConfig.guardar_config(&config);
+            } else {
+                imprimir_error("\nContrasenia rechazada");
+            }
+
+            break;
+        default:
+            imprimir_error("\nComando invalido\n");
+            break;
+        }
+    } else {
+        imprimir_separador();
+        imprimir_comando("\nLista de comandos USUARIO COMUN:\n1. Registrar servicio\n2. Consultar mesas o servicios\n"
+                         "3. Modificar mesa\n-1. Cerrar programa\n-2. Limpiar consola\n"
+                         "-3. Cambiar modo de usuario\n\nIngrese un comando: ");
+        cin>>comando;
+        switch (comando) {
+        case 1:
+            //comun_menu_registrar();
+            break;
+        case 2:
+            //comun_consultar();
+            break;
+        case 3:
+            //comun_modificar();
+        case -1:
+            return false;
+            break;
+        case -2:
+            clear_screen();
+            break;
+        case -3:
+            if (menu_cambiar_modo(&config, 1)) {
+                aConfig.guardar_config(&config);
+                clear_screen();
+            } else {
+                imprimir_error("\nContrasenia rechazada");
+            }
+
+            break;
+        default:
+            cout<<"\nComando invalido\n";
+            break;
+        }
+    }
+    return true;
+}
+
+bool menu_cambiar_modo(Configuracion * config, int modo) {
+    string contrasenia;
+    char buffer[20];
+    int i;
+    pedir_string("\nIngrese la contrasenia: ", &contrasenia, 20, true, false);
+    contrasenia.copy(buffer, 20, 0);
+    for (i=contrasenia.length(); i<20; i++) {
+        buffer[i]='\0';
+    }
+    config->set_modo(buffer, modo);
+    return modo==config->get_modo();
+}
+
+bool menu_cambiar_contrasenia(Configuracion * config) {
+    string contrasenia_vieja;
+    string contrasenia_nueva;
+    char buffer1[20];
+    char buffer2[20];
+    int i;
+    pedir_string("\nIngrese la contrasenia vieja: ", &contrasenia_vieja, 20, true, false);
+    contrasenia_vieja.copy(buffer1, 20, 0);
+    for (i=contrasenia_vieja.length(); i<20; i++) {
+        buffer1[i]='\0';
+    }
+    pedir_string("\nIngrese la contrasenia nueva: ", &contrasenia_nueva, 20, true, false);
+    contrasenia_nueva.copy(buffer2, 20, 0);
+    for (i=contrasenia_nueva.length(); i<20; i++) {
+        buffer2[i]='\0';
+    }
+    return config->cambiar_contrasenia(buffer1, buffer2)==1;
 }
 
 void mostrar_mesa(Mesa * mesa, bool ignorar_borrado, int color=rlutil::WHITE, bool mostrar_nombres=true) {
