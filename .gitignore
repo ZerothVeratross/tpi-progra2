@@ -6,5 +6,7 @@
 *.tar
 *.bkp
 *.dat
+*.depend
+*.layout
 bin/
 obj/
