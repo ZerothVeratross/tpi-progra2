@@ -358,7 +358,7 @@ bool comandos_principales() {
     admin=config.get_modo()==1;
     if (admin) {
         rlutil::setColor(rlutil::YELLOW);
-        cout<<"Lista de comandos ADMINISTRADOR\n";
+        cout<<"Comandos para administrador\n";
         rlutil::setColor(rlutil::WHITE);
         imprimir_separador();
         imprimir_comando("\n1. Registrar datos nuevos\n2. Consultar registros especificos\n3. Listar todos los registros de un archivo\n"
@@ -405,7 +405,7 @@ bool comandos_principales() {
         }
     } else {
         rlutil::setColor(rlutil::YELLOW);
-        cout<<"Lista de comandos USUARIO COMUN\n";
+        cout<<"Comandos para usuario comun\n";
         rlutil::setColor(rlutil::WHITE);
         imprimir_separador();
         imprimir_comando("\n1. Registrar un servicio\n"
@@ -994,7 +994,7 @@ int menu_registrar_servicio() {
 //Comienzo funciones para consultar base de datos
 void admin_menu_consultar() {
     int dato_int;
-    comenzar_etapa("Consultar datos");
+    comenzar_etapa("Consultar registros");
     pedir_comando("Que archivo desea consultar?\n1. Mesas\n2. Mozos\n3. Servicios\n", 3, &dato_int);
     switch(dato_int) {
     case 1:
@@ -1013,7 +1013,7 @@ void admin_menu_consultar() {
 
 void comun_menu_consultar() {
     int dato_int;
-    comenzar_etapa("Consultar datos");
+    comenzar_etapa("Consultar registros");
     pedir_comando("Que archivo desea consultar?\n1. Mesas\n2. Servicios\n", 2, &dato_int);
     switch(dato_int) {
     case 1:
@@ -1127,10 +1127,12 @@ void menu_consultar_mozos() {
     string datos_str[2];
     Mozo * mozos=new Mozo[cant_regs];
 
+    comenzar_etapa("Consultar mozos");
     pedir_comando("Que tipo de consulta desea realizar?\n1. Por ID de mozo\n2. Por nombre y/o apellido\n3. Por turno\n",
                   3, &datos_int[0]);
     switch(datos_int[0]) {
     case 1:
+        comenzar_etapa("Consultar mozos por IDs");
         if (!pedir_rango_int("\nIndique el rango de IDs de mozo. Si solo quiere buscar un mozo, escriba dos veces el mismo numero.",
                          datos_int, 1, 2)) {
             return;
@@ -1139,6 +1141,7 @@ void menu_consultar_mozos() {
         ordenar_mozos_por_id(mozos, cant_regs);
         break;
     case 2:
+        comenzar_etapa("Consultar mozos por nombre y/o apellido");
         pedir_comando("\nIndique que desea buscar. Note que debe escribir el nombre y/o apellido exacto.\n1. Nombre\n2. Apellido\n3. Nombre y apellido\n",
                       3, &datos_int[1]);
         switch(datos_int[1]) {
@@ -1165,6 +1168,7 @@ void menu_consultar_mozos() {
         }
         break;
     case 3:
+        comenzar_etapa("Consultar mozos por turno");
         pedir_comando("\nIndique el turno.\n1. Maniana\n2. Tarde\n3. Noche\n", 3, &datos_int[1]);
         datos_int[0]=archivo.consultar_mozos(mozos, cant_regs, 2, datos_int[1], datos_int[1]);
         ordenar_mozos_por_turno_id(mozos, cant_regs);
@@ -1226,47 +1230,54 @@ void menu_consultar_servicios() {
     Fecha datos_fecha[2];
     Servicio * servicios=new Servicio[cant_regs];
 
-    cout<<"Que tipo de consulta desea realizar?\n1. Por numero de factura\n2. Por numero de mesa\n3. Por ID de mozo\n4. Por fecha de servicio\n5. Por importe de servicio\n6. Por monto abonado\n";
+    comenzar_etapa("Consultar servicios");
+    pedir_comando("Que tipo de consulta desea realizar?\n1. Por numero de factura\n2. Por numero de mesa\n3. Por ID de mozo\n4. Por fecha de servicio\n5. Por importe de servicio\n6. Por monto abonado\n", 6, &datos_int[0]);
     cin>>datos_int[0];
     switch(datos_int[0]) {
     case 1:
+        comenzar_etapa("Consultar servicios por numeros de factura");
         if (!pedir_rango_int("\nIndique el rango de numeros de factura. Si solo quiere buscar un servicio, escriba dos veces el mismo numero.",
                          datos_int, 1, 2)) {return;}
         datos_int[0]=archivo.consultar_servicios(servicios, cant_regs, 1, datos_int[1], datos_int[2]);
         ordenar_servicios_por_nro_factura(servicios, cant_regs);
         break;
     case 2:
+        comenzar_etapa("Consultar servicios por numeros de mesa");
         if (!pedir_rango_int("\nIndique el rango de numeros de mesa. Si solo quiere buscar por un numero, escriba dos veces el mismo numero.",
                          datos_int, 1, 2)) {return;}
         datos_int[0]=archivo.consultar_servicios(servicios, cant_regs, 2, datos_int[1], datos_int[2]);
         ordenar_servicios_por_nro_mesa(servicios, cant_regs);
         break;
     case 3:
+        comenzar_etapa("Consultar servicios por IDs de mozo");
         if (!pedir_rango_int("\nIndique el rango de IDs de mozo. Si solo quiere buscar por un ID, escriba dos veces el mismo numero.",
                          datos_int, 1, 2)) {return;}
         datos_int[0]=archivo.consultar_servicios(servicios, cant_regs, 3, datos_int[1], datos_int[2]);
         ordenar_servicios_por_id_mozo(servicios, cant_regs);
         break;
     case 4:
+        comenzar_etapa("Consultar servicios por fechas");
         if (!pedir_rango_fecha("\nIndique el rango de fechas. Si solo quiere buscar un dia especifico, escriba dos veces la misma fecha.\n",
                                datos_fecha, 2000, 2025, 0, 1)) {return;}
         datos_int[0]=archivo.consultar_servicios(servicios, cant_regs, 4, datos_fecha[0], datos_fecha[1]);
         ordenar_servicios_por_fecha_serv(servicios, cant_regs);
         break;
     case 5:
+        comenzar_etapa("Consultar servicios por importes");
         if (!pedir_rango_float("\nIndique el rango de importes. Si solo quiere buscar por un importe especifico, escriba dos veces el mismo numero.",
                          datos_float, 0, 1)) {return;}
         datos_int[0]=archivo.consultar_servicios(servicios, cant_regs, 5, datos_float[0], datos_float[1]);
         ordenar_servicios_por_importe_serv(servicios, cant_regs);
         break;
     case 6:
+        comenzar_etapa("Consultar servicios por montos abonados");
         if (!pedir_rango_float("\nIndique el rango de montos. Si solo quiere buscar por un monto especifico, escriba dos veces el mismo numero.",
                          datos_float, 0, 1)) {return;}
         datos_int[0]=archivo.consultar_servicios(servicios, cant_regs, 6, datos_float[0], datos_float[1]);
         ordenar_servicios_por_monto_abon(servicios, cant_regs);
         break;
     default:
-        comando_invalido();
+        return;
         break;
     }
 
@@ -1309,7 +1320,8 @@ void menu_consultar_servicios() {
 //Comienzo funciones para listar datos
 void admin_menu_listar() {
     int dato_int;
-    pedir_comando("\nIngrese su eleccion:\n1. Listar mesas\n2. Listar mozos\n3. Listar servicios\n", 3, &dato_int);
+    comenzar_etapa("Listar registros");
+    pedir_comando("\nSe recomienda maximizar la ventana. Ingrese su eleccion:\n1. Listar mesas\n2. Listar mozos\n3. Listar servicios\n", 3, &dato_int);
     switch(dato_int) {
     case 1:
         menu_listar_mesas();
@@ -1339,6 +1351,7 @@ void menu_listar_mesas() {
     bool ignorar_borrado=true;
     Mesa * mesas=new Mesa[cant_regs];
 
+    comenzar_etapa("Listar mesas");
     pedir_comando("Como deben estar ordenadas las mesas?\n1. Por numero de mesa\n2. Por cantidad de sillas\n3. Por ubicacion y numero de mesa\n4. Listar mesas dadas de baja\n", 4, &orden);
 
     if (!cant_regs || !archivo.listar_mesas(mesas, cant_regs)) {
@@ -1349,22 +1362,25 @@ void menu_listar_mesas() {
     switch(orden) {
     case 1:
         ordenar_mesas_por_nro(mesas, cant_regs);
+        comenzar_etapa("Mesas ordenadas por numero");
         break;
     case 2:
         ordenar_mesas_por_can_sillas(mesas, cant_regs);
+        comenzar_etapa("Mesas ordenadas por cantidad de sillas");
         break;
     case 3:
         ordenar_mesas_por_ubicacion_nro_mesa(mesas, cant_regs);
+        comenzar_etapa("Mesas ordenadas por ubicacion y numero");
         break;
     case 4:
+        comenzar_etapa("Mesas dadas de baja");
         ignorar_borrado=false;
         break;
     default:
         break;
     }
 
-    imprimir_separador();
-    cout<<"\nNumero|Sillas|Ubicacion |Descripcion\n";
+    cout<<"Numero|Sillas|Ubicacion |Descripcion\n";
     imprimir_separador();
     cout<<"\n";
     for (i=0; i<cant_regs; i++) {
@@ -1397,6 +1413,7 @@ void menu_listar_mozos() {
     bool ignorar_borrado=true;
     Mozo * mozos=new Mozo[cant_regs];
 
+    comenzar_etapa("Listar mozos");
     pedir_comando("Como deben estar ordenadas los mozos?\n1. Por ID de mozo\n2. Alfabeticamente por nombre\n3. Alfabeticamente por apellido\n4. Por fecha de nacimiento\n5. Por turno e ID de mozo\n6. Listar mozos dados de baja\n", 6, &orden);
 
     if (!cant_regs || !archivo.listar_mozos(mozos, cant_regs)) {
@@ -1407,21 +1424,27 @@ void menu_listar_mozos() {
     switch(orden) {
     case 1:
         ordenar_mozos_por_id(mozos, cant_regs);
+        comenzar_etapa("Mozos ordenados por ID");
         break;
     case 2:
         ordenar_mozos_por_nombre(mozos, cant_regs);
+        comenzar_etapa("Mozos ordenados por nombre");
         break;
     case 3:
         ordenar_mozos_por_apellido(mozos, cant_regs);
+        comenzar_etapa("Mozos ordenados por apellido");
         break;
     case 4:
         ordenar_mozos_por_fecha_naci(mozos, cant_regs);
+        comenzar_etapa("Mozos ordenados por nacimiento");
         break;
     case 5:
         ordenar_mozos_por_turno_id(mozos, cant_regs);
+        comenzar_etapa("Mozos ordenados por turno e ID");
         break;
     case 6:
         ignorar_borrado=false;
+        comenzar_etapa("Mozos dados de baja");
         break;
     default:
         break;
@@ -1474,6 +1497,7 @@ void menu_listar_servicios() {
     bool ignorar_borrado=true;
     Servicio * servicios=new Servicio[cant_regs];
 
+    comenzar_etapa("Listar servicios");
     pedir_comando("Como deben estar ordenados los servicios?\n1. Por numero de factura\n2. Por numero de mesa\n3. Por ID de mozo\n4. Por fecha de servicio\n5. Por importe de servicio\n6. Listar servicios dados de baja\n", 6, &orden);
 
     if (!archivo.listar_servicios(servicios, cant_regs)) {
@@ -1484,21 +1508,27 @@ void menu_listar_servicios() {
     switch(orden) {
     case 1:
         ordenar_servicios_por_nro_factura(servicios, cant_regs);
+        comenzar_etapa("Servicios ordenados por numero de factura");
         break;
     case 2:
         ordenar_servicios_por_nro_mesa(servicios, cant_regs);
+        comenzar_etapa("Servicios ordenados por numero de mesa");
         break;
     case 3:
         ordenar_servicios_por_id_mozo(servicios, cant_regs);
+        comenzar_etapa("Servicios ordenados por ID de mozo");
         break;
     case 4:
         ordenar_servicios_por_fecha_serv(servicios, cant_regs);
+        comenzar_etapa("Servicios ordenados por fecha");
         break;
     case 5:
         ordenar_servicios_por_importe_serv(servicios, cant_regs);
+        comenzar_etapa("Servicios ordenados por importe");
         break;
     case 6:
         ignorar_borrado=false;
+        comenzar_etapa("Servicios dados de baja");
         break;
     default:
         break;
@@ -1532,7 +1562,8 @@ void menu_listar_servicios() {
 //Comienzo funciones para generar informes
 void admin_menu_informe() {
     int dato_int;
-    pedir_comando("\nQue tipo de informe desea generar?\n1. Recaudacion anual\n2. Recaudacion por mozo\n3. Recaudacion por mesa\n4. Recaudacion mensual\n5. Propinas percibidas por cada mozo\n", 5, &dato_int);
+    comenzar_etapa("Generar informe");
+    pedir_comando("Que tipo de informe desea generar?\n1. Recaudacion anual\n2. Recaudacion por mozo\n3. Recaudacion por mesa\n4. Recaudacion mensual\n5. Propinas percibidas por cada mozo\n", 5, &dato_int);
     switch(dato_int) {
     case 1:
         informe_recaudacion_anual();
@@ -1592,8 +1623,8 @@ void informe_recaudacion_anual() {
     }
 
     ordenar_int_con_float_secundario(anios, recaudaciones, 30);
-    imprimir_separador();
-    cout<<"\nAnio | Recaudacion\n";
+    comenzar_etapa("Recaudacion anual");
+    cout<<"Anio | Recaudacion\n";
     imprimir_separador();
     cout<<"\n";
     for (i=0; i<30; i++) {
@@ -1610,6 +1641,7 @@ void informe_recaudacion_anual() {
         cout<<anios[i]<<" | $ "<<recaudaciones[i]<<"\n";
     }
     rlutil::setColor(rlutil::WHITE);
+    imprimir_separador();
 }
 
 void informe_recaudacion_por_mozo() {
@@ -1618,9 +1650,7 @@ void informe_recaudacion_por_mozo() {
     int i, pos, cant_mozos=aMozo.contar_regs();
     CONSOLE_SCREEN_BUFFER_INFO s;
     HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-    GetConsoleScreenBufferInfo(console, &s);
-    int x=1;
-    int y=s.dwCursorPosition.Y+3;
+    int y, x=1;
     int color=rlutil::WHITE;
 
     if (!cant_mozos) {
@@ -1663,11 +1693,14 @@ void informe_recaudacion_por_mozo() {
 
     }
 
+    comenzar_etapa("Recaudacion por mozo");
     imprimir_separador();
     imprimir_separador();
     cout<<"\nID mozo | Nombre y Apellido                                  | Recaudacion\n";
     imprimir_separador();
     imprimir_separador();
+    GetConsoleScreenBufferInfo(console, &s);
+    y=s.dwCursorPosition.Y+1;
     for (i=0; i<cant_mozos; i++) {
         if (!mozos[i].get_estado()) {
             continue;
@@ -1691,7 +1724,9 @@ void informe_recaudacion_por_mozo() {
         rlutil::locate(x, y);
         cout<<" | $ "<<recaudaciones[i];
     }
+    rlutil::setColor(rlutil::WHITE);
     cout<<"\n";
+    imprimir_separador();
     imprimir_separador();
 }
 
@@ -1701,9 +1736,7 @@ void informe_recaudacion_por_mesa() {
     int i, pos, cant_mesas=aMesa.contar_regs();
     CONSOLE_SCREEN_BUFFER_INFO s;
     HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-    GetConsoleScreenBufferInfo(console, &s);
-    int x=1;
-    int y=s.dwCursorPosition.Y+3;
+    int y, x=1;
     int color=rlutil::WHITE;
 
     if (!cant_mesas) {
@@ -1750,9 +1783,12 @@ void informe_recaudacion_por_mesa() {
         recaudaciones[pos]+=servicios[i].get_importe_serv();
 
     }
+
+    comenzar_etapa("Recaudacion por mesa");
+    cout<<"Numero de mesa | Recaudacion\n";
     imprimir_separador();
-    cout<<"\nNumero de mesa | Recaudacion\n";
-    imprimir_separador();
+    GetConsoleScreenBufferInfo(console, &s);
+    y=s.dwCursorPosition.Y+1;
     for (i=0; i<cant_mesas; i++) {
         if (!mesas[i].get_estado()) {
             continue;
@@ -1774,6 +1810,8 @@ void informe_recaudacion_por_mesa() {
         cout<<" | $ "<<recaudaciones[i];
     }
     cout<<"\n";
+    rlutil::setColor(rlutil::WHITE);
+    imprimir_separador();
 }
 
 void informe_recaudacion_mensual() {
@@ -1788,7 +1826,8 @@ void informe_recaudacion_mensual() {
     Servicio * servicios=new Servicio[cant_regs];
     float recaudaciones[12];
 
-    cout<<"\nIngrese el anio del que se desea informar: ";
+    comenzar_etapa("Recaudacion por mesa");
+    cout<<"Ingrese el anio del que se desea informar: ";
     cin>>anio;
     if (anio<1950 || anio>2025) {
         cout<<"\nAnio invalido ingresado, regresando al menu principal...\n";
@@ -1813,23 +1852,35 @@ void informe_recaudacion_mensual() {
         }
     }
 
-    imprimir_separador();
-    cout<<"\nANIO "<<anio<<"\n";
+    comenzar_etapa("Recaudacion mensual");
+    cout<<"ANIO "<<anio<<"\n";
     imprimir_separador();
     cout<<"\nMES        | Recaudacion\n";
     imprimir_separador();
     cout<<"\nEnero      | $"<<recaudaciones[0]<<"\n";
+    rlutil::setColor(rlutil::WHITE);
     cout<<"Febrero    | $"<<recaudaciones[1]<<"\n";
+    rlutil::setColor(rlutil::GREY);
     cout<<"Marzo      | $"<<recaudaciones[2]<<"\n";
+    rlutil::setColor(rlutil::WHITE);
     cout<<"Abril      | $"<<recaudaciones[3]<<"\n";
+    rlutil::setColor(rlutil::GREY);
     cout<<"Mayo       | $"<<recaudaciones[4]<<"\n";
+    rlutil::setColor(rlutil::WHITE);
     cout<<"Junio      | $"<<recaudaciones[5]<<"\n";
+    rlutil::setColor(rlutil::GREY);
     cout<<"Julio      | $"<<recaudaciones[6]<<"\n";
+    rlutil::setColor(rlutil::WHITE);
     cout<<"Agosto     | $"<<recaudaciones[7]<<"\n";
+    rlutil::setColor(rlutil::GREY);
     cout<<"Septiembre | $"<<recaudaciones[8]<<"\n";
+    rlutil::setColor(rlutil::WHITE);
     cout<<"Octubre    | $"<<recaudaciones[9]<<"\n";
+    rlutil::setColor(rlutil::GREY);
     cout<<"Noviembre  | $"<<recaudaciones[10]<<"\n";
+    rlutil::setColor(rlutil::WHITE);
     cout<<"Diciembre  | $"<<recaudaciones[11]<<"\n";
+    imprimir_separador();
 }
 
 void informe_propinas_percibidas() {
@@ -1838,9 +1889,7 @@ void informe_propinas_percibidas() {
     int i, pos, cant_mozos=aMozo.contar_regs();
     CONSOLE_SCREEN_BUFFER_INFO s;
     HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-    GetConsoleScreenBufferInfo(console, &s);
-    int x=1;
-    int y=s.dwCursorPosition.Y+3;
+    int y, x=1;
     int color=rlutil::WHITE;
 
     if (!cant_mozos) {
@@ -1888,11 +1937,14 @@ void informe_propinas_percibidas() {
 
     }
 
+    comenzar_etapa("Propinas percibidas");
     imprimir_separador();
     imprimir_separador();
     cout<<"\nID mozo | Nombre y Apellido                                  | Propinas percibidas\n";
     imprimir_separador();
     imprimir_separador();
+    GetConsoleScreenBufferInfo(console, &s);
+    y=s.dwCursorPosition.Y+1;
     for (i=0; i<cant_mozos; i++) {
         if (!mozos[i].get_estado()) {
             continue;
@@ -1917,6 +1969,9 @@ void informe_propinas_percibidas() {
         cout<<" | $ "<<propinas[i];
     }
     cout<<"\n";
+    rlutil::setColor(rlutil::WHITE);
+    imprimir_separador();
+    imprimir_separador();
 }
 //Fin funciones para generar informes
 
@@ -2429,7 +2484,8 @@ void menu_generacion_datos() {
     ArchivoMozo aMozo;
     ArchivoServicio aServicio;
     int datos_int[2];
-    if (!pedir_comando("Que archivo desea generar? Recuerde que la generacion de servicios depende de la existencia de datos para mesas y mozos.\n1. Mesas\n2. Mozos\n3. Servicios\n",
+    comenzar_etapa("Generacion de datos aleatorios");
+    if (!pedir_comando("Que archivo desea generar? Recuerde que la generacion de servicios depende de la existencia de datos para mesas y mozos. Cada registro tiene 25% de probabilidad de generarse dado de baja\n1. Mesas\n2. Mozos\n3. Servicios\n",
                        3, &datos_int[0])) {
         return;
     }
