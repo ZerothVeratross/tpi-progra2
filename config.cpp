@@ -8,7 +8,7 @@ Configuracion::Configuracion() {
     for (i=3; i<20; i++) {
         contrasenia[i]='\0';
     }
-    modo=2;
+    modo=1;
 }
 
 Configuracion::Configuracion(char n_contrasenia[20], int n_modo) {
