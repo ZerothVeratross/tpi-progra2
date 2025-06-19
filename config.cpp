@@ -49,7 +49,17 @@ int Configuracion::get_modo() {
 }
 
 void Configuracion::set_modo(char intento[20], int n_modo) {
-    if (comparar_contrasenia(intento) && n_modo>=1 && n_modo<=2) {
+    switch(n_modo) {
+    case 1:
+        if (comparar_contrasenia(intento)) {
+            modo=n_modo;
+        }
+        break;
+    case 2:
         modo=n_modo;
+        break;
+    default:
+        break;
     }
+
 }
