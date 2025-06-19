@@ -5,13 +5,13 @@ ArchivoConfiguracion::ArchivoConfiguracion() : Archivo() {
     set_tam_reg(sizeof(Configuracion));
 }
 
-int ArchivoConfiguracion::inicializar() {
+int ArchivoConfiguracion::comprobar_config() {
     FILE * pConfig;
     Configuracion dummy;
     char condummy[20] = {'1', '2', '3', '\0', '\0', '\0', '\0', '\0', '\0', '\0',
     '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'};
 
-    if (contar_regs()==0) {
+    if (contar_regs()==-1) {
         pConfig=fopen(get_direccion().c_str(), "wb");
         fwrite(&dummy, get_tam_reg(), 1, pConfig);
         fclose(pConfig);

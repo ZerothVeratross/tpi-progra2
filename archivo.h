@@ -14,5 +14,6 @@ public:
     std::string get_direccion();
     int get_tam_reg();
     int contar_regs();
+    int inicializar();
 };
 #endif // ARCHIVO_H

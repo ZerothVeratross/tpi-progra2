@@ -25,8 +25,16 @@ int Archivo::get_tam_reg() {
 int Archivo::contar_regs() {
     FILE * pArchivo=fopen(direccion.c_str(), "rb");
     if (pArchivo==NULL) {
-        return 0;
+        return -1;
     }
     fseek(pArchivo, 0, SEEK_END);
     return ftell(pArchivo) / tam_reg;
+}
+
+int Archivo::inicializar() {
+    FILE * pArchivo=fopen(direccion.c_str(), "wb");
+    if (pArchivo==NULL) {
+        return -1;
+    }
+    return 1;
 }
