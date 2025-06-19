@@ -40,6 +40,7 @@ int menu_registrar_mozo();
 int menu_registrar_servicio();
 
 void admin_menu_consultar();
+void comun_menu_consultar();
 void menu_consultar_mesas();
 void menu_consultar_mozos();
 void menu_consultar_servicios();

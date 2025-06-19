@@ -329,13 +329,14 @@ bool comandos_principales() {
         cin>>comando;
         switch (comando) {
         case 1:
-            //comun_menu_registrar();
+            menu_registrar_servicio();
             break;
         case 2:
-            //comun_consultar();
+            comun_menu_consultar();
             break;
         case 3:
-            //comun_modificar();
+            menu_modificar_mesa();
+            break;
         case -1:
             return false;
             break;
@@ -874,6 +875,23 @@ void admin_menu_consultar() {
         menu_consultar_mozos();
         break;
     case 3:
+        menu_consultar_servicios();
+        break;
+    default:
+        comando_invalido();
+        break;
+    }
+
+}
+
+void comun_menu_consultar() {
+    int dato_int;
+    pedir_comando("\nQue archivo desea consultar?\n1. Mesas\n2. Servicios\n", 2, &dato_int);
+    switch(dato_int) {
+    case 1:
+        menu_consultar_mesas();
+        break;
+    case 2:
         menu_consultar_servicios();
         break;
     default:
