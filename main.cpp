@@ -3,10 +3,10 @@
 using namespace std;
 
 int main() {
-    HWND hWnd=GetConsoleWindow();
+    //HWND hWnd=GetConsoleWindow();
     bool ciclo=true;
 
-    ShowWindow(hWnd, SW_SHOWMAXIMIZED); //debido a un limitacion de rlutil, se requiere que la ventana de la consola
+    //ShowWindow(hWnd, SW_SHOWMAXIMIZED); //debido a un limitacion de rlutil, se requiere que la ventana de la consola
                                         //sea grande para que las funciones de listas e informes puedan dibujar sin
                                         //errores. si no hay suficiente espacio físico en la ventana, los llamados a
                                         //locate con coordenadas que excedan las dimensiones de la ventana seran ignorados

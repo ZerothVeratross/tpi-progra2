@@ -252,6 +252,7 @@ int pedir_rango_fecha(const char * pedido, Fecha * fechas, int anio1, int anio2,
 bool comandos_principales() {
     bool admin;
     int comando;
+    char c;
     ArchivoConfiguracion aConfig;
     Configuracion config;
     comando=aConfig.inicializar();
@@ -357,6 +358,10 @@ bool comandos_principales() {
             break;
         }
     }
+    cin.ignore();
+    cout<<"\nPresione enter para continuar\n";
+    do c=getchar(); while (c!='\n');
+    clear_screen();
     return true;
 }
 
@@ -687,7 +692,7 @@ int menu_registrar_mesa() {
         return 0;
     }
 
-    Mesa mesas[cant_regs];
+    Mesa * mesas=new Mesa[cant_regs];
     Mesa n_mesa;
     string dato_str;
 
@@ -730,7 +735,7 @@ int menu_registrar_mozo() {
         return 0;
     }
 
-    Mozo mozos[cant_regs];
+    Mozo * mozos=new Mozo[cant_regs];
     Mozo n_mozo;
     string datos_str[4];
     Fecha dato_fecha;
@@ -794,9 +799,9 @@ int menu_registrar_servicio() {
         return 0;
     }
 
-    Servicio servicios[cant_servicios];
-    Mesa mesas[cant_mesas];
-    Mozo mozos[cant_mozos];
+    Servicio * servicios=new Servicio[cant_servicios];
+    Mesa * mesas=new Mesa[cant_mesas];
+    Mozo * mozos=new Mozo[cant_mozos];
     Servicio n_servicio;
     Fecha dato_fecha;
     float datos_float[2];
@@ -911,7 +916,7 @@ void menu_consultar_mesas() {
         return;
     }
 
-    Mesa mesas[cant_regs];
+    Mesa * mesas=new Mesa[cant_regs];
 
     pedir_comando("Que tipo de consulta desea realizar?\n1. Por numero de mesa\n2. Por cantidad de sillas\n3. Por ubicacion y cantidad de sillas\n",
                   3, &datos_int[0]);
@@ -994,7 +999,7 @@ void menu_consultar_mozos() {
     }
 
     string datos_str[2];
-    Mozo mozos[cant_regs];
+    Mozo * mozos=new Mozo[cant_regs];
 
     pedir_comando("Que tipo de consulta desea realizar?\n1. Por ID de mozo\n2. Por nombre y/o apellido\n3. Por turno\n",
                   3, &datos_int[0]);
@@ -1093,7 +1098,7 @@ void menu_consultar_servicios() {
 
     float datos_float[2];
     Fecha datos_fecha[2];
-    Servicio servicios[cant_regs];
+    Servicio * servicios=new Servicio[cant_regs];
 
     cout<<"Que tipo de consulta desea realizar?\n1. Por numero de factura\n2. Por numero de mesa\n3. Por ID de mozo\n4. Por fecha de servicio\n5. Por importe de servicio\n6. Por monto abonado\n";
     cin>>datos_int[0];
@@ -1206,7 +1211,7 @@ void menu_listar_mesas() {
     }
 
     bool ignorar_borrado=true;
-    Mesa mesas[cant_regs];
+    Mesa * mesas=new Mesa[cant_regs];
 
     pedir_comando("Como deben estar ordenadas las mesas?\n1. Por numero de mesa\n2. Por cantidad de sillas\n3. Por ubicacion y numero de mesa\n4. Listar mesas dadas de baja\n", 4, &orden);
 
@@ -1264,7 +1269,7 @@ void menu_listar_mozos() {
     }
 
     bool ignorar_borrado=true;
-    Mozo mozos[cant_regs];
+    Mozo * mozos=new Mozo[cant_regs];
 
     pedir_comando("Como deben estar ordenadas los mozos?\n1. Por ID de mozo\n2. Alfabeticamente por nombre\n3. Alfabeticamente por apellido\n4. Por fecha de nacimiento\n5. Por turno e ID de mozo\n6. Listar mozos dados de baja\n", 6, &orden);
 
@@ -1341,7 +1346,7 @@ void menu_listar_servicios() {
     }
 
     bool ignorar_borrado=true;
-    Servicio servicios[cant_regs];
+    Servicio * servicios=new Servicio[cant_regs];
 
     pedir_comando("Como deben estar ordenados los servicios?\n1. Por numero de factura\n2. Por numero de mesa\n3. Por ID de mozo\n4. Por fecha de servicio\n5. Por importe de servicio\n6. Listar servicios dados de baja\n", 6, &orden);
 
@@ -1434,7 +1439,7 @@ void informe_recaudacion_anual() {
         return;
     }
 
-    Servicio servicios[cant_regs];
+    Servicio * servicios=new Servicio[cant_regs];
     int anios[30];
     float recaudaciones[30];
 
@@ -1504,9 +1509,9 @@ void informe_recaudacion_por_mozo() {
         return;
     }
 
-    Mozo mozos[cant_mozos];
-    Servicio servicios[cant_servicios];
-    float recaudaciones[cant_mozos];
+    Mozo * mozos=new Mozo[cant_mozos];
+    Servicio * servicios=new Servicio[cant_servicios];
+    float * recaudaciones=new float[cant_mozos];
 
     aMozo.listar_mozos(mozos, cant_mozos);
     ordenar_mozos_por_id(mozos, cant_mozos);
@@ -1587,9 +1592,9 @@ void informe_recaudacion_por_mesa() {
         return;
     }
 
-    Mesa mesas[cant_mesas];
-    Servicio servicios[cant_servicios];
-    float recaudaciones[cant_mesas];
+    Mesa * mesas=new Mesa[cant_mesas];
+    Servicio * servicios=new Servicio[cant_servicios];
+    float * recaudaciones=new float[cant_mesas];
 
     if (!aMesa.listar_mesas(mesas, cant_mesas)) {
         acceso_archivo_fallido();
@@ -1654,7 +1659,7 @@ void informe_recaudacion_mensual() {
         return;
     }
 
-    Servicio servicios[cant_regs];
+    Servicio * servicios=new Servicio[cant_regs];
     float recaudaciones[12];
 
     cout<<"\nIngrese el anio del que se desea informar: ";
@@ -1724,9 +1729,9 @@ void informe_propinas_percibidas() {
         return;
     }
 
-    Mozo mozos[cant_mozos];
-    Servicio servicios[cant_servicios];
-    float propinas[cant_mozos];
+    Mozo * mozos=new Mozo[cant_mozos];
+    Servicio * servicios=new Servicio[cant_servicios];
+    float * propinas=new float[cant_mozos];
 
     if (!aMozo.listar_mozos(mozos, cant_mozos)) {
         acceso_archivo_fallido();
@@ -1818,7 +1823,7 @@ void menu_borrar_recuperar_mesa() {
         return;
     }
 
-    Mesa mesas[cant_regs];
+    Mesa * mesas=new Mesa[cant_regs];
 
     if (!archivo.listar_mesas(mesas, cant_regs)) {
         acceso_archivo_fallido();
@@ -1866,7 +1871,7 @@ void menu_borrar_recuperar_mozo() {
         return;
     }
 
-    Mozo mozos[cant_regs];
+    Mozo * mozos=new Mozo[cant_regs];
 
     if (!archivo.listar_mozos(mozos, cant_regs)) {
         acceso_archivo_fallido();
@@ -1914,7 +1919,7 @@ void menu_borrar_recuperar_servicio() {
         return;
     }
 
-    Servicio servicios[cant_regs];
+    Servicio * servicios=new Servicio[cant_regs];
 
     if (!archivo.listar_servicios(servicios, cant_regs)) {
         acceso_archivo_fallido();
@@ -1987,7 +1992,7 @@ void menu_modificar_mesa() {
     string dato_str;
     bool control=true;
     bool cin_antes=true;
-    Mesa mesas[cant_regs];
+    Mesa * mesas=new Mesa[cant_regs];
 
     if (!archivo.listar_mesas(mesas, cant_regs)) {
         acceso_archivo_fallido();
@@ -2068,7 +2073,7 @@ void menu_modificar_mozo() {
     string dato_str;
     bool control=true;
     bool cin_antes=true;
-    Mozo mozos[cant_regs];
+    Mozo * mozos=new Mozo[cant_regs];
 
     if (!archivo.listar_mozos(mozos, cant_regs)) {
         acceso_archivo_fallido();
@@ -2165,7 +2170,7 @@ void menu_modificar_servicio() {
         acceso_archivo_fallido();
         return;
     }
-    Servicio servicios[cant_serv];
+    Servicio * servicios=new Servicio[cant_serv];
     if (!pServicios.listar_servicios(servicios, cant_serv)) {
         acceso_archivo_fallido();
         return;
@@ -2176,7 +2181,7 @@ void menu_modificar_servicio() {
         acceso_archivo_fallido();
         return;
     }
-    Mesa mesas[cant_mesas];
+    Mesa * mesas=new Mesa[cant_mesas];
     if (!pMesas.listar_mesas(mesas, cant_mesas)) {
         acceso_archivo_fallido();
         return;
@@ -2187,7 +2192,7 @@ void menu_modificar_servicio() {
         acceso_archivo_fallido();
         return;
     }
-    Mozo mozos[cant_mozos];
+    Mozo * mozos=new Mozo[cant_mozos];
     if (!pMozos.listar_mozos(mozos, cant_mozos)) {
         acceso_archivo_fallido();
         return;

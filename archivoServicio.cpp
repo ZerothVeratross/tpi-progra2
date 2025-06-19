@@ -142,8 +142,8 @@ int ArchivoServicio::generar_servicios(int cantidad) {
 
     int mesas=archivo_mesa.contar_regs();
     int mozos=archivo_mozo.contar_regs();
-    int nros_mesas[mesas];
-    int ids_mozos[mozos];
+    int * nros_mesas=new int[mesas];
+    int * ids_mozos=new int[mozos];
 
     pServicios=fopen(archivo_mesa.get_direccion().c_str(), "rb");
     if (pServicios==NULL) {
