@@ -4,3 +4,7 @@
 *.zip
 *.7z
 *.tar
+*.bkp
+*.dat
+bin/
+obj/
