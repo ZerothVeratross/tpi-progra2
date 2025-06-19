@@ -13,12 +13,13 @@ void imprimir_separador();
 void imprimir_error(const char * msj_error);
 void imprimir_exito(const char * msj_exito);
 void imprimir_comando(const char * msj_comando);
-void comando_invalido();
+void comando_invalido(bool volver);
 void numero_invalido();
 void numero_debe_ser_mayor();
 void acceso_archivo_fallido();
 
-int pedir_comando(const char *, int cant_com, int * comando);
+int pedir_comando(const char * pedido, int cant_com, int * comando, bool volver);
+void pedir_siono(const char * pedido, int * comando);
 int pedir_int(const char * pedido, int cota_inf, int cota_sup, int * dato_int);
 int pedir_rango_int(const char * pedido, int * datos_int, int pos1, int pos2);
 int pedir_string(const char * pedido, std::string * str, int tam_max, bool cin_antes, bool espacios=true);
@@ -26,6 +27,9 @@ int pedir_float(const char * pedido, float cota_inf, float cota_sup, float * dat
 int pedir_rango_float(const char * pedido, float * datos_float, int pos1, int pos2);
 int pedir_fecha(const char * pedido, Fecha * fecha, int anio1, int anio2);
 
+void finalizar_etapa();
+void comenzar_etapa(const char * titulo);
+void comprobar_archivos();
 bool comandos_principales();
 bool menu_cambiar_modo(Configuracion * config, int modo);
 bool menu_cambiar_contrasenia(Configuracion * config);

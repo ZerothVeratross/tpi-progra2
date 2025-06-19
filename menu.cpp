@@ -44,13 +44,13 @@ void imprimir_comando(const char * msj_comando) {
         if ((c>=48 && c<=57) || c=='-') {
             if (msj_comando[i+1]>=48 && msj_comando[i+1]<=57) {
                 if (msj_comando[i+2]=='.') {
-                    rlutil::setColor(rlutil::YELLOW);
+                    rlutil::setColor(rlutil::LIGHTCYAN);
                     cout<<c<<msj_comando[i+1]<<'.';
                     rlutil::setColor(rlutil::WHITE);
                     i+=2;
                 }
             } else if (msj_comando[i+1]=='.') {
-                rlutil::setColor(rlutil::YELLOW);
+                rlutil::setColor(rlutil::LIGHTCYAN);
                 cout<<c<<'.';
                 rlutil::setColor(rlutil::WHITE);
                 i++;
@@ -63,8 +63,12 @@ void imprimir_comando(const char * msj_comando) {
     }
 }
 
-void comando_invalido() {
-    imprimir_error("\nComando invalido, regresando al menu principal...\n");
+void comando_invalido(bool volver=true) {
+    if (volver) {
+        imprimir_error("\nComando invalido, regresando al menu principal...\n");
+    } else {
+        imprimir_error("\nComando invalido\n");
+    }
 }
 
 void numero_invalido() {
@@ -79,14 +83,30 @@ void acceso_archivo_fallido() {
     imprimir_error("\nNo se pudo acceder al archivo, regresando al menu principal...\n");
 }
 
-int pedir_comando(const char * pedido, int cant_com, int * comando) {
+int pedir_comando(const char * pedido, int cant_com, int * comando, bool volver=true) {
     imprimir_comando(pedido);
     cin>>*comando;
     if (*comando<1 || *comando>cant_com) {
-        comando_invalido();
+        comando_invalido(volver);
         return 0;
     }
     return 1;
+}
+
+void pedir_siono(const char * pedido, int * comando) {
+    CONSOLE_SCREEN_BUFFER_INFO s;
+    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+    int y, x=1;
+    *comando=0;
+    imprimir_comando(pedido);
+    GetConsoleScreenBufferInfo(console, &s);
+    y=s.dwCursorPosition.Y+1;
+    while (*comando!=1 && *comando!=2) {
+        rlutil::locate(x, y);
+        cout<<"                                                                  ";
+        rlutil::locate(x, y);
+        cin>>*comando;
+    }
 }
 
 int pedir_int(const char * pedido, int cota_inf, int cota_sup, int * dato_int) {
@@ -249,29 +269,101 @@ int pedir_rango_fecha(const char * pedido, Fecha * fechas, int anio1, int anio2,
     return 1;
 }
 
+void finalizar_etapa() {
+    char c;
+    do c=getchar(); while (c!='\n' && c!=EOF);
+    cout<<"\nPresione enter para continuar\n";
+    do c=getchar(); while (c!='\n' && c!=EOF);
+    clear_screen();
+}
+
+void comenzar_etapa(const char * titulo) {
+    clear_screen();
+    rlutil::setColor(rlutil::YELLOW);
+    cout<<titulo<<"\n";
+    rlutil::setColor(rlutil::WHITE);
+    imprimir_separador();
+    cout<<"\n";
+}
+
+void comprobar_archivos() {
+    ArchivoMesa aMesas;
+    ArchivoMozo aMozos;
+    ArchivoServicio aServicios;
+
+    if (aMesas.contar_regs()==-1) {
+        aMesas.inicializar();
+    }
+
+    if (aMozos.contar_regs()==-1) {
+        aMozos.inicializar();
+    }
+
+    if (aServicios.contar_regs()==-1) {
+        aServicios.inicializar();
+    }
+
+    //El codigo comentado evitaria sobreescribir datos si no se encuentran los archivos debido a carencia de permisos de lectura, pero seria engorroso para el usuario pasar por todas las preguntas.
+    //No espero que esta situacion se de, por lo que simplemente creo archivos vacios
+    /*int comando=0;
+
+    if (aMesas.contar_regs()==-1) {
+        while (comando!=1 && comando!=2) {
+            pedir_siono("\nNo se ha encontrado el archivo de Mesas. Desea crear uno vacio? Si desea generar datos aleatorios, este paso no es necesario.\n1. Si\n2. No\n", &comando);
+        }
+        if (comando==1) {
+            aMesas.inicializar();
+        }
+    }
+    comando=0;
+
+    if (aMozos.contar_regs()==-1) {
+        while (comando!=1 && comando!=2) {
+            pedir_siono("\nNo se ha encontrado el archivo de Mozos. Desea crear uno vacio? Si desea generar datos aleatorios, este paso no es necesario.\n1. Si\n2. No\n", &comando);
+        }
+        if (comando==1) {
+            aMozos.inicializar();
+        }
+    }
+    comando=0;
+
+    if (aServicios.contar_regs()==-1) {
+        while (comando!=1 && comando!=2) {
+            pedir_siono("\nNo se ha encontrado el archivo de Servicios. Desea crear uno vacio? Si desea generar datos aleatorios, este paso no es necesario.\n1. Si\n2. No\n", &comando);
+        }
+        if (comando==1) {
+            aServicios.inicializar();
+        }
+    }*/
+}
+
 bool comandos_principales() {
     bool admin;
     int comando;
-    char c;
     ArchivoConfiguracion aConfig;
     Configuracion config;
-    comando=aConfig.inicializar();
+    comando=aConfig.comprobar_config();
 
     if (comando==0) {
-        cout<<"No hay un archivo de configuracion, creando uno...\n";
+        cout<<"No hay un archivo de configuracion, creando uno con contrasenia \"123\"...\n";
+        imprimir_separador();
+        cout<<"\n";
     } else if (comando==1) {
-        cout<<"\nLa contrasenia todavia tiene el valor predeterminado de \"123\". Se recomienda cambiarla\n";
+        cout<<"La contrasenia todavia tiene el valor predeterminado de \"123\". Se recomienda cambiarla\n";
+        imprimir_separador();
+        cout<<"\n";
     }
 
     aConfig.leer_config(&config);
     admin=config.get_modo()==1;
     if (admin) {
+        rlutil::setColor(rlutil::YELLOW);
+        cout<<"Lista de comandos ADMINISTRADOR\n";
+        rlutil::setColor(rlutil::WHITE);
         imprimir_separador();
-        imprimir_comando("\nLista de comandos ADMINISTRADOR:\n1. Registrar\n2. Consultar\n3. Listar\n"
-                         "4. Generar informe\n5. Borrar o recuperar\n6. Modificar\n"
-                         "7. Generar datos aleatorios\n"
-                         "-1. Cerrar programa\n-2. Limpiar consola\n"
-                         "-3. Cambiar modo de usuario\n-4. Cambiar contrasenia\nIngrese un comando: ");
+        imprimir_comando("\n1. Registrar datos nuevos\n2. Consultar registros especificos\n3. Listar todos los registros de un archivo\n"
+                         "4. Generar un informe\n5. Borrar o recuperar un registro\n6. Modificar un registro\n7. Generar datos aleatorios\n"
+                         "8. Salir de modo administrador\n9. Cambiar contrasenia\n0. Cerrar programa\n\nIngrese un comando: ");
         cin>>comando;
         switch (comando) {
         case 1:
@@ -295,38 +387,31 @@ bool comandos_principales() {
         case 7:
             menu_generacion_datos();
             break;
-        case -1:
-            return false;
+        case 8:
+            menu_cambiar_modo(&config, 2);
+            aConfig.guardar_config(&config);
             break;
-        case -2:
-            clear_screen();
-            break;
-        case -3:
-            if (menu_cambiar_modo(&config, 2)) {
-                aConfig.guardar_config(&config);
-                clear_screen();
-            } else {
-                imprimir_error("\nContrasenia rechazada");
-            }
-
-            break;
-        case -4:
+        case 9:
             if (menu_cambiar_contrasenia(&config)) {
                 aConfig.guardar_config(&config);
-            } else {
-                imprimir_error("\nContrasenia rechazada");
             }
-
+            break;
+        case 0:
+            return false;
             break;
         default:
             imprimir_error("\nComando invalido\n");
             break;
         }
     } else {
+        rlutil::setColor(rlutil::YELLOW);
+        cout<<"Lista de comandos USUARIO COMUN\n";
+        rlutil::setColor(rlutil::WHITE);
         imprimir_separador();
-        imprimir_comando("\nLista de comandos USUARIO COMUN:\n1. Registrar servicio\n2. Consultar mesas o servicios\n"
-                         "3. Modificar mesa\n-1. Cerrar programa\n-2. Limpiar consola\n"
-                         "-3. Cambiar modo de usuario\n\nIngrese un comando: ");
+        imprimir_comando("\n1. Registrar un servicio\n"
+                         "2. Consultar mesas o servicios especificos\n"
+                         "3. Modificar datos de una mesa\n4. Entrar como administrador\n"
+                         "0. Cerrar programa\n\nIngrese un comando: ");
         cin>>comando;
         switch (comando) {
         case 1:
@@ -338,30 +423,25 @@ bool comandos_principales() {
         case 3:
             menu_modificar_mesa();
             break;
-        case -1:
-            return false;
-            break;
-        case -2:
-            clear_screen();
-            break;
-        case -3:
+        case 4:
             if (menu_cambiar_modo(&config, 1)) {
                 aConfig.guardar_config(&config);
-                clear_screen();
+                imprimir_exito("\nContrasenia aceptada");
             } else {
                 imprimir_error("\nContrasenia rechazada");
             }
 
             break;
+        case 0:
+            return false;
+            break;
         default:
-            cout<<"\nComando invalido\n";
+            imprimir_error("\nComando invalido\n");
             break;
         }
     }
-    cin.ignore();
-    cout<<"\nPresione enter para continuar\n";
-    do c=getchar(); while (c!='\n');
-    clear_screen();
+
+    finalizar_etapa();
     return true;
 }
 
@@ -369,10 +449,23 @@ bool menu_cambiar_modo(Configuracion * config, int modo) {
     string contrasenia;
     char buffer[20];
     int i;
-    pedir_string("\nIngrese la contrasenia: ", &contrasenia, 20, true, false);
-    contrasenia.copy(buffer, 20, 0);
-    for (i=contrasenia.length(); i<20; i++) {
-        buffer[i]='\0';
+    if (config->get_modo()==1) {
+        comenzar_etapa("Saliendo de modo administrador");
+        for (i=0; i<20; i++) {
+            buffer[i]='\0';
+        }
+
+    } else if (config->get_modo()==2) {
+        comenzar_etapa("Entrar como administrador");
+        pedir_string("\nIngrese la contrasenia: ", &contrasenia, 20, true, false);
+        contrasenia.copy(buffer, 20, 0);
+        for (i=contrasenia.length(); i<20; i++) {
+            buffer[i]='\0';
+        }
+
+    } else {
+        imprimir_error("El modo en la configuracion es invalido\n");
+        return false;
     }
     config->set_modo(buffer, modo);
     return modo==config->get_modo();
@@ -384,11 +477,20 @@ bool menu_cambiar_contrasenia(Configuracion * config) {
     char buffer1[20];
     char buffer2[20];
     int i;
-    pedir_string("\nIngrese la contrasenia vieja: ", &contrasenia_vieja, 20, true, false);
+    comenzar_etapa("Cambiar contrasenia");
+    pedir_string("Ingrese la contrasenia vieja: ", &contrasenia_vieja, 20, true, false);
     contrasenia_vieja.copy(buffer1, 20, 0);
     for (i=contrasenia_vieja.length(); i<20; i++) {
         buffer1[i]='\0';
     }
+
+    if (!config->comparar_contrasenia(buffer1)) {
+        imprimir_error("\nContrasenia rechazada");
+        return false;
+    } else {
+        imprimir_exito("\nContrasenia aceptada");
+    }
+
     pedir_string("\nIngrese la contrasenia nueva: ", &contrasenia_nueva, 20, true, false);
     contrasenia_nueva.copy(buffer2, 20, 0);
     for (i=contrasenia_nueva.length(); i<20; i++) {
@@ -654,25 +756,26 @@ void mostrar_servicio(Servicio * servicio, bool ignorar_borrado, int color=rluti
 //Comienzo funciones para registrar datos
 void admin_menu_registrar() {
     int dato_int;
-    pedir_comando("\nIngrese su eleccion:\n1. Registrar mesa\n2. Registrar mozo\n3. Registrar servicio\n", 3, &dato_int);
+    comenzar_etapa("Registrar datos");
+    pedir_comando("Ingrese su eleccion:\n1. Registrar mesa\n2. Registrar mozo\n3. Registrar servicio\n", 3, &dato_int);
     switch(dato_int) {
     case 1:
         if (menu_registrar_mesa()) {
-            cout<<"\nNueva mesa registrada exitosamente\n";
+            imprimir_exito("\nNueva mesa registrada exitosamente\n");
         } else {
             imprimir_error("\nNo se registro una mesa nueva\n");
         }
         break;
     case 2:
         if (menu_registrar_mozo()) {
-            cout<<"\nNuevo mozo registrado exitosamente\n";
+            imprimir_exito("\nNuevo mozo registrado exitosamente\n");
         } else {
             imprimir_error("\nNo se registro un mozo nuevo\n");
         }
         break;
     case 3:
         if (menu_registrar_servicio()) {
-            cout<<"\nNuevo servicio registrado exitosamente\n";
+            imprimir_exito("\nNuevo servicio registrado exitosamente\n");
         } else {
             imprimir_error("\nNo se registro un servicio nuevo\n");
         }
@@ -687,7 +790,7 @@ int menu_registrar_mesa() {
     ArchivoMesa archivo;
     int datos_int[3], pos, cant_regs=archivo.contar_regs();
 
-    if (!cant_regs) {
+    if (cant_regs==-1) {
         acceso_archivo_fallido();
         return 0;
     }
@@ -695,8 +798,9 @@ int menu_registrar_mesa() {
     Mesa * mesas=new Mesa[cant_regs];
     Mesa n_mesa;
     string dato_str;
+    comenzar_etapa("Registrar mesa");
 
-    if (!pedir_int("\nIngrese numero de mesa: ", 1, 99999, &datos_int[0])){return 0;}
+    if (!pedir_int("Ingrese numero de mesa: ", 1, 99999, &datos_int[0])){return 0;}
     if (!archivo.listar_mesas(mesas, cant_regs)){acceso_archivo_fallido();};
     pos=buscar_nro_mesa(mesas, cant_regs, datos_int[0]);
     if (pos!=-1) {
@@ -708,16 +812,20 @@ int menu_registrar_mesa() {
         return 0;
     }
 
+    comenzar_etapa("Registrar mesa");
     if (!pedir_int("\nIngrese cantidad de sillas: ", 1, 12, &datos_int[1])){return 0;}
 
+    comenzar_etapa("Registrar mesa");
     if (!pedir_comando("\nElija ubicacion:\n1. Interior\n2. Terraza\n", 2, &datos_int[2])){return 0;}
 
+    comenzar_etapa("Registrar mesa");
     if (!pedir_string("\nEscriba una descripcion de la mesa con no mas de 29 caracteres:\n", &dato_str, 29, true)){return 0;}
 
     n_mesa=Mesa(datos_int[0], datos_int[1], datos_int[2], dato_str);
 
+    comenzar_etapa("Registrar mesa");
     mostrar_mesa(&n_mesa, true);
-    if (!pedir_comando("\nEsta es la mesa que desea registrar?\n1. Si\n2. No\n", 2, &datos_int[0])){return 0;}
+    pedir_siono("\nEsta es la mesa que desea registrar?\n1. Si\n2. No\n", &datos_int[0]);
     if (datos_int[0]==2) {
         return 0;
     }
@@ -730,7 +838,7 @@ int menu_registrar_mozo() {
     ArchivoMozo archivo;
     int datos_int[3], cant_regs=archivo.contar_regs();
 
-    if (!cant_regs) {
+    if (cant_regs==-1) {
         acceso_archivo_fallido();
         return 0;
     }
@@ -739,33 +847,42 @@ int menu_registrar_mozo() {
     Mozo n_mozo;
     string datos_str[4];
     Fecha dato_fecha;
+    comenzar_etapa("Registrar mozo");
 
-    if (!pedir_int("\nIngrese ID del mozo: ", 1, 99999, &datos_int[2])) {return 0;}
+    if (!pedir_int("Ingrese ID del mozo: ", 1, 99999, &datos_int[2])) {return 0;}
     if (!archivo.listar_mozos(mozos, cant_regs)){acceso_archivo_fallido();};
     if (buscar_id_mozo(mozos, cant_regs, datos_int[5])!=-1) {
         imprimir_error("\nYa existe un mozo con este ID, regresando al menu principal...\n");
         return 0;
     }
 
+    comenzar_etapa("Registrar mozo");
     //una persona con DNI por debajo de 1 millon probablemente no este en condiciones de trabajar de mozo
     if (!pedir_int("\nIngrese DNI mayor a 1 millon: ", 1000000, 80000000, &datos_int[0])) {return 0;}
 
+    comenzar_etapa("Registrar mozo");
     if (!pedir_string("\nEscriba el nombre del mozo con no mas de 19 caracteres:\n", &datos_str[0], 19, true)) {return 0;}
 
+    comenzar_etapa("Registrar mozo");
     if (!pedir_string("\nEscriba el apellido del mozo con no mas de 29 caracteres:\n", &datos_str[1], 29, false)) {return 0;}
 
+    comenzar_etapa("Registrar mozo");
     if (!pedir_string("\nEscriba el numero de telefono del mozo con no mas de 19 caracteres:\n", &datos_str[2], 19, false)) {return 0;}
 
+    comenzar_etapa("Registrar mozo");
     if (!pedir_string("\nEscriba el email del mozo con no mas de 49 caracteres:\n", &datos_str[3], 49, false)) {return 0;}
 
+    comenzar_etapa("Registrar mozo");
     if (!pedir_fecha("\nIngrese fecha de nacimiento del mozo en numeros.", &dato_fecha, 1900, 2025)) {return 0;}
 
+    comenzar_etapa("Registrar mozo");
     if (!pedir_comando("\nIngrese turno del mozo.\n1. Maniana\n2. Tarde\n3. Noche\n", 3, &datos_int[1])) {return 0;}
 
     n_mozo=Mozo(datos_int[0], datos_str[0], datos_str[1], datos_str[2], datos_str[3], dato_fecha, datos_int[1], datos_int[2]);
 
+    comenzar_etapa("Registrar mozo");
     mostrar_mozo(&n_mozo, true);
-    if (!pedir_comando("\nEste es el mozo que desea registrar?\n1. Si\n2. No\n", 2, &datos_int[0])) {return 0;}
+    pedir_siono("\nEste es el mozo que desea registrar?\n1. Si\n2. No\n", &datos_int[0]);
     if (datos_int[0]==2) {
         return 0;
     }
@@ -780,21 +897,21 @@ int menu_registrar_servicio() {
     ArchivoMozo pMozos;
     int datos_int[3], pos, cant_servicios=pServicios.contar_regs();
 
-    if (!cant_servicios) {
+    if (cant_servicios==-1) {
         acceso_archivo_fallido();
         return 0;
     }
 
     int cant_mesas=pMesas.contar_regs();
 
-    if (!cant_mesas) {
+    if (cant_mesas==-1) {
         acceso_archivo_fallido();
         return 0;
     }
 
     int cant_mozos=pMozos.contar_regs();
 
-    if (!cant_mozos) {
+    if (cant_mozos==-1) {
         acceso_archivo_fallido();
         return 0;
     }
@@ -805,6 +922,7 @@ int menu_registrar_servicio() {
     Servicio n_servicio;
     Fecha dato_fecha;
     float datos_float[2];
+    comenzar_etapa("Registrar servicio");
 
     if (!pedir_int("\nIngrese numero de factura: ", 1, 9999999, &datos_int[0])) {return 0;}
     if (!pServicios.listar_servicios(servicios, cant_servicios)){acceso_archivo_fallido();};
@@ -813,6 +931,7 @@ int menu_registrar_servicio() {
         return 0;
     }
 
+    comenzar_etapa("Registrar servicio");
     if (!pedir_int("\nIngrese numero de mesa: ", 1, 99999, &datos_int[1])) {return 0;}
     if (!pMesas.listar_mesas(mesas, cant_mesas)){acceso_archivo_fallido();};
     pos=buscar_nro_mesa(mesas, cant_mesas, datos_int[1]);
@@ -821,13 +940,14 @@ int menu_registrar_servicio() {
         return 0;
     }
     if (!mesas[pos].get_estado()) {
-        if (!pedir_comando("\nEsta mesa fue dada de baja. Registrar de todos modos?\n1. Si\n2. No\n", 2, &pos)){return 0;}
+        pedir_siono("\nEsta mesa fue dada de baja. Registrar de todos modos?\n1. Si\n2. No\n", &pos);
         if (pos==2) {
             imprimir_error("\nAbortando operacion...\n");
             return 0;
         }
     }
 
+    comenzar_etapa("Registrar servicio");
     if (!pedir_int("\nIngrese ID de mozo: ", 1, 99999, &datos_int[2])) {return 0;}
     if (!pMozos.listar_mozos(mozos, cant_mozos)){acceso_archivo_fallido();};
     pos=buscar_id_mozo(mozos, cant_mozos, datos_int[2]);
@@ -836,19 +956,22 @@ int menu_registrar_servicio() {
         return 0;
     }
     if (!mozos[pos].get_estado()) {
-        if (!pedir_comando("\nEste mozo fue dado de baja. Registrar de todos modos?\n1. Si\n2. No\n", 2, &pos)){return 0;}
+        pedir_siono("\nEste mozo fue dado de baja. Registrar de todos modos?\n1. Si\n2. No\n", &pos);
         if (pos==2) {
             imprimir_error("\nAbortando operacion...\n");
             return 0;
         }
     }
 
+    comenzar_etapa("Registrar servicio");
     if (!pedir_fecha("\nIngrese fecha del servicio en numeros.", &dato_fecha, 2000, 2025)) {return 0;}
 
+    comenzar_etapa("Registrar servicio");
     //supongo que 10 millones es un techo razonable para gastarse en comida con 12 personas
-    if (!pedir_float("\nIngrese importe del servicio, utilizando punto para marcar decimales: ", 1, 10000000, &datos_float[0])) {return 0;}
+    if (!pedir_float("\nIngrese importe del servicio, utilizando punto para marcar decimales\n", 1, 10000000, &datos_float[0])) {return 0;}
 
-    if (!pedir_float("\nIngrese monto abonado por el cliente, utilizando punto para marcar decimales: ", 1, 10000000, &datos_float[1])) {return 0;}
+    comenzar_etapa("Registrar servicio");
+    if (!pedir_float("\nIngrese monto abonado por el cliente, utilizando punto para marcar decimales\n", 1, 10000000, &datos_float[1])) {return 0;}
 
     if (datos_float[0]>datos_float[1]) {
         imprimir_error("\nEl monto abonado no puede ser menor que el importe del servicio, regresando al menu principal...\n");
@@ -856,9 +979,9 @@ int menu_registrar_servicio() {
     }
 
     n_servicio=Servicio(datos_int[0], datos_int[1], datos_int[2], dato_fecha, datos_float[0], datos_float[1]);
+    comenzar_etapa("Registrar mozo");
     mostrar_servicio(&n_servicio, true);
-    cout<<"\nEste es el servicio que desea registrar?\n1. Si\n2. No\n";
-    cin>>datos_int[0];
+    pedir_siono("\nEste es el servicio que desea registrar?\n1. Si\n2. No\n", &datos_int[0]);
     if (datos_int[0]==2) {
         return 0;
     }
@@ -871,7 +994,8 @@ int menu_registrar_servicio() {
 //Comienzo funciones para consultar base de datos
 void admin_menu_consultar() {
     int dato_int;
-    pedir_comando("\nQue archivo desea consultar?\n1. Mesas\n2. Mozos\n3. Servicios\n", 3, &dato_int);
+    comenzar_etapa("Consultar datos");
+    pedir_comando("Que archivo desea consultar?\n1. Mesas\n2. Mozos\n3. Servicios\n", 3, &dato_int);
     switch(dato_int) {
     case 1:
         menu_consultar_mesas();
@@ -883,15 +1007,14 @@ void admin_menu_consultar() {
         menu_consultar_servicios();
         break;
     default:
-        comando_invalido();
         break;
     }
-
 }
 
 void comun_menu_consultar() {
     int dato_int;
-    pedir_comando("\nQue archivo desea consultar?\n1. Mesas\n2. Servicios\n", 2, &dato_int);
+    comenzar_etapa("Consultar datos");
+    pedir_comando("Que archivo desea consultar?\n1. Mesas\n2. Servicios\n", 2, &dato_int);
     switch(dato_int) {
     case 1:
         menu_consultar_mesas();
@@ -900,7 +1023,6 @@ void comun_menu_consultar() {
         menu_consultar_servicios();
         break;
     default:
-        comando_invalido();
         break;
     }
 
@@ -917,12 +1039,14 @@ void menu_consultar_mesas() {
     }
 
     Mesa * mesas=new Mesa[cant_regs];
+    comenzar_etapa("Consultar mesas");
 
     pedir_comando("Que tipo de consulta desea realizar?\n1. Por numero de mesa\n2. Por cantidad de sillas\n3. Por ubicacion y cantidad de sillas\n",
                   3, &datos_int[0]);
     switch(datos_int[0]) {
     case 1:
-        if (!pedir_rango_int("\nIndique el rango de numeros de mesa. Si solo quiere buscar una mesa, escriba dos veces el mismo numero.",
+        comenzar_etapa("Consultar mesas por numero");
+        if (!pedir_rango_int("Indique el rango de numeros de mesa. Si solo quiere buscar una mesa, escriba dos veces el mismo numero.",
                          datos_int, 1, 2)) {
             return;
         }
@@ -930,7 +1054,8 @@ void menu_consultar_mesas() {
         ordenar_mesas_por_nro(mesas, cant_regs);
         break;
     case 2:
-        if (!pedir_rango_int("\nIndique el rango de cantidad de sillas. Si solo quiere buscar por una cantidad especifica, escriba dos veces el mismo numero.",
+        comenzar_etapa("Consultar mesas por cantidad de sillas");
+        if (!pedir_rango_int("Indique el rango de cantidad de sillas. Si solo quiere buscar por una cantidad especifica, escriba dos veces el mismo numero.",
                          datos_int, 1, 2)) {
             return;
         }
@@ -938,6 +1063,7 @@ void menu_consultar_mesas() {
         ordenar_mesas_por_can_sillas(mesas, cant_regs);
         break;
     case 3:
+        comenzar_etapa("Consultar mesas por ubicacion y cantidad de sillas");
         if (!pedir_comando("\nIndique la ubicacion.\n1. Interior\n2. Terraza\n", 2, &datos_int[0])) {
             return;
         }
