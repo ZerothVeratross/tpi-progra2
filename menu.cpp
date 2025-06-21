@@ -21,6 +21,68 @@ void vaciar_input() {
     while (cin.get(c) && c != '\n');
 }
 
+void extraer_int(int * dato) {
+    bool input_valido=false;
+    int x, xlim, y, inicio;
+    char c;
+    y=obtener_coordenada_y()+1;
+    inicio=obtener_coordenada_x()+1;
+    do {
+        cin>>*dato;
+        input_valido=cin.good();
+        if (!input_valido) {
+            cin.clear();
+            xlim=inicio;
+            rlutil::locate(inicio, y);
+            while (cin.get(c) && c != '\n'){xlim++;}
+            xlim++;
+            for (x=inicio; x<xlim; x++) {
+                rlutil::locate(x, y);
+                cout<<' ';
+            }
+            rlutil::locate(inicio, y);
+        }
+    } while (!input_valido);
+}
+
+void extraer_float(float * dato) {
+    bool input_valido=false;
+    int x, xlim, y, inicio;
+    char c;
+    y=obtener_coordenada_y()+1;
+    inicio=obtener_coordenada_x()+1;
+    do {
+        cin>>*dato;
+        input_valido=cin.good();
+        if (!input_valido) {
+            cin.clear();
+            xlim=inicio;
+            rlutil::locate(inicio, y);
+            while (cin.get(c) && c != '\n'){xlim++;}
+            xlim++;
+            for (x=inicio; x<xlim; x++) {
+                rlutil::locate(x, y);
+                cout<<' ';
+            }
+            rlutil::locate(inicio, y);
+        }
+    } while (!input_valido);
+}
+
+int obtener_coordenada_x() {
+    CONSOLE_SCREEN_BUFFER_INFO s;
+    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+    GetConsoleScreenBufferInfo(console, &s);
+    return s.dwCursorPosition.X;
+}
+
+int obtener_coordenada_y() {
+    CONSOLE_SCREEN_BUFFER_INFO s;
+    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+    GetConsoleScreenBufferInfo(console, &s);
+    return s.dwCursorPosition.Y;
+}
+
 void imprimir_separador() {
     cout<<"-------------------------------------------------------------------";
 }
@@ -90,7 +152,7 @@ int pedir_comando(const char * pedido, int cant_com, int * comando, bool volver=
     if (volver) {
         imprimir_comando("0. Volver al menu principal\n");
     }
-    cin>>*comando;
+    extraer_int(comando);
     if (*comando<0 || *comando>cant_com || (!volver && comando==0)) {
         comando_invalido();
         return 0;
@@ -99,29 +161,26 @@ int pedir_comando(const char * pedido, int cant_com, int * comando, bool volver=
 }
 
 void pedir_siono(const char * pedido, int * comando) {
-    CONSOLE_SCREEN_BUFFER_INFO s;
-    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
     int y, xlim, x;
     *comando=0;
     imprimir_comando(pedido);
-    GetConsoleScreenBufferInfo(console, &s);
-    y=s.dwCursorPosition.Y+1;
+    y=obtener_coordenada_y()+1;
     while (*comando!=1 && *comando!=2) {
-        GetConsoleScreenBufferInfo(console, &s);
-        xlim=s.dwCursorPosition.X+1;
+        xlim=obtener_coordenada_x()+1;
         for (x=1; x<xlim; x++) {
             rlutil::locate(x, y);
             cout<<' ';
         }
         rlutil::locate(1, y);
-        cin>>*comando;
+        extraer_int(comando);
     }
 }
 
 int pedir_int(const char * pedido, int cota_inf, int cota_sup, int * dato_int) {
     int buffer;
+
     cout<<pedido;
-    cin>>buffer;
+    extraer_int(&buffer);
     if (buffer<cota_inf || buffer>cota_sup) {
         numero_invalido();
         return 0;
@@ -132,18 +191,21 @@ int pedir_int(const char * pedido, int cota_inf, int cota_sup, int * dato_int) {
 
 int pedir_rango_int(const char * pedido, int * datos_int, int pos1, int pos2) {
     int buffer1, buffer2;
+
     cout<<pedido<<"\nNumero menor: ";
-    cin>>buffer1;
+    extraer_int(&buffer1);
     if (buffer1<1) {
         numero_invalido();
         return 0;
     }
+
     cout<<"\nNumero mayor: ";
-    cin>>buffer2;
+    extraer_int(&buffer2);
     if (buffer2<1) {
         numero_invalido();
         return 0;
     }
+
     if (buffer2<buffer1) {
         numero_debe_ser_mayor();
         return 0;
@@ -180,8 +242,9 @@ int pedir_string(const char * pedido, string * dato_str, int tam_max, bool cin_a
 
 int pedir_float(const char * pedido, float cota_inf, float cota_sup, float * dato_float) {
     float buffer;
+
     cout<<pedido;
-    cin>>buffer;
+    extraer_float(&buffer);
     if (buffer<cota_inf || buffer>cota_sup) {
         numero_invalido();
         return 0;
@@ -192,14 +255,15 @@ int pedir_float(const char * pedido, float cota_inf, float cota_sup, float * dat
 
 int pedir_rango_float(const char * pedido, float * datos_float, int pos1, int pos2) {
     float buffer1, buffer2;
+
     cout<<pedido<<"\nNumero menor: ";
-    cin>>buffer1;
+    extraer_float(&buffer1);
     if (buffer1<1) {
         numero_invalido();
         return 0;
     }
     cout<<"\nNumero mayor: ";
-    cin>>buffer2;
+    extraer_float(&buffer2);
     if (buffer2<1) {
         numero_invalido();
         return 0;
@@ -373,7 +437,7 @@ bool comandos_principales() {
         imprimir_comando("\n1. Registrar datos nuevos\n2. Consultar registros especificos\n3. Listar todos los registros de un archivo\n"
                          "4. Generar un informe\n5. Borrar o recuperar un registro\n6. Modificar un registro\n7. Generar datos aleatorios\n"
                          "8. Salir de modo administrador\n9. Cambiar contrasenia\n0. Cerrar programa\n\nIngrese el numero de un comando: ");
-        cin>>comando;
+        extraer_int(&comando);
         switch (comando) {
         case 1:
             admin_menu_registrar();
@@ -421,7 +485,7 @@ bool comandos_principales() {
                          "2. Consultar mesas o servicios especificos\n"
                          "3. Modificar datos de una mesa\n4. Entrar como administrador\n"
                          "0. Cerrar programa\n\nIngrese el numero de un comando: ");
-        cin>>comando;
+        extraer_int(&comando);
         switch (comando) {
         case 1:
             menu_registrar_servicio();
@@ -466,7 +530,7 @@ bool menu_cambiar_modo(Configuracion * config, int modo) {
 
     } else if (config->get_modo()==2) {
         comenzar_etapa("Entrar como administrador");
-        pedir_string("\nIngrese la contrasenia: ", &contrasenia, 20, true, false);
+        pedir_string("Ingrese la contrasenia: ", &contrasenia, 20, true, false);
         contrasenia.copy(buffer, 20, 0);
         for (i=contrasenia.length(); i<20; i++) {
             buffer[i]='\0';
@@ -509,11 +573,8 @@ bool menu_cambiar_contrasenia(Configuracion * config) {
 }
 
 void mostrar_mesa(Mesa * mesa, bool ignorar_borrado, int color=rlutil::WHITE, bool mostrar_nombres=true) {
-    CONSOLE_SCREEN_BUFFER_INFO s;
-    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-    GetConsoleScreenBufferInfo(console, &s);
-    int x=1;
-    int y=s.dwCursorPosition.Y+1;
+	int x=1;
+    int y=obtener_coordenada_y()+1;
 
     if (!mesa->get_estado() && ignorar_borrado) {
         return;
@@ -567,11 +628,8 @@ void mostrar_mesa(Mesa * mesa, bool ignorar_borrado, int color=rlutil::WHITE, bo
 }
 
 void mostrar_mozo(Mozo * mozo, bool ignorar_borrado, int color=rlutil::WHITE, bool mostrar_nombres=true) {
-    CONSOLE_SCREEN_BUFFER_INFO s;
-    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-    GetConsoleScreenBufferInfo(console, &s);
     int x=1;
-    int y=s.dwCursorPosition.Y+1;
+    int y=obtener_coordenada_y()+1;
 
     if (!mozo->get_estado() && ignorar_borrado) {
         return;
@@ -684,11 +742,8 @@ void mostrar_mozo(Mozo * mozo, bool ignorar_borrado, int color=rlutil::WHITE, bo
 }
 
 void mostrar_servicio(Servicio * servicio, bool ignorar_borrado, int color=rlutil::WHITE, bool mostrar_nombres=true) {
-    CONSOLE_SCREEN_BUFFER_INFO s;
-    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-    GetConsoleScreenBufferInfo(console, &s);
     int x=1;
-    int y=s.dwCursorPosition.Y+1;
+    int y=obtener_coordenada_y()+1;
 
     if (!servicio->get_estado() && ignorar_borrado) {
         return;
@@ -1364,7 +1419,7 @@ void menu_consultar_servicios() {
 void admin_menu_listar() {
     int dato_int;
     comenzar_etapa("Listar registros");
-    pedir_comando("\nSe recomienda maximizar la ventana. Ingrese su eleccion:\n1. Listar mesas\n2. Listar mozos\n3. Listar servicios\n", 3, &dato_int);
+    pedir_comando("Se recomienda maximizar la ventana. Ingrese su eleccion:\n1. Listar mesas\n2. Listar mozos\n3. Listar servicios\n", 3, &dato_int);
     switch(dato_int) {
     case 1:
         menu_listar_mesas();
@@ -1708,8 +1763,6 @@ void informe_recaudacion_por_mozo() {
     ArchivoMozo aMozo;
     ArchivoServicio aServicio;
     int i, pos, cant_mozos=aMozo.contar_regs();
-    CONSOLE_SCREEN_BUFFER_INFO s;
-    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
     int y, x=1;
     int color=rlutil::WHITE;
 
@@ -1759,8 +1812,7 @@ void informe_recaudacion_por_mozo() {
     cout<<"\nID mozo | Nombre y Apellido                                  | Recaudacion\n";
     imprimir_separador();
     imprimir_separador();
-    GetConsoleScreenBufferInfo(console, &s);
-    y=s.dwCursorPosition.Y+1;
+    y=obtener_coordenada_y()+1;
     for (i=0; i<cant_mozos; i++) {
         if (!mozos[i].get_estado()) {
             continue;
@@ -1794,8 +1846,6 @@ void informe_recaudacion_por_mesa() {
     ArchivoMesa aMesa;
     ArchivoServicio aServicio;
     int i, pos, cant_mesas=aMesa.contar_regs();
-    CONSOLE_SCREEN_BUFFER_INFO s;
-    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
     int y, x=1;
     int color=rlutil::WHITE;
 
@@ -1847,8 +1897,7 @@ void informe_recaudacion_por_mesa() {
     comenzar_etapa("Recaudacion por mesa");
     cout<<"Numero de mesa | Recaudacion\n";
     imprimir_separador();
-    GetConsoleScreenBufferInfo(console, &s);
-    y=s.dwCursorPosition.Y+1;
+    y=obtener_coordenada_y()+1;
     for (i=0; i<cant_mesas; i++) {
         if (!mesas[i].get_estado()) {
             continue;
@@ -1888,7 +1937,7 @@ void informe_recaudacion_mensual() {
 
     comenzar_etapa("Recaudacion por mesa");
     cout<<"Ingrese el anio del que se desea informar: ";
-    cin>>anio;
+    extraer_int(&anio);
     if (anio<1950 || anio>2025) {
         cout<<"\nAnio invalido ingresado, regresando al menu principal...\n";
         return;
@@ -1947,8 +1996,6 @@ void informe_propinas_percibidas() {
     ArchivoMozo aMozo;
     ArchivoServicio aServicio;
     int i, pos, cant_mozos=aMozo.contar_regs();
-    CONSOLE_SCREEN_BUFFER_INFO s;
-    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
     int y, x=1;
     int color=rlutil::WHITE;
 
@@ -2003,8 +2050,7 @@ void informe_propinas_percibidas() {
     cout<<"\nID mozo | Nombre y Apellido                                  | Propinas percibidas\n";
     imprimir_separador();
     imprimir_separador();
-    GetConsoleScreenBufferInfo(console, &s);
-    y=s.dwCursorPosition.Y+1;
+    y=obtener_coordenada_y()+1;
     for (i=0; i<cant_mozos; i++) {
         if (!mozos[i].get_estado()) {
             continue;
@@ -2039,7 +2085,7 @@ void informe_propinas_percibidas() {
 void admin_menu_borrar_recuperar() {
     int dato_int;
     comenzar_etapa("Borrar o recuperar un registro");
-    pedir_comando("\nQue tipo de dato desea borrar o recuperar?\n1. Mesa\n2. Mozo\n3. Servicio\n", 3, &dato_int);
+    pedir_comando("Que tipo de dato desea borrar o recuperar?\n1. Mesa\n2. Mozo\n3. Servicio\n", 3, &dato_int);
     switch (dato_int) {
     case 1:
         menu_borrar_recuperar_mesa();
@@ -2076,7 +2122,7 @@ void menu_borrar_recuperar_mesa() {
     }
 
     comenzar_etapa("Borrar o recuperar mesa");
-    if (!pedir_int("\nIngrese el numero de mesa que desea borrar o recuperar: ", 1, cant_regs, &dato_int)) {return;}
+    if (!pedir_int("Ingrese el numero de mesa que desea borrar o recuperar: ", 1, cant_regs, &dato_int)) {return;}
 
     pos=buscar_nro_mesa(mesas, cant_regs, dato_int);
 
@@ -2128,7 +2174,7 @@ void menu_borrar_recuperar_mozo() {
     }
 
     comenzar_etapa("Borrar o recuperar mozo");
-    if (!pedir_int("\nIngrese el ID de mozo que desea borrar o recuperar: ", 1, cant_regs, &dato_int)) {return;}
+    if (!pedir_int("Ingrese el ID de mozo que desea borrar o recuperar: ", 1, cant_regs, &dato_int)) {return;}
 
     pos=buscar_id_mozo(mozos, cant_regs, dato_int);
 
@@ -2180,7 +2226,7 @@ void menu_borrar_recuperar_servicio() {
     }
 
     comenzar_etapa("Borrar o recuperar servicio");
-    if (!pedir_int("\nIngrese el numero de factura del servicio que desea borrar o recuperar: ", 1, cant_regs, &dato_int)) {return;}
+    if (!pedir_int("Ingrese el numero de factura del servicio que desea borrar o recuperar: ", 1, cant_regs, &dato_int)) {return;}
 
     pos=buscar_nro_factura(servicios, cant_regs, dato_int);
 
@@ -2221,7 +2267,7 @@ void admin_menu_modificar() {
     int dato_int;
 
     comenzar_etapa("Modificar registro");
-    pedir_comando("\nQue tipo de registro desea modificar?\n1. Mesa\n2. Mozo\n3. Servicio\n", 3, &dato_int);
+    pedir_comando("Que tipo de registro desea modificar?\n1. Mesa\n2. Mozo\n3. Servicio\n", 3, &dato_int);
     switch (dato_int) {
     case 1:
         menu_modificar_mesa();
@@ -2263,7 +2309,7 @@ void menu_modificar_mesa() {
     while (control) {
         if (pos==-2) {
             comenzar_etapa("Modificar mesa");
-            if(!pedir_int("\nIngrese el numero de la mesa que desea modificar: ", 1, 99999, &dato_int)){return;}
+            if(!pedir_int("Ingrese el numero de la mesa que desea modificar: ", 1, 99999, &dato_int)){return;}
             pos=buscar_nro_mesa(mesas, cant_regs, dato_int);
         }
         if (pos==-1 || !mesas[pos].get_estado()) {
@@ -2276,12 +2322,12 @@ void menu_modificar_mesa() {
             mostrar_mesa(&mesas[pos], true);
         }
 
-        if (!pedir_comando("\nQue atributo desea modificar?\n1. Numero de mesa\n2. Cantidad de sillas\n3. Ubicacion\n4. Descripcion\n5. Modificar otra mesa\n6. Guardar y salir\n", 6, &dato_int, false)){return;}
+        if (!pedir_comando("Que atributo desea modificar?\n1. Numero de mesa\n2. Cantidad de sillas\n3. Ubicacion\n4. Descripcion\n5. Modificar otra mesa\n6. Guardar y salir\n", 6, &dato_int, false)){return;}
 
         comenzar_etapa("Modificar mesa");
         switch (dato_int) {
         case 1:
-            if (!pedir_int("\nIngrese el nuevo numero de mesa: ", 1, 99999, &dato_int)){return;}
+            if (!pedir_int("Ingrese el nuevo numero de mesa: ", 1, 99999, &dato_int)){return;}
             cin_antes=true;
             tpos=buscar_nro_mesa(mesas, cant_regs, dato_int);
             if (tpos!=-1) {
@@ -2295,17 +2341,17 @@ void menu_modificar_mesa() {
             }
             break;
         case 2:
-            if (!pedir_int("\nIngrese la nueva cantidad de sillas: ", 1, 12, &dato_int)) {return;}
+            if (!pedir_int("Ingrese la nueva cantidad de sillas: ", 1, 12, &dato_int)) {return;}
             cin_antes=true;
             mesas[pos].set_can_sillas(dato_int);
             break;
         case 3:
-            if (!pedir_comando("\nIngrese la nueva ubicacion\n1. Interior\n2. Terraza\n", 2, &dato_int, false)) {return;}
+            if (!pedir_comando("Ingrese la nueva ubicacion\n1. Interior\n2. Terraza\n", 2, &dato_int, false)) {return;}
             cin_antes=true;
             mesas[pos].set_ubic(dato_int);
             break;
         case 4:
-            if (!pedir_string("\nIngrese la nueva descripcion con no mas de 29 caracteres\n", &dato_str, 29, cin_antes, true)) {return;}
+            if (!pedir_string("Ingrese la nueva descripcion con no mas de 29 caracteres\n", &dato_str, 29, cin_antes, true)) {return;}
             cin_antes=false;
             mesas[pos].set_desc(dato_str);
             break;
@@ -2314,7 +2360,7 @@ void menu_modificar_mesa() {
             break;
         case 6:
             archivo.guardar_mesas(mesas, cant_regs);
-            imprimir_exito("\nGuardando mesa...\n");
+            imprimir_exito("Guardando mesa...\n");
             control=false;
             break;
         default:
@@ -2346,7 +2392,7 @@ void menu_modificar_mozo() {
     while (control) {
         if (pos==-2) {
             comenzar_etapa("Modificar mozo");
-            if(!pedir_int("\nIngrese el ID del mozo que desea modificar: ", 1, 99999, &dato_int)){return;}
+            if(!pedir_int("Ingrese el ID del mozo que desea modificar: ", 1, 99999, &dato_int)){return;}
             pos=buscar_id_mozo(mozos, cant_regs, dato_int);
         }
         if (pos==-1 || !mozos[pos].get_estado()) {
@@ -2359,12 +2405,12 @@ void menu_modificar_mozo() {
             mostrar_mozo(&mozos[pos], true);
         }
 
-        if (!pedir_comando("\nQue atributo desea modificar?\n1. ID de mozo\n2. DNI\n3. Turno\n4. Nombre\n5. Apellido\n6. Numero de telefono\n7. Email\n8. Modificar otra mozo\n9. Guardar y salir\n", 9, &dato_int, false)){return;}
+        if (!pedir_comando("Que atributo desea modificar?\n1. ID de mozo\n2. DNI\n3. Turno\n4. Nombre\n5. Apellido\n6. Numero de telefono\n7. Email\n8. Modificar otra mozo\n9. Guardar y salir\n", 9, &dato_int, false)){return;}
 
         comenzar_etapa("Modificar mozo");
         switch (dato_int) {
         case 1:
-            if (!pedir_int("\nIngrese el nuevo ID de mozo: ", 1, 99999, &dato_int)){return;}
+            if (!pedir_int("Ingrese el nuevo ID de mozo: ", 1, 99999, &dato_int)){return;}
             cin_antes=true;
             tpos=buscar_id_mozo(mozos, cant_regs, dato_int);
             if (tpos!=-1) {
@@ -2378,32 +2424,32 @@ void menu_modificar_mozo() {
             }
             break;
         case 2:
-            if (!pedir_int("\nIngrese el nuevo DNI: ", 1000000, 80000000, &dato_int)) {return;}
+            if (!pedir_int("Ingrese el nuevo DNI: ", 1000000, 80000000, &dato_int)) {return;}
             cin_antes=true;
             mozos[pos].set_dni(dato_int);
             break;
         case 3:
-            if (!pedir_comando("\nIngrese el nuevo turno\n1. Maniana\n2. Tarde\n3. Noche\n", 3, &dato_int, false)) {return;}
+            if (!pedir_comando("Ingrese el nuevo turno\n1. Maniana\n2. Tarde\n3. Noche\n", 3, &dato_int, false)) {return;}
             cin_antes=true;
             mozos[pos].set_turno(dato_int);
             break;
         case 4:
-            if (!pedir_string("\nIngrese el nuevo nombre con no mas de 19 caracteres\n", &dato_str, 19, cin_antes, true)) {return;}
+            if (!pedir_string("Ingrese el nuevo nombre con no mas de 19 caracteres\n", &dato_str, 19, cin_antes, true)) {return;}
             cin_antes=false;
             mozos[pos].set_nombre(dato_str);
             break;
         case 5:
-            if (!pedir_string("\nIngrese el nuevo apellido con no mas de 29 caracteres\n", &dato_str, 29, cin_antes, true)) {return;}
+            if (!pedir_string("Ingrese el nuevo apellido con no mas de 29 caracteres\n", &dato_str, 29, cin_antes, true)) {return;}
             cin_antes=false;
             mozos[pos].set_apellido(dato_str);
             break;
         case 6:
-            if (!pedir_string("\nIngrese el nuevo numero de telefono con no mas de 19 caracteres\n", &dato_str, 19, cin_antes, true)) {return;}
+            if (!pedir_string("Ingrese el nuevo numero de telefono con no mas de 19 caracteres\n", &dato_str, 19, cin_antes, true)) {return;}
             cin_antes=false;
             mozos[pos].set_nombre(dato_str);
             break;
         case 7:
-            if (!pedir_string("\nIngrese el nuevo email con no mas de 49 caracteres\n", &dato_str, 19, cin_antes, true)) {return;}
+            if (!pedir_string("Ingrese el nuevo email con no mas de 49 caracteres\n", &dato_str, 19, cin_antes, true)) {return;}
             cin_antes=false;
             mozos[pos].set_nombre(dato_str);
             break;
@@ -2411,7 +2457,7 @@ void menu_modificar_mozo() {
             pos=-1;
             break;
         case 9:
-            imprimir_exito("\nGuardando mozo...\n");
+            imprimir_exito("Guardando mozo...\n");
             archivo.guardar_mozos(mozos, cant_regs);
             control=false;
             break;
@@ -2466,7 +2512,7 @@ void menu_modificar_servicio() {
     while (control) {
         if (pos==-1) {
             comenzar_etapa("Modificar servicio");
-            if(!pedir_int("\nIngrese el numero de factura del servicio que desea modificar: ", 1, 999999, &dato_int)){return;}
+            if(!pedir_int("Ingrese el numero de factura del servicio que desea modificar: ", 1, 999999, &dato_int)){return;}
             pos=buscar_nro_factura(servicios, cant_serv, dato_int);
         }
         if (pos==-1 || !servicios[pos].get_estado()) {
@@ -2479,12 +2525,12 @@ void menu_modificar_servicio() {
             mostrar_servicio(&servicios[pos], true);
         }
 
-        pedir_comando("\nQue atributo desea modificar?\n1. Numero de factura\n2. Numero de mesa\n3. ID de mozo\n4. Fecha\n5. Importe de servicio\n6. Monto abonado\n7. Modificar otro servicio\n8. Guardar y salir\n", 8, &dato_int, false);
+        pedir_comando("Que atributo desea modificar?\n1. Numero de factura\n2. Numero de mesa\n3. ID de mozo\n4. Fecha\n5. Importe de servicio\n6. Monto abonado\n7. Modificar otro servicio\n8. Guardar y salir\n", 8, &dato_int, false);
 
         comenzar_etapa("Modificar servicio");
         switch (dato_int) {
         case 1:
-            if (!pedir_int("\nIngrese el nuevo numero de factura: ", 1, 9999999, &dato_int)){return;}
+            if (!pedir_int("Ingrese el nuevo numero de factura: ", 1, 9999999, &dato_int)){return;}
             tpos=buscar_nro_factura(servicios, cant_serv, dato_int);
             if (tpos!=-1) {
                 if (mesas[tpos].get_estado()) {
@@ -2497,7 +2543,7 @@ void menu_modificar_servicio() {
             }
             break;
         case 2:
-            if (!pedir_int("\nIngrese el nuevo numero de mesa: ", 1, 99999, &dato_int)) {return;}
+            if (!pedir_int("Ingrese el nuevo numero de mesa: ", 1, 99999, &dato_int)) {return;}
             tpos=buscar_nro_mesa(mesas, cant_mesas, dato_int);
             if (tpos!=-1) {
                 if (!mesas[tpos].get_estado()) {
@@ -2514,7 +2560,7 @@ void menu_modificar_servicio() {
             }
             break;
         case 3:
-            if (!pedir_int("\nIngrese el nuevo ID de mozo: ", 1, 99999, &dato_int)) {return;}
+            if (!pedir_int("Ingrese el nuevo ID de mozo: ", 1, 99999, &dato_int)) {return;}
             tpos=buscar_id_mozo(mozos, cant_mozos, dato_int);
             if (tpos!=-1) {
                 if (!mesas[tpos].get_estado()) {
@@ -2531,11 +2577,11 @@ void menu_modificar_servicio() {
             }
             break;
         case 4:
-            if (!pedir_fecha("\nIngrese la nueva fecha de servicio\n", &dato_fecha, 2000, 2025)) {return;}
+            if (!pedir_fecha("Ingrese la nueva fecha de servicio\n", &dato_fecha, 2000, 2025)) {return;}
             servicios[pos].set_fecha_serv(dato_fecha);
             break;
         case 5:
-            if (!pedir_float("\nIngrese el nuevo importe de servicio: ", 1, 10000000, &dato_float)){return;}
+            if (!pedir_float("Ingrese el nuevo importe de servicio: ", 1, 10000000, &dato_float)){return;}
             if (dato_float<=servicios[pos].get_monto_abon()) {
                 servicios[pos].set_importe_serv(dato_float);
             } else {
@@ -2543,7 +2589,7 @@ void menu_modificar_servicio() {
             }
             break;
         case 6:
-            if (!pedir_float("\nIngrese el nuevo monto abonado: ", 1, 10000000, &dato_float)){return;}
+            if (!pedir_float("Ingrese el nuevo monto abonado: ", 1, 10000000, &dato_float)){return;}
             if (dato_float>=servicios[pos].get_importe_serv()) {
                 servicios[pos].set_importe_serv(dato_float);
             } else {
@@ -2555,7 +2601,7 @@ void menu_modificar_servicio() {
             break;
         case 8:
             pServicios.guardar_servicios(servicios, cant_serv);
-            imprimir_exito("\nGuardando servicio...\n");
+            imprimir_exito("Guardando servicio...\n");
             control=false;
             break;
         default:

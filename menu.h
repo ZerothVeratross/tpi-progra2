@@ -9,6 +9,11 @@
 
 void clear_screen(char fill = ' ');
 void vaciar_input();
+void extraer_int(int * dato, int pos);
+void extraer_float(float * dato, int pos);
+int obtener_coordenada_x();
+int obtener_coordenada_y();
+
 void imprimir_separador();
 void imprimir_error(const char * msj_error);
 void imprimir_exito(const char * msj_exito);
