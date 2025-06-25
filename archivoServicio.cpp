@@ -184,5 +184,7 @@ int ArchivoServicio::generar_servicios(int cantidad) {
         fwrite(&servicio, get_tam_reg(), 1, pServicios);
     }
     fclose(pServicios);
+	delete []nros_mesas;
+	delete []ids_mozos;
     return 1;
 }

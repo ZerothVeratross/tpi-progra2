@@ -898,6 +898,7 @@ int menu_registrar_mesa() {
     }
 
     datos_int[0]=archivo.registrar_mesa(&n_mesa);
+    delete []mesas;
     return datos_int[0];
 }
 
@@ -955,6 +956,7 @@ int menu_registrar_mozo() {
     }
 
     datos_int[0]=archivo.registrar_mozo(&n_mozo);
+	delete []mozos;
     return datos_int[0];
 }
 
@@ -1054,6 +1056,9 @@ int menu_registrar_servicio() {
     }
 
     datos_int[0]=pServicios.registrar_servicio(&n_servicio);
+	delete []servicios;
+	delete []mesas;
+	delete []mozos;
     return datos_int[0];
 }
 //Fin funciones para registrar datos
@@ -1189,6 +1194,7 @@ void menu_consultar_mesas() {
         cout<<"\nSe encontro "<<mesas_encontradas<<" mesa\n";
     }
     rlutil::setColor(rlutil::WHITE);
+	delete []mesas;
 }
 
 void menu_consultar_mozos() {
@@ -1305,6 +1311,7 @@ void menu_consultar_mozos() {
         cout<<"\nSe encontro "<<mozos_encontrados<<" mozo\n";
     }
     rlutil::setColor(rlutil::WHITE);
+	delete []mozos;
 }
 
 void menu_consultar_servicios() {
@@ -1412,6 +1419,7 @@ void menu_consultar_servicios() {
         cout<<"\nSe encontro "<<servicios_encontrados<<" servicio\n";
     }
     rlutil::setColor(rlutil::WHITE);
+	delete []servicios;
 }
 //Fin funciones para consultar base de datos
 
@@ -1504,6 +1512,8 @@ void menu_listar_mesas() {
     }
     rlutil::setColor(rlutil::WHITE);
     imprimir_separador();
+    //cout<<"\n"<<cant_regs<<"\n"<<mesas[49].get_nro_mesa();
+    delete []mesas;
 }
 
 void menu_listar_mozos() {
@@ -1589,6 +1599,7 @@ void menu_listar_mozos() {
     imprimir_separador();
     imprimir_separador();
     imprimir_separador();
+	delete []mozos;
 }
 
 void menu_listar_servicios() {
@@ -1668,6 +1679,7 @@ void menu_listar_servicios() {
     imprimir_separador();
     imprimir_separador();
     rlutil::setColor(rlutil::WHITE);
+	delete []servicios;
 }
 //Fin funciones para listar datos
 
@@ -1757,6 +1769,7 @@ void informe_recaudacion_anual() {
     }
     rlutil::setColor(rlutil::WHITE);
     imprimir_separador();
+	delete []servicios;
 }
 
 void informe_recaudacion_por_mozo() {
@@ -1840,6 +1853,9 @@ void informe_recaudacion_por_mozo() {
     cout<<"\n";
     imprimir_separador();
     imprimir_separador();
+	delete []mozos;
+	delete []servicios;
+	delete []recaudaciones;
 }
 
 void informe_recaudacion_por_mesa() {
@@ -1921,6 +1937,9 @@ void informe_recaudacion_por_mesa() {
     cout<<"\n";
     rlutil::setColor(rlutil::WHITE);
     imprimir_separador();
+	delete []mesas;
+	delete []servicios;
+	delete []recaudaciones;
 }
 
 void informe_recaudacion_mensual() {
@@ -1990,6 +2009,7 @@ void informe_recaudacion_mensual() {
     rlutil::setColor(rlutil::WHITE);
     cout<<"Diciembre  | $"<<recaudaciones[11]<<"\n";
     imprimir_separador();
+	free(servicios);
 }
 
 void informe_propinas_percibidas() {
@@ -2078,6 +2098,9 @@ void informe_propinas_percibidas() {
     rlutil::setColor(rlutil::WHITE);
     imprimir_separador();
     imprimir_separador();
+	delete []mozos;
+	delete []servicios;
+	delete []propinas;
 }
 //Fin funciones para generar informes
 
@@ -2155,6 +2178,7 @@ void menu_borrar_recuperar_mesa() {
     } else if (dato_int==2) {
         imprimir_error("\nAbortando operacion de borrado...\n");
     }
+	delete []mesas;
 }
 
 void menu_borrar_recuperar_mozo() {
@@ -2207,6 +2231,7 @@ void menu_borrar_recuperar_mozo() {
     } else if (dato_int==2) {
         imprimir_error("\nAbortando operacion de borrado...\n");
     }
+	delete []mozos;
 }
 
 void menu_borrar_recuperar_servicio() {
@@ -2259,6 +2284,7 @@ void menu_borrar_recuperar_servicio() {
     } else if (dato_int==2) {
         imprimir_error("\nAbortando operacion de borrado...\n");
     }
+	delete []servicios;
 }
 //Fin funciones para borrar
 
@@ -2367,6 +2393,7 @@ void menu_modificar_mesa() {
             break;
         }
     }
+	delete []mesas;
 }
 
 void menu_modificar_mozo() {
@@ -2465,6 +2492,7 @@ void menu_modificar_mozo() {
             break;
         }
     }
+	delete []mozos;
 }
 
 void menu_modificar_servicio() {
@@ -2608,6 +2636,9 @@ void menu_modificar_servicio() {
             break;
         }
     }
+	delete []servicios;
+	delete []mesas;
+	delete []mozos;
 }
 //Fin funciones para modificar
 
